@@ -3,18 +3,25 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 atualizar_lista() {
-  local linhas="" n=0 d nome f arq
+  local linhas="" n=0 d nome f arq s sub
   for d in */; do
     nome="${d%/}"
     case "$nome" in .*|_*) continue ;; esac
     if [ -f "$nome/index.html" ]; then
-      linhas+="      <li><a href=\"./$nome/\">$nome<small>$nome/</small></a></li>"$'\n'
+      linhas+="      <li><a href=\"./$nome/index.html\">$nome<small>$nome/index.html</small></a></li>"$'\n'
       n=$((n+1))
     else
       for f in "$nome"/*.html; do
         [ -f "$f" ] || continue
         arq="${f##*/}"
         linhas+="      <li><a href=\"./$nome/$arq\">${arq%.html}<small>$nome/$arq</small></a></li>"$'\n'
+        n=$((n+1))
+      done
+      for s in "$nome"/*/; do
+        sub="${s%/}"; sub="${sub##*/}"
+        case "$sub" in .*|_*) continue ;; esac
+        [ -f "$nome/$sub/index.html" ] || continue
+        linhas+="      <li><a href=\"./$nome/$sub/index.html\">$sub<small>$nome/$sub/index.html</small></a></li>"$'\n'
         n=$((n+1))
       done
     fi

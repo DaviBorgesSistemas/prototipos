@@ -12,11 +12,17 @@ function Atualizar-Lista {
   foreach ($d in (Get-ChildItem -Path $raiz -Directory | Where-Object { $_.Name -notmatch '^[._]' } | Sort-Object Name)) {
     if (Test-Path (Join-Path $d.FullName 'index.html')) {
       $itens += $d
-      $linhas += "      <li><a href=`"./$($d.Name)/`">$($d.Name)<small>$($d.Name)/</small></a></li>"
+      $linhas += "      <li><a href=`"./$($d.Name)/index.html`">$($d.Name)<small>$($d.Name)/index.html</small></a></li>"
     } else {
       foreach ($f in (Get-ChildItem -Path $d.FullName -Filter *.html -File | Sort-Object Name)) {
         $itens += $f
         $linhas += "      <li><a href=`"./$($d.Name)/$($f.Name)`">$($f.BaseName)<small>$($d.Name)/$($f.Name)</small></a></li>"
+      }
+      foreach ($s in (Get-ChildItem -Path $d.FullName -Directory | Where-Object { $_.Name -notmatch '^[._]' } | Sort-Object Name)) {
+        if (Test-Path (Join-Path $s.FullName 'index.html')) {
+          $itens += $s
+          $linhas += "      <li><a href=`"./$($d.Name)/$($s.Name)/index.html`">$($s.Name)<small>$($d.Name)/$($s.Name)/index.html</small></a></li>"
+        }
       }
     }
   }
