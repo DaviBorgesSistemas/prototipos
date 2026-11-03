@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Financiamento de carro sem susto</title>
+<script>
+(function () {
+  var t = null;
+  try { t = localStorage.getItem("carro_theme"); } catch (e) {}
+  if (t !== "light" && t !== "dark") t = (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", t);
+})();
+</script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+:root {
+  --page:#eaf0ee; --card:#ffffff; --bg2:#f2f6f4; --bg3:#e0e8e5;
+  --t1:#1b2a2e; --t2:#5d6e73;
+  --bd:rgba(20,40,40,.10); --bd2:rgba(20,40,40,.22);
+  --r:18px; --rs:12px;
+  --green:#0f9d54; --gbg:#e0f6ea; --on-g:#ffffff;
+  --yellow:#f5c022; --ybg:#fff5d6; --yt:#8a6500;
+  --red:#c93a3a; --rbg:#fdeaea;
+  --blue:#15829e; --bbg:#e3f3f8;
+  --sh:0 2px 12px rgba(20,50,40,.08);
+  --hero:linear-gradient(135deg,#19c36d 0%,#0b8f4d 100%);
+}
+:root[data-theme="dark"] {
+  --page:#1f2a2f; --card:#2c3a41; --bg2:#37474f; --bg3:#465a64;
+  --t1:#eef3f2; --t2:#a2b3b8;
+  --bd:rgba(255,255,255,.09); --bd2:rgba(255,255,255,.22);
+  --green:#35d585; --gbg:rgba(53,213,133,.15); --on-g:#06261a;
+  --yellow:#f7c831; --ybg:rgba(247,200,49,.14); --yt:#f7d86a;
+  --red:#ff8f8f; --rbg:rgba(255,110,110,.14);
+  --blue:#5cc7e3; --bbg:rgba(92,199,227,.15);
+  --sh:0 2px 12px rgba(0,0,0,.28);
+  --hero:linear-gradient(135deg,#1f4b3b 0%,#16382d 100%);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  background: var(--page); color: var(--t1); font-size: 15px; line-height: 1.55; min-height: 100vh; overflow-x: hidden;
+}
+.wrap { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+button { font-family: inherit; }
+button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
+.red { color: var(--red); } .grn { color: var(--green); }
+
+/* ── Topo ── */
+.top { position: sticky; top: 0; z-index: 40; background: var(--card); box-shadow: 0 1px 0 var(--bd), var(--sh); }
+.top-in { display: flex; align-items: center; gap: 14px; height: 58px; }
+.brand { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 18px; letter-spacing: -.01em; flex-shrink: 0; }
+.brand .bm { width: 34px; height: 34px; border-radius: 10px; background: var(--green); color: var(--on-g); display: grid; place-items: center; }
+.ico { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tnav { display: flex; gap: 2px; flex: 1; overflow-x: auto; scrollbar-width: none; }
+.tnav::-webkit-scrollbar { display: none; }
+.tnav a { padding: 8px 12px; border-radius: 999px; font-size: 13.5px; color: var(--t2); text-decoration: none; white-space: nowrap; }
+.tnav a:hover { background: var(--bg2); color: var(--t1); }
+.icon-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--bd2); background: transparent; color: var(--t1); cursor: pointer; display: grid; place-items: center; flex-shrink: 0; }
+.icon-btn:hover { background: var(--bg2); }
+
+/* ── Herói ── */
+.hero { margin: 20px 0 22px; background: var(--hero); color: #fff; border-radius: 24px; padding: 30px 28px; box-shadow: var(--sh); }
+.hero h1 { font-size: clamp(24px, 4.2vw, 36px); line-height: 1.15; letter-spacing: -.02em; font-weight: 700; max-width: 760px; }
+.hero p { margin-top: 10px; font-size: 16px; opacity: .93; max-width: 680px; }
+.hero ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 10px; margin-top: 18px; }
+.hero li { background: rgba(255,255,255,.18); border-radius: 999px; padding: 6px 13px; font-size: 13px; }
+
+/* ── Passos + resumo ao vivo ── */
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; }
+.steps { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.step, .box { background: var(--card); border-radius: var(--r); box-shadow: var(--sh); padding: 22px; min-width: 0; }
+.st-h { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 16px; }
+.st-n { width: 34px; height: 34px; border-radius: 50%; background: var(--green); color: var(--on-g); font-weight: 700; display: grid; place-items: center; flex-shrink: 0; font-size: 16px; }
+.st-n.opt { background: var(--bg3); color: var(--t2); font-size: 12px; }
+.st-h h2 { font-size: 19px; line-height: 1.25; letter-spacing: -.01em; }
+.st-d { color: var(--t2); font-size: 14px; margin-top: 3px; }
+.st-i { margin-top: 12px; font-size: 14px; color: var(--t2); background: var(--bg2); border-radius: var(--rs); padding: 10px 13px; }
+.st-i.warn { background: var(--ybg); color: var(--yt); }
+.st-i b { color: var(--t1); }
+
+.inp, .money { background: var(--bg2); border: 1.5px solid var(--bd2); border-radius: var(--rs); color: var(--t1); font-size: 16px; font-family: inherit; }
+.inp { width: 100%; padding: 11px 13px; }
+.money { display: flex; align-items: center; gap: 6px; padding: 0 13px; }
+.money span { color: var(--t2); font-weight: 600; }
+.money input { flex: 1; min-width: 0; border: none; background: transparent; color: var(--t1); font-size: 18px; font-weight: 600; padding: 11px 0; font-family: inherit; outline: none; }
+.money:focus-within, .inp:focus { border-color: var(--green); outline: none; }
+.money.sm input { font-size: 16px; }
+.lbl { display: block; font-size: 13px; font-weight: 600; margin: 0 0 6px; }
+.hint { font-size: 12px; color: var(--t2); font-weight: 400; }
+input[type=range] { width: 100%; accent-color: var(--green); height: 30px; cursor: pointer; }
+
+.carrow { display: grid; grid-template-columns: 30px minmax(0, 1fr) 190px 36px; gap: 10px; align-items: center; margin-bottom: 12px; background: var(--bg2); border-radius: 14px; padding: 12px; }
+.carrow .inp, .carrow .money { background: var(--card); }
+.color-btn { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--bd2); position: relative; overflow: hidden; cursor: pointer; }
+.color-btn input { opacity: 0; position: absolute; inset: 0; width: 100%; height: 100%; cursor: pointer; border: none; padding: 0; }
+.del-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background: transparent; color: var(--t2); font-size: 22px; cursor: pointer; line-height: 1; }
+.del-btn:hover { background: var(--rbg); color: var(--red); }
+.btn-ghost { border: 1.5px dashed var(--bd2); background: transparent; color: var(--t1); border-radius: var(--rs); padding: 11px 16px; font-size: 14px; cursor: pointer; width: 100%; }
+.btn-ghost:hover { border-color: var(--green); color: var(--green); }
+.btn { display: inline-block; border: none; background: var(--green); color: var(--on-g); border-radius: var(--rs); padding: 11px 18px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center; }
+.btn:hover { filter: brightness(1.06); }
+.btn.sec { background: var(--bg2); color: var(--t1); border: 1px solid var(--bd2); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.chip { padding: 9px 14px; border-radius: 999px; border: 1.5px solid var(--bd2); background: transparent; color: var(--t1); font-size: 13.5px; cursor: pointer; min-height: 40px; }
+.chip:hover { background: var(--bg2); }
+.chip.on { background: var(--green); border-color: var(--green); color: var(--on-g); font-weight: 600; }
+.inrow { display: grid; grid-template-columns: minmax(0, 1fr) 190px; gap: 16px; align-items: center; }
+
+.pzs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.pz { border: 1.5px solid var(--bd2); border-radius: var(--rs); background: transparent; color: var(--t1); padding: 10px 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 76px; }
+.pz b { font-size: 17px; }
+.pz small { font-size: 11px; color: var(--t2); line-height: 1.25; text-align: center; }
+.pz small.s1 { color: var(--t1); font-weight: 600; font-size: 11.5px; }
+.pz:hover { background: var(--bg2); }
+.pz.on { background: var(--green); border-color: var(--green); color: var(--on-g); }
+.pz.on small { color: var(--on-g); opacity: .92; }
+.pz.on small.s1 { color: var(--on-g); }
+
+.tag { display: inline-block; border-radius: 999px; padding: 4px 12px; font-size: 12.5px; font-weight: 600; margin-top: 10px; }
+.tag.ok { background: var(--gbg); color: var(--green); } .tag.warn { background: var(--ybg); color: var(--yt); } .tag.bad { background: var(--rbg); color: var(--red); }
+
+details.adv { margin-top: 16px; border-top: 1px solid var(--bd); padding-top: 12px; }
+details > summary { cursor: pointer; font-weight: 600; font-size: 14px; list-style: none; display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary::before { content: "▸"; color: var(--green); transition: transform .15s; display: inline-block; }
+details[open] > summary::before { transform: rotate(90deg); }
+.fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
+.chk { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; cursor: pointer; line-height: 1.4; }
+.chk input { accent-color: var(--green); width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.seg .chip { border-radius: var(--rs); text-align: center; margin-top: 0; }
+
+/* ── Resumo ao vivo ── */
+.live { position: sticky; top: 74px; background: var(--card); border-radius: var(--r); box-shadow: var(--sh); padding: 20px; border-top: 5px solid var(--green); }
+.live h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--t2); }
+.live .nm { font-weight: 700; font-size: 16px; margin-top: 4px; overflow-wrap: anywhere; }
+.live .big { font-size: 34px; font-weight: 700; letter-spacing: -.02em; color: var(--green); line-height: 1.1; margin-top: 10px; font-variant-numeric: tabular-nums; }
+.live .big small { display: block; font-size: 13px; font-weight: 400; color: var(--t2); letter-spacing: 0; margin-top: 3px; }
+.live .row { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-top: 1px solid var(--bd); font-size: 14px; }
+.live .row b { font-variant-numeric: tabular-nums; text-align: right; }
+.live .btn { width: 100%; margin-top: 12px; }
+.livebar { display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; background: var(--card); box-shadow: 0 -4px 18px rgba(0,0,0,.16); padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); align-items: center; gap: 14px; border-top: 3px solid var(--green); }
+.livebar div { flex: 1; min-width: 0; }
+.livebar small { display: block; font-size: 11px; color: var(--t2); }
+.livebar b { font-size: 17px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.livebar .btn { padding: 10px 14px; flex: 0 0 auto; }
+
+/* ── Seções ── */
+section.blk { margin-top: 30px; scroll-margin-top: 74px; }
+.blk > h2 { font-size: 23px; letter-spacing: -.02em; line-height: 1.2; }
+.blk > .lead { color: var(--t2); margin: 6px 0 16px; max-width: 760px; }
+.warnbox { background: var(--rbg); color: var(--red); border-radius: var(--rs); padding: 10px 14px; font-size: 14px; margin-bottom: 12px; display: none; }
+
+.verdict { display: flex; gap: 16px; align-items: flex-start; border-radius: var(--r); padding: 20px; margin-bottom: 16px; border: 2px solid; }
+.verdict.ok { background: var(--gbg); border-color: var(--green); } .verdict.warn { background: var(--ybg); border-color: var(--yellow); } .verdict.bad { background: var(--rbg); border-color: var(--red); }
+.v-ic { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center; font-weight: 800; font-size: 20px; color: #fff; }
+.verdict.ok .v-ic { background: var(--green); } .verdict.warn .v-ic { background: #d49a00; } .verdict.bad .v-ic { background: var(--red); }
+.verdict h3 { font-size: 18px; line-height: 1.3; }
+.verdict p { margin-top: 5px; font-size: 15px; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+.card { background: var(--card); border-radius: var(--r); box-shadow: var(--sh); padding: 20px; min-width: 0; }
+.card.best { box-shadow: 0 0 0 3px var(--green), var(--sh); }
+.c-top { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.c-dot { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; }
+.c-nm { font-weight: 700; font-size: 16px; overflow-wrap: anywhere; flex: 1; min-width: 0; }
+.badge { font-size: 12px; font-weight: 600; padding: 4px 11px; border-radius: 999px; background: var(--gbg); color: var(--green); }
+.badge.r { background: var(--rbg); color: var(--red); }
+.c-pm { margin-top: 14px; font-size: 32px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.c-pm small { display: block; font-size: 13px; font-weight: 400; color: var(--t2); letter-spacing: 0; margin-top: 4px; }
+.stack { display: flex; height: 16px; border-radius: 8px; overflow: hidden; margin: 16px 0 8px; background: var(--bg3); }
+.stack span { display: block; min-width: 2px; }
+.stack-l { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.stack-l > span { display: flex; align-items: center; gap: 8px; }
+.stack-l i { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+.stack-l b { margin-left: auto; font-variant-numeric: tabular-nums; }
+.c-sum { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--bd); font-size: 14.5px; }
+.c-sum .x { font-size: 15.5px; margin-top: 6px; }
+.c-sum .y { color: var(--t2); font-size: 13px; margin-top: 6px; }
+.card details { margin-top: 12px; }
+.rw { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--bd); font-size: 13.5px; }
+.rw:last-child { border-bottom: none; }
+.rw > span:first-child { color: var(--t2); min-width: 0; }
+.rw > b, .rw > span:last-child:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.hp { background: none; border: none; color: inherit; font: inherit; cursor: pointer; padding: 0; text-decoration: underline dotted; text-underline-offset: 3px; text-align: left; }
+.hp::after { content: " ?"; display: inline-grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; background: var(--bg3); color: var(--t1); font-size: 10px; font-weight: 700; text-decoration: none; vertical-align: 1px; margin-left: 3px; }
+.hp:hover { color: var(--green); }
+
+/* ── Teste do vendedor ── */
+.seller { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 22px; align-items: start; }
+.sform { display: flex; flex-direction: column; gap: 14px; }
+.sout .empty { color: var(--t2); background: var(--bg2); border-radius: var(--r); padding: 22px; text-align: center; }
+.sres { border-radius: var(--r); border: 2px solid; padding: 18px; }
+.sres.ok { background: var(--gbg); border-color: var(--green); } .sres.warn { background: var(--ybg); border-color: var(--yellow); } .sres.bad { background: var(--rbg); border-color: var(--red); }
+.sres h3 { font-size: 18px; line-height: 1.3; }
+.sres > p { margin-top: 6px; }
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.cmp div { background: var(--card); border-radius: var(--rs); padding: 12px; }
+.cmp small { display: block; font-size: 12px; color: var(--t2); }
+.cmp b { font-size: 19px; font-variant-numeric: tabular-nums; }
+.sres .more { margin-top: 12px; font-size: 14px; }
+
+/* ── Alertas, listas ── */
+.als { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.al { display: flex; gap: 13px; align-items: flex-start; background: var(--card); border-radius: var(--rs); padding: 14px 16px; border-left: 6px solid; box-shadow: var(--sh); }
+.al.ok { border-color: var(--green); } .al.warn { border-color: var(--yellow); } .al.bad { border-color: var(--red); } .al.info { border-color: var(--blue); }
+.al-i { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.al.ok .al-i { background: var(--green); } .al.warn .al-i { background: #d49a00; } .al.bad .al-i { background: var(--red); } .al.info .al-i { background: var(--blue); }
+.al b { font-size: 15px; display: block; }
+.al p { font-size: 14px; color: var(--t2); margin-top: 2px; }
+
+.twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ql { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.ql label { display: flex; gap: 12px; align-items: flex-start; padding: 10px 8px; border-radius: var(--rs); cursor: pointer; font-size: 14.5px; line-height: 1.45; }
+.ql label:hover { background: var(--bg2); }
+.ql input { accent-color: var(--green); width: 21px; height: 21px; flex-shrink: 0; margin-top: 1px; }
+.ql input:checked + span { color: var(--t2); text-decoration: line-through; }
+.ql small { display: block; color: var(--t2); font-size: 12.5px; text-decoration: none; }
+.acc { background: var(--card); border-radius: var(--rs); box-shadow: var(--sh); padding: 4px 16px; margin-bottom: 10px; }
+.acc summary { padding: 13px 0; font-size: 15px; }
+.acc > div { padding: 0 0 14px 22px; color: var(--t2); font-size: 14.5px; }
+.acc > div b { color: var(--t1); }
+.rights { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.rights li { display: flex; gap: 12px; align-items: flex-start; font-size: 14.5px; }
+.rights li::before { content: "✓"; color: var(--on-g); background: var(--green); width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+.disc { font-size: 12.5px; color: var(--t2); margin-top: 14px; }
+
+/* ── Tabelas / gráfico ── */
+.tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; white-space: nowrap; }
+th { text-align: left; font-weight: 600; color: var(--t2); font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; padding: 8px 10px; border-bottom: 1px solid var(--bd); }
+td { padding: 9px 10px; border-bottom: 1px solid var(--bd); font-variant-numeric: tabular-nums; }
+tr:last-child td { border-bottom: none; }
+th.r, td.r { text-align: right; }
+.tg { color: var(--green); font-weight: 600; } .tr { color: var(--red); }
+.mx td small { display: block; color: var(--t2); font-size: 11px; }
+#sumTable th:first-child, #sumTable td:first-child, #mxTable th:first-child, #mxTable td:first-child { position: sticky; left: 0; background: var(--card); z-index: 1; }
+.scroll { max-height: 360px; overflow: auto; -webkit-overflow-scrolling: touch; margin-top: 8px; }
+#schedTable thead th { position: sticky; top: 0; background: var(--card); z-index: 2; box-shadow: 0 1px 0 var(--bd); }
+#schedTable th:first-child, #schedTable td:first-child { position: sticky; left: 0; background: var(--card); z-index: 1; }
+#schedTable thead th:first-child { z-index: 3; }
+.sub-h { font-size: 15px; font-weight: 700; margin: 22px 0 6px; }
+.sub-h:first-child { margin-top: 4px; }
+select.inp { width: auto; max-width: 100%; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--t2); margin: 6px 0; }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+.chart { position: relative; height: 230px; padding: 10px 0 30px 40px; margin-top: 8px; }
+.ch-grid { position: absolute; left: 40px; right: 0; top: 10px; bottom: 30px; display: flex; flex-direction: column-reverse; justify-content: space-between; }
+.ch-gl { border-top: 1px dashed var(--bd2); height: 0; position: relative; }
+.ch-gl span { position: absolute; left: -40px; width: 34px; text-align: right; top: -7px; font-size: 10px; color: var(--t2); }
+.ch-groups { position: absolute; left: 40px; right: 0; top: 10px; bottom: 30px; display: flex; }
+.ch-g { flex: 1; min-width: 0; height: 100%; display: flex; align-items: flex-end; justify-content: center; gap: 4px; border-radius: 8px 8px 0 0; }
+.ch-g.sel { background: var(--bg2); }
+.ch-b { flex: 0 1 22px; min-width: 5px; border-radius: 5px 5px 0 0; min-height: 2px; }
+.ch-labels { position: absolute; left: 40px; right: 0; bottom: 0; height: 26px; display: flex; }
+.ch-l { flex: 1; text-align: center; font-size: 11px; color: var(--t2); padding-top: 6px; }
+
+.foot { margin: 34px 0 24px; font-size: 12px; color: var(--t2); line-height: 1.7; }
+.foot a { color: var(--t2); }
+
+
+/* Esquema de cores nativo segue o tema da página (não o do sistema) */
+:root { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+/* Checkbox próprio: legível nos dois temas */
+input[type=checkbox] {
+  -webkit-appearance: none; appearance: none; background: var(--card);
+  border: 2px solid var(--bd2); border-radius: 6px; cursor: pointer; display: inline-grid; place-content: center;
+  transition: background .12s, border-color .12s;
+}
+:root:not([data-theme="dark"]) input[type=checkbox] { border-color: #8a9a9f; background: #fff; }
+input[type=checkbox]:hover { border-color: var(--green); }
+input[type=checkbox]::after {
+  content: ""; width: 6px; height: 11px; border: solid var(--on-g); border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg) scale(0); margin-top: -2px; transition: transform .12s;
+}
+input[type=checkbox]:checked { background: var(--green); border-color: var(--green); }
+input[type=checkbox]:checked::after { transform: rotate(45deg) scale(1); }
+
+/* ── Janela de ajuda ── */
+.modal { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,.5); display: flex; align-items: flex-end; justify-content: center; padding: 16px; }
+.modal[hidden] { display: none; }
+.mbox { background: var(--card); color: var(--t1); border-radius: 22px; padding: 24px 22px 22px; width: 100%; max-width: 520px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,.35); max-height: 85vh; overflow: auto; }
+.mbox h3 { font-size: 19px; padding-right: 36px; line-height: 1.3; }
+.mbox p { margin-top: 10px; font-size: 15.5px; line-height: 1.6; }
+.mx { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--bg2); color: var(--t1); font-size: 22px; cursor: pointer; line-height: 1; }
+@media (min-width: 700px) { .modal { align-items: center; } }
+
+/* ═════════ RESPONSIVO ═════════ */
+@media (max-width: 999px) {
+  .cols { grid-template-columns: minmax(0, 1fr); }
+  .live { display: none; }
+  .livebar { display: flex; }
+  body { padding-bottom: 86px; }
+  .seller { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 720px) {
+  .wrap { padding: 0 14px; }
+  .hero { padding: 24px 20px; border-radius: 20px; margin-top: 14px; }
+  .hero p { font-size: 15px; }
+  .step, .box { padding: 18px 16px; }
+  .st-h h2 { font-size: 18px; }
+  .carrow { grid-template-columns: 30px minmax(0, 1fr) 36px; grid-template-areas: "dot nm del" ". pr pr"; gap: 10px 8px; padding: 12px 10px; }
+  .carrow .color-btn { grid-area: dot; } .carrow .cn { grid-area: nm; } .carrow .money { grid-area: pr; } .carrow .del-btn { grid-area: del; }
+  .carrow > span:empty { display: none; }
+  .inrow { grid-template-columns: 1fr; gap: 6px; }
+  .pzs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .fgrid, .twocol { grid-template-columns: 1fr; }
+  .blk > h2 { font-size: 21px; }
+  .verdict { padding: 16px; gap: 12px; }
+  .cmp { grid-template-columns: 1fr; }
+  .tnav a { padding: 8px 10px; }
+  .tnav { -webkit-mask-image: linear-gradient(to right, #000 82%, transparent); mask-image: linear-gradient(to right, #000 82%, transparent); padding-right: 24px; }
+  .chart { height: 210px; padding-left: 34px; }
+  .ch-grid, .ch-groups, .ch-labels { left: 34px; }
+  .ch-gl span { left: -34px; width: 28px; }
+  select.inp { width: 100%; }
+}
+@media (max-width: 380px) { .pzs { grid-template-columns: repeat(2, minmax(0, 1fr)); } .c-pm { font-size: 28px; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <div class="brand"><span class="bm" id="brandIc"></span><span>AutoFin</span></div>
+    <nav class="tnav" aria-label="Seções">
+      <a href="#sec-simular">Simular</a>
+      <a href="#sec-resultado">Resultado</a>
+      <a href="#sec-vendedor">Conferir vendedor</a>
+      <a href="#sec-perguntas">Perguntas</a>
+      <a href="#sec-direitos">Seus direitos</a>
+      <a href="#sec-gloss">Glossário</a>
+    </nav>
+    <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro/escuro" title="Tema claro/escuro"></button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h1>Vai financiar um carro? Descubra quanto ele realmente vai custar.</h1>
+    <p>Responda 4 perguntas simples. Mostramos, em português claro, o total que você vai pagar — e se a proposta do vendedor é justa ou tem pegadinha.</p>
+    <ul>
+      <li>✓ Grátis e sem cadastro</li>
+      <li>✓ Seus dados ficam só neste aparelho</li>
+      <li>✓ Sem letras miúdas</li>
+    </ul>
+  </div>
+
+  <div class="cols" id="sec-simular">
+
+    <div class="steps">
+
+      <section class="step">
+        <div class="st-h"><span class="st-n">1</span><div><h2>Qual carro você quer comprar?</h2><p class="st-d">Digite o nome e o preço anunciado pela loja. Pode colocar mais de um carro para comparar.</p></div></div>
+        <div id="carRows"></div>
+        <button class="btn-ghost" id="addCar" type="button">+ Comparar com outro carro</button>
+      </section>
+
+      <section class="step">
+        <div class="st-h"><span class="st-n">2</span><div><h2>Quanto você dá de entrada?</h2><p class="st-d">É o dinheiro que você paga na hora. Quanto maior, menos juros você paga depois.</p></div></div>
+        <div class="inrow">
+          <input id="eSlider" type="range" min="0" max="80" step="1" value="22" aria-label="Entrada em porcentagem">
+          <label class="money"><span>R$</span><input id="eTyped" type="number" min="0" step="500" inputmode="decimal" aria-label="Entrada em reais"></label>
+        </div>
+        <div class="chips" id="eChips"></div>
+        <p class="st-i" id="eInfo"></p>
+      </section>
+
+      <section class="step">
+        <div class="st-h"><span class="st-n">3</span><div><h2>Em quantas vezes quer pagar?</h2><p class="st-d">Toque no prazo. Embaixo de cada um mostramos a parcela e o total que você pagaria.</p></div></div>
+        <div class="pzs" id="prazoTabs"></div>
+        <p class="st-i" id="pzInfo"></p>
+      </section>
+
+      <section class="step">
+        <div class="st-h"><span class="st-n">4</span><div><h2>Qual a taxa de juros?</h2><p class="st-d">Se o vendedor já falou, digite abaixo. Se não, deixe a <button type="button" class="hp" data-help="mkt">média do mercado</button> e depois confira a proposta dele.</p></div></div>
+        <div class="inrow">
+          <input id="rSlider" type="range" min="50" max="400" step="1" value="197" aria-label="Taxa de juros ao mês">
+          <label class="money"><input id="rTyped" type="number" min="0.01" max="20" step="0.01" inputmode="decimal" aria-label="Taxa de juros ao mês"><span>% ao mês</span></label>
+        </div>
+        <div class="chips" id="chips"></div>
+        <p class="st-i" id="rInfo"></p>
+        <span class="tag" id="rTag"></span>
+      </section>
+
+      <section class="step">
+        <div class="st-h"><span class="st-n opt">extra</span><div><h2>Quer que a gente avise se a parcela pesar no seu bolso?</h2><p class="st-d">Opcional. Informe quanto você ganha por mês.</p></div></div>
+        <label class="money" style="max-width:280px"><span>R$</span><input id="renda" type="number" min="0" step="500" inputmode="decimal" placeholder="Renda mensal" aria-label="Renda mensal"></label>
+
+        <details class="adv">
+          <summary>Opções avançadas (IOF, tarifas, seguro, tipo de parcela)</summary>
+          <div class="fgrid">
+            <label class="chk"><input type="checkbox" id="iofOn"><span>Incluir <button type="button" class="hp" data-help="iof">IOF</button> (imposto do empréstimo)</span></label>
+            <label class="chk"><input type="checkbox" id="finEnc"><span>Colocar IOF, tarifas e seguro dentro do financiamento (é o mais comum)</span></label>
+            <div><label class="lbl" for="tarifas">Tarifas cobradas (R$) <button type="button" class="hp" data-help="tarifas"> </button></label><label class="money sm"><span>R$</span><input id="tarifas" type="number" min="0" step="50" inputmode="decimal"></label></div>
+            <div><label class="lbl" for="seguro">Seguro (% do valor financiado) <button type="button" class="hp" data-help="seguro"> </button></label><label class="money sm"><input id="seguro" type="number" min="0" max="20" step="0.1" inputmode="decimal"><span>%</span></label></div>
+            <div><label class="lbl" for="mkt">Taxa média do mercado usada nas comparações</label><label class="money sm"><input id="mkt" type="number" min="0.1" max="10" step="0.01" inputmode="decimal"><span>% ao mês</span></label><p class="hint" style="margin-top:4px">Padrão: 1,97% ao mês (Banco Central, jun/2026). Atualize se souber um valor mais recente.</p></div>
+            <div>
+              <span class="lbl">Tipo de parcela <button type="button" class="hp" data-help="price"> </button></span>
+              <div class="seg" id="sistTabs">
+                <button class="chip" type="button" data-s="price">Parcela fixa (Price)</button>
+                <button class="chip" type="button" data-s="sac">Parcela que diminui (SAC)</button>
+              </div>
+            </div>
+          </div>
+        </details>
+      </section>
+
+    </div>
+
+    <aside class="live" id="live" aria-live="polite"></aside>
+  </div>
+
+  <!-- ═════════ RESULTADO ═════════ -->
+  <section class="blk" id="sec-resultado">
+    <h2>O resultado, sem enrolação</h2>
+    <p class="lead">Toque nas palavras sublinhadas (com <b>?</b>) para ver o que cada termo significa.</p>
+    <div id="verdict"></div>
+    <div class="warnbox" id="warnBox"></div>
+    <div class="cards" id="cardsGrid"></div>
+  </section>
+
+  <!-- ═════════ VENDEDOR ═════════ -->
+  <section class="blk" id="sec-vendedor">
+    <h2>Confira a proposta do vendedor</h2>
+    <p class="lead">O vendedor falou uma parcela? Digite aqui. Mostramos quanto de juros está escondido nela e se está acima do que o mercado costuma cobrar.</p>
+    <div class="box">
+      <div class="seller">
+        <div class="sform">
+          <div><label class="lbl" for="stCar">Qual carro?</label><select class="inp" id="stCar"></select></div>
+          <div><label class="lbl" for="stParc">Valor da parcela que o vendedor falou</label><label class="money"><span>R$</span><input id="stParc" type="number" min="0" step="10" inputmode="decimal" placeholder="Ex.: 2.500"></label></div>
+          <div><label class="lbl" for="stN">Em quantas parcelas? <span class="hint">(vazio = prazo escolhido acima)</span></label><label class="money"><input id="stN" type="number" min="1" max="120" step="1" inputmode="numeric"><span>parcelas</span></label></div>
+          <div><label class="lbl" for="stBase">Valor financiado <span class="hint">(vazio = preço − entrada)</span></label><label class="money"><span>R$</span><input id="stBase" type="number" min="0" step="100" inputmode="decimal"></label></div>
+        </div>
+        <div class="sout" id="stOut"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ ALERTAS ═════════ -->
+  <section class="blk" id="sec-alertas">
+    <h2>Pontos de atenção da sua simulação</h2>
+    <p class="lead">Verde: tudo certo. Amarelo: vale negociar. Vermelho: cuidado antes de assinar.</p>
+    <ul class="als" id="alerts"></ul>
+  </section>
+
+  <!-- ═════════ PERGUNTAS ═════════ -->
+  <section class="blk" id="sec-perguntas">
+    <h2>Pergunte isto ao vendedor</h2>
+    <p class="lead">Leve essa lista para a loja. Vá marcando conforme ele responder — e peça as respostas por escrito.</p>
+    <div class="box">
+      <ul class="ql" id="checklist"></ul>
+      <div style="margin-top:14px"><button class="btn sec" id="copyBtn" type="button">Copiar lista (para mandar no WhatsApp)</button></div>
+    </div>
+  </section>
+
+  <section class="blk" id="sec-pegadinhas">
+    <h2>Pegadinhas mais comuns</h2>
+    <p class="lead">Toque para ler.</p>
+    <details class="acc"><summary>“A parcela cabe no seu bolso!”</summary><div>O vendedor aumenta o <b>número de parcelas</b> (72, 84…) para a parcela ficar pequena. Cada parcela é menor, mas o <b>total pago sobe muito</b>. Veja o passo 3: compare o total, não só a parcela.</div></details>
+    <details class="acc"><summary>“É juros zero!”</summary><div>Pode ser verdade em promoções de montadora. Mas confira se o <b>preço do carro</b> não está maior do que o preço à vista, ou se você perdeu um desconto. Pergunte: <b>“qual o preço à vista, sem financiar?”</b></div></details>
+    <details class="acc"><summary>Seguro, proteção ou garantia “obrigatórios”</summary><div>Seguro <b>não pode ser imposto</b> para liberar o financiamento (isso é “venda casada”). Se você aceitar, o valor entra no financiamento e <b>você paga juros em cima dele</b>. Peça para ver a parcela com e sem o seguro.</div></details>
+    <details class="acc"><summary>Comissão da loja escondida na taxa</summary><div>Em muitos casos a loja ganha uma comissão do banco por fechar o negócio, e isso pode estar embutido na taxa. Por isso, <b>simule no seu banco antes</b> e leve a proposta impressa ou no celular para comparar.</div></details>
+    <details class="acc"><summary>Valor financiado maior do que precisa</summary><div>Tarifas, seguros, acessórios, revisão, “plano de proteção” — tudo isso pode ser jogado dentro do financiamento. Você paga juros sobre <b>tudo</b>. Peça o <b>detalhamento por escrito</b> do valor financiado.</div></details>
+    <details class="acc"><summary>Assinar rápido, sem ler</summary><div>Nunca assine contrato com <b>campos em branco</b>. Confira antes: valor financiado, número de parcelas, valor da parcela, taxa, <b>CET</b> e data do primeiro vencimento. Peça uma cópia.</div></details>
+    <details class="acc"><summary>Pagamento “por fora” ou sem recibo</summary><div>Entrada, sinal e taxas devem ter <b>recibo</b> e ir para a conta da <b>empresa ou do banco</b>. Desconfie de pedido de Pix para pessoa física ou de valores combinados só de boca.</div></details>
+    <details class="acc"><summary>Seu carro usado na troca</summary><div>Pesquise o valor do seu carro na <b>tabela FIPE</b> e em outras lojas. Uma avaliação baixa pode esconder um preço do carro novo mais alto — o desconto “some” de um lado e aparece do outro.</div></details>
+  </section>
+
+  <section class="blk" id="sec-direitos">
+    <h2>Seus direitos como consumidor</h2>
+    <div class="box">
+      <ul class="rights">
+        <li><span><b>Saber o custo total antes de assinar.</b> O banco/loja deve informar o <button type="button" class="hp" data-help="cet">CET</button> e o valor total a pagar.</span></li>
+        <li><span><b>Pagar antes e pagar menos juros.</b> Se quitar ou adiantar parcelas, você tem direito à redução proporcional dos juros (Código de Defesa do Consumidor, art. 52, § 2º).</span></li>
+        <li><span><b>Não ser obrigado a contratar seguro.</b> Vincular o seguro ao financiamento é “venda casada” (CDC, art. 39, I), e a Justiça tem decidido nesse sentido.</span></li>
+        <li><span><b>Questionar tarifas.</b> Tarifas como avaliação do bem e registro do contrato só podem ser cobradas se o serviço foi realmente prestado e o valor não for abusivo.</span></li>
+        <li><span><b>Receber uma cópia do contrato e da proposta.</b> Guarde tudo.</span></li>
+        <li><span><b>Reclamar:</b> Procon da sua cidade e o site <b>consumidor.gov.br</b> são os caminhos mais rápidos.</span></li>
+      </ul>
+      <p class="disc">Informações gerais para orientar você. Não substituem a leitura do seu contrato nem a orientação de um advogado ou do Procon.</p>
+    </div>
+  </section>
+
+  <!-- ═════════ DETALHES ═════════ -->
+  <section class="blk" id="sec-detalhes">
+    <h2>Quer ver todos os números?</h2>
+    <details class="acc" style="margin-top:14px"><summary>Comparativo entre os carros</summary><div style="padding-left:0"><div class="tbl-wrap"><table id="sumTable"></table></div></div></details>
+    <details class="acc"><summary>Parcela e total em cada prazo</summary><div style="padding-left:0"><div class="legend" id="legend2"></div><div id="chart2"></div><div class="tbl-wrap"><table id="mxTable" class="mx"></table></div></div></details>
+    <details class="acc"><summary>Tabela mês a mês (quanto é juros e quanto abate a dívida)</summary><div style="padding-left:0"><select class="inp" id="schedSel" aria-label="Carro"></select><div class="scroll"><table id="schedTable"></table></div></div></details>
+  </section>
+
+  <section class="blk" id="sec-gloss">
+    <h2>Glossário: o que cada palavra significa</h2>
+    <div id="gloss" style="margin-top:14px"></div>
+  </section>
+
+  <div class="foot">
+    <p id="noteEl"></p>
+    <p style="margin-top:8px">Fontes e referências: IOF de pessoa física — Decreto 6.306/2007 (0,38% + 0,0082% ao dia, base de até 365 dias). Taxa média de mercado — Banco Central (crédito para aquisição de veículos, pessoa física; 26,4% ao ano em jun/2026 ≈ 1,97% ao mês); confira o dado mais recente no site do Banco Central. Preços de exemplo — Tabela FIPE set/2026 (Onix Plus Premier 1.0 Turbo 2026 R$&nbsp;111.007; City LX 2026 R$&nbsp;111.015; Versa Advance 2026 R$&nbsp;110.269), referência de mercado, não preço de concessionária.</p>
+    <p style="margin-top:8px"><b>Ferramenta educativa.</b> Não é proposta de crédito nem aconselhamento financeiro ou jurídico. O CET e as condições reais dependem do banco, do seu perfil e do contrato.</p>
+  </div>
+</div>
+
+<div class="livebar" id="livebar"></div>
+
+<div class="modal" id="modal" hidden>
+  <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <button class="mx" id="mClose" type="button" aria-label="Fechar">&times;</button>
+    <h3 id="mTitle"></h3>
+    <p id="mText"></p>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+var PALETTE = ["#EF9F27","#378ADD","#1D9E75","#E24B4A","#7F77DD","#D4537E","#63a832","#0a8fa0","#c46b1a","#888780","#b44ac0","#e07b39"];
+var PRAZOS  = [12,24,36,48,60,72];
+var CHIPS   = [[99,"0,99% — promoção da montadora"],[130,"1,30% — excelente histórico"],[169,"1,69% — bom histórico"],[197,"1,97% — média do mercado"],[220,"2,20% — histórico ruim"],[250,"2,50% — histórico muito ruim"]];
+var KEY     = "carro_fin_v3";
+var IOF_FIXO = 0.0038, IOF_DIA = 0.000082, IOF_DIAS_MAX = 365;
+
+var S = { entrada:26000, rate:197, prazo:48, sac:false, iof:true, finEnc:true, tarifas:0, seguro:0, renda:0, sched:null,
+          mkt:197, stCar:null, stParc:0, stN:0, stBase:0, chk:{} };
+var cars = [
+  { id:1, name:"Onix Plus Premier 1.0 Turbo", brand:"Chevrolet · 2026 · ref. FIPE", price:111007, color:"#EF9F27" },
+  { id:2, name:"City LX",                      brand:"Honda · 2026 · ref. FIPE",     price:111015, color:"#378ADD" },
+  { id:3, name:"Versa Advance",                brand:"Nissan · 2026 · ref. FIPE",    price:110269, color:"#1D9E75" }
+];
+var _nextId = 4, _blkE = false, _blkR = false, R = {}, SELLER = null;
+
+try {
+  var sv = JSON.parse(localStorage.getItem(KEY) || "null");
+  if (sv && sv.S && sv.cars && sv.cars.length) { Object.assign(S, sv.S); cars = sv.cars; _nextId = sv.nid || 100; }
+} catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify({ S:S, cars:cars, nid:_nextId })); } catch (e) {} }
+
+/* ═════════ TEXTOS DE AJUDA ═════════ */
+var GLOSS = [
+  ["entrada", "Entrada", "É o dinheiro que você paga na hora, do seu bolso. Quanto maior a entrada, menos você precisa financiar — e menos juros paga no total."],
+  ["financiado", "Valor financiado", "É a parte do carro que o banco empresta para você: o preço do carro menos a entrada. É em cima dele que os juros são cobrados."],
+  ["contratado", "Valor contratado", "É o valor total do empréstimo no contrato: o valor financiado mais tudo que for colocado dentro dele (IOF, tarifas, seguro). Você paga juros sobre tudo isso."],
+  ["juros", "Juros", "É o “aluguel” do dinheiro do banco. Você paga um pouco por mês, junto com a parcela, por usar um dinheiro que não é seu. É a parte do financiamento que você “perde”."],
+  ["taxa", "Taxa de juros (ao mês e ao ano)", "A taxa mensal parece pequena, mas se acumula: 2% ao mês dá cerca de 27% ao ano. Para comparar propostas, use sempre a mesma medida (ao mês com ao mês)."],
+  ["cet", "CET — Custo Efetivo Total", "É o preço REAL do financiamento: soma os juros, o IOF, as tarifas e os seguros incluídos. O banco/loja deve informar o CET antes de você assinar. Compare propostas pelo CET, não só pela taxa de juros."],
+  ["iof", "IOF", "Imposto federal cobrado em empréstimos. Para pessoa física, é 0,38% mais 0,0082% ao dia (por até 365 dias) sobre o valor financiado. Costuma ser incluído no financiamento — e aí você paga juros sobre ele também."],
+  ["tarifas", "Tarifas", "Cobranças por serviços como cadastro, avaliação do veículo e registro do contrato (gravame). Algumas são permitidas, mas só se o serviço foi realmente feito e o valor não for abusivo. Peça o valor de cada uma por escrito."],
+  ["seguro", "Seguro prestamista", "Seguro que quita a dívida se você morrer ou perder a renda. É opcional: o vendedor ou o banco não pode obrigar você a contratar (isso é “venda casada”). Se aceitar, o valor costuma entrar no financiamento e você paga juros sobre ele."],
+  ["price", "Tabela Price (parcela fixa)", "Todas as parcelas têm o mesmo valor. No começo, quase tudo da parcela é juros e a dívida cai devagar. É a forma mais comum em financiamento de carro."],
+  ["sac", "SAC (parcela que diminui)", "As parcelas começam mais altas e vão diminuindo. Costuma custar menos juros no total do que a Price, mas pesa mais no início."],
+  ["parcela", "Parcela", "O valor que você paga todo mês. Ela tem duas partes: uma que diminui a dívida e outra que são juros."],
+  ["total", "Total pago", "Entrada + todas as parcelas + o que for pago à parte (como IOF e tarifas à vista). É quanto sai do seu bolso do começo ao fim."],
+  ["amort", "Amortização e saldo devedor", "Amortização é a parte da parcela que realmente diminui a dívida. O que ainda falta pagar é o saldo devedor."],
+  ["mkt", "Taxa média do mercado", "Média que o Banco Central divulga para financiamento de veículos de pessoas físicas. Serve de referência: quem tem bom histórico pode conseguir menos; quem tem score baixo, mais. Confira o dado mais recente no site do Banco Central."],
+  ["renda", "Comprometimento da renda", "Quanto da sua renda mensal vai só para a parcela. Uma regra prática de mercado é não passar de cerca de 30%, para sobrar dinheiro para as outras contas. É uma recomendação, não uma lei."],
+  ["retorno", "Comissão da loja (“retorno”)", "Em muitos casos, a loja recebe uma comissão do banco por fechar o financiamento, e ela pode estar embutida na taxa que você paga. Por isso é bom comparar com a proposta do seu próprio banco antes de fechar."]
+];
+var HELP = {}; GLOSS.forEach(function (g) { HELP[g[0]] = { t: g[1], d: g[2] }; });
+
+var QUESTIONS = [
+  ["Qual é o preço do carro à vista, sem financiar?", "Compare com o preço financiado. Se for igual, ótimo; se for menor, a diferença é o seu desconto perdido."],
+  ["Qual é o CET (Custo Efetivo Total), ao mês e ao ano?", "Esse é o custo real. A taxa de juros sozinha não conta a história toda."],
+  ["Qual é o valor total que vou pagar no final?", "Entrada + soma de todas as parcelas. Peça o número por escrito."],
+  ["O que está incluído no valor financiado?", "Peça o detalhamento: IOF, tarifas, seguro, acessórios, garantia estendida…"],
+  ["Posso fazer sem o seguro? Quanto fica a parcela?", "Seguro não pode ser obrigatório para liberar o financiamento."],
+  ["Qual banco financia e qual a taxa de juros mensal?", "Assim você consegue comparar com a proposta do seu próprio banco."],
+  ["Quais tarifas estão sendo cobradas e quanto é cada uma?", "Avaliação do bem, registro do contrato, cadastro… peça valor por valor."],
+  ["Se eu quitar antes, quanto de juros eu economizo?", "Por lei você tem direito à redução proporcional dos juros."],
+  ["Posso levar o contrato para ler antes de assinar?", "Nunca assine com campos em branco. Peça uma cópia da proposta e do contrato."]
+];
+
+/* ═════════ ÍCONES / TEMA ═════════ */
+var ICONS = {
+  car: '<path d="M5 16l1.6-5a2 2 0 0 1 1.9-1.4h7a2 2 0 0 1 1.9 1.4L19 16"/><rect x="3" y="16" width="18" height="4" rx="1.5"/><path d="M6.5 18h.01M17.5 18h.01"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon: '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>'
+};
+function ic(n) { return '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[n] || "") + '</svg>'; }
+function setTheme(t) {
+  document.documentElement.setAttribute("data-theme", t);
+  try { localStorage.setItem("carro_theme", t); } catch (e) {}
+  $("themeBtn").innerHTML = ic(t === "dark" ? "sun" : "moon");
+}
+
+/* ═════════ MATEMÁTICA ═════════ */
+function pmt(pv, i, n) {
+  if (i === 0) return pv / n;
+  var f = Math.pow(1 + i, n);
+  return pv * i * f / (f - 1);
+}
+function schedule(P, i, n, sac) {
+  var rows = [], saldo = P, a = P / n, p = pmt(P, i, n);
+  for (var k = 1; k <= n; k++) {
+    var j = saldo * i, am = sac ? a : p - j;
+    saldo -= am;
+    rows.push({ k:k, parc:j + am, j:j, am:am, saldo:Math.max(saldo, 0) });
+  }
+  return rows;
+}
+function iofFactor(i, n, sac) {
+  var rows = schedule(1, i, n, sac), w = 0;
+  rows.forEach(function(r){ w += r.am * Math.min(30 * r.k, IOF_DIAS_MAX); });
+  return IOF_FIXO + IOF_DIA * w;
+}
+function irr(net, parcs) {
+  if (net <= 0) return null;
+  var lo = 0, hi = 1;
+  for (var t = 0; t < 100; t++) {
+    var mid = (lo + hi) / 2, v = 0;
+    for (var k = 0; k < parcs.length; k++) v += parcs[k] / Math.pow(1 + mid, k + 1);
+    if (v > net) lo = mid; else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
+function solveRate(pv, pmtv, n) {
+  if (pmtv <= 0 || pv <= 0 || n <= 0) return null;
+  var z = pv / n;
+  if (pmtv < z - 0.005) return null;
+  if (pmtv <= z + 0.005) return 0;
+  var lo = 0, hi = 5;
+  for (var k = 0; k < 200; k++) {
+    var mid = (lo + hi) / 2;
+    if (pmt(pv, mid, n) < pmtv) lo = mid; else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
+function calc(car, n) {
+  var i = S.rate / 10000, base = car.price - S.entrada;
+  if (base <= 0) return { id:car.id, inv:true };
+  var f      = S.iof ? iofFactor(i, n, S.sac) : 0;
+  var tarFin = S.finEnc ? S.tarifas : 0;
+  var seguro = (S.seguro / 100) * (base + tarFin);
+  var P, iof, upIOF = 0;
+  if (S.finEnc) { P = (base + tarFin + seguro) / (1 - f); iof = f * P; }
+  else          { P = base + tarFin + seguro; iof = f * P; upIOF = iof; }
+  var upfront = upIOF + (S.tarifas - tarFin);
+  var rows    = schedule(P, i, n, S.sac);
+  var totParc = rows.reduce(function(s, r){ return s + r.parc; }, 0);
+  var parcs   = rows.map(function(r){ return r.parc; });
+  var cet     = irr(base - upfront, parcs);
+  return {
+    id:car.id, name:car.name, brand:car.brand, price:car.price, color:car.color, inv:false,
+    n:n, base:base, P:P, iof:iof, tarifas:S.tarifas, seguro:seguro, upfront:upfront,
+    rows:rows, p1:rows[0].parc, pN:rows[n - 1].parc, totParc:totParc,
+    jur:totParc - P, custo:totParc + upfront - base, total:S.entrada + totParc + upfront,
+    cet:cet, ep:S.entrada / car.price * 100
+  };
+}
+
+/* ═════════ FORMATAÇÃO ═════════ */
+function num(v) { return v.toLocaleString("pt-BR", { minimumFractionDigits:2, maximumFractionDigits:2 }); }
+function brl(v) { return "R$ " + num(v); }
+function brl0(v) { return "R$ " + Math.round(v).toLocaleString("pt-BR"); }
+function pct1(v) { return v.toFixed(1).replace(".", ",") + "%"; }
+function pct2(v) { return v.toFixed(2).replace(".", ",") + "%"; }
+function aa(m)   { return (Math.pow(1 + m, 12) - 1) * 100; }
+function esc(s)  { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/'/g,"&#39;").replace(/"/g,"&quot;"); }
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function minPrice() { return cars.length ? Math.min.apply(null, cars.map(function(c){ return c.price; })) : 100000; }
+function nextColor() {
+  var used = cars.map(function(c){ return c.color; });
+  return PALETTE.find(function(c){ return used.indexOf(c) < 0; }) || PALETTE[_nextId % PALETTE.length];
+}
+function $(id) { return document.getElementById(id); }
+function shortName(n) { return String(n).split(/\s+/).slice(0, 2).join(" "); }
+function hp(k, t) { return "<button type='button' class='hp' data-help='" + k + "'>" + t + "</button>"; }
+function plural(n, a, b) { return n === 1 ? a : b; }
+
+/* ═════════ AJUDA (janela) ═════════ */
+var _lastFocus = null;
+function openHelp(k) {
+  var h = HELP[k]; if (!h) return;
+  _lastFocus = document.activeElement;
+  $("mTitle").textContent = h.t; $("mText").textContent = h.d;
+  $("modal").hidden = false; $("mClose").focus();
+}
+function closeHelp() { $("modal").hidden = true; if (_lastFocus && _lastFocus.focus) _lastFocus.focus(); }
+document.addEventListener("click", function (e) {
+  var b = e.target.closest && e.target.closest("[data-help]");
+  if (b) { e.preventDefault(); openHelp(b.getAttribute("data-help")); }
+});
+$("mClose").addEventListener("click", closeHelp);
+$("modal").addEventListener("click", function (e) { if (e.target === this) closeHelp(); });
+document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("modal").hidden) closeHelp(); });
+
+/* ═════════ CONTROLES ═════════ */
+var eSlider = $("eSlider"), eTyped = $("eTyped"), rSlider = $("rSlider"), rTyped = $("rTyped");
+
+function ePctToR(p) { return Math.round(minPrice() * p / 100 / 100) * 100; }
+function eRToPct(r) { return clamp(Math.round(r / minPrice() * 100), 0, 80); }
+function applyEntrada(r, src) {
+  if (_blkE) return; _blkE = true;
+  S.entrada = clamp(Math.round(r / 100) * 100, 0, 99999999);
+  if (src !== "slider") eSlider.value = eRToPct(S.entrada);
+  if (src !== "typed")  eTyped.value  = S.entrada;
+  _blkE = false; render();
+}
+eSlider.addEventListener("input", function(){ applyEntrada(ePctToR(+eSlider.value), "slider"); });
+eTyped.addEventListener("input",  function(){ var v = parseFloat(eTyped.value); if (!isNaN(v) && v >= 0) applyEntrada(v, "typed"); });
+
+function applyRate(c, src) {
+  if (_blkR) return; _blkR = true;
+  S.rate = clamp(Math.round(c), 1, 9999);
+  if (src !== "slider") rSlider.value = clamp(S.rate, 50, 400);
+  if (src !== "typed")  rTyped.value  = (S.rate / 100).toFixed(2);
+  _blkR = false; render();
+}
+rSlider.addEventListener("input", function(){ applyRate(+rSlider.value, "slider"); });
+rTyped.addEventListener("input",  function(){ var v = parseFloat(rTyped.value); if (!isNaN(v) && v > 0) applyRate(v * 100, "typed"); });
+
+function bindNum(id, key, mult) {
+  $(id).addEventListener("input", function(){ var v = parseFloat(this.value); S[key] = isNaN(v) || v < 0 ? 0 : v * (mult || 1); render(); });
+}
+bindNum("tarifas", "tarifas"); bindNum("seguro", "seguro"); bindNum("renda", "renda");
+bindNum("stParc", "stParc"); bindNum("stN", "stN"); bindNum("stBase", "stBase");
+$("mkt").addEventListener("input", function(){ var v = parseFloat(this.value); if (!isNaN(v) && v > 0) { S.mkt = Math.round(v * 100); render(); } });
+$("iofOn").addEventListener("change",  function(){ S.iof = this.checked; render(); });
+$("finEnc").addEventListener("change", function(){ S.finEnc = this.checked; render(); });
+$("stCar").addEventListener("change", function(){ S.stCar = +this.value; render(); });
+
+$("chips").innerHTML = CHIPS.map(function(c){ return "<button class='chip' type='button' data-r='" + c[0] + "'>" + c[1] + "</button>"; }).join("");
+$("chips").addEventListener("click", function(e){ var b = e.target.closest("[data-r]"); if (b) applyRate(+b.dataset.r, "none"); });
+$("eChips").innerHTML = [0, 10, 20, 30, 40].map(function(p){ return "<button class='chip' type='button' data-ep='" + p + "'>" + (p === 0 ? "Sem entrada" : p + "% do carro") + "</button>"; }).join("");
+$("eChips").addEventListener("click", function(e){ var b = e.target.closest("[data-ep]"); if (b) applyEntrada(ePctToR(+b.dataset.ep), "none"); });
+$("sistTabs").addEventListener("click", function(e){ var b = e.target.closest("[data-s]"); if (b) { S.sac = b.dataset.s === "sac"; render(); } });
+$("prazoTabs").innerHTML = PRAZOS.map(function(p){ return "<button class='pz' type='button' data-p='" + p + "'><b>" + p + "x</b><small class='s1'></small><small class='s2'></small></button>"; }).join("");
+$("prazoTabs").addEventListener("click", function(e){ var b = e.target.closest("[data-p]"); if (b) { S.prazo = +b.dataset.p; render(); } });
+$("schedSel").addEventListener("change", function(){ S.sched = +this.value; renderSched(); });
+$("themeBtn").addEventListener("click", function(){ setTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark"); });
+
+/* ═════════ GRÁFICO ═════════ */
+function niceMax(m) {
+  if (m <= 0) return 1;
+  var p = Math.pow(10, Math.floor(Math.log10(m))), x = m / p;
+  return (x <= 2 ? 2 : x <= 4 ? 4 : x <= 8 ? 8 : 12) * p;
+}
+function fmtK(v) {
+  if (v >= 1000) { var k = v / 1000; return String(k >= 100 ? Math.round(k) : Math.round(k * 10) / 10).replace(".", ",") + "k"; }
+  return String(Math.round(v));
+}
+function barChart(el, groups) {
+  var mx = 0;
+  groups.forEach(function(g){ g.bars.forEach(function(b){ if (b.v > mx) mx = b.v; }); });
+  if (!groups.length || mx <= 0) { el.innerHTML = ""; return; }
+  var top = niceMax(mx), grid = "", i;
+  for (i = 0; i <= 4; i++) grid += "<div class='ch-gl'><span>" + fmtK(top * i / 4) + "</span></div>";
+  var bars = groups.map(function(g) {
+    return "<div class='ch-g" + (g.sel ? " sel" : "") + "'>" + g.bars.map(function(b) {
+      return "<span class='ch-b' style='height:" + (b.v / top * 100).toFixed(2) + "%;background:" + b.c + "' title='" + esc(b.t) + "'></span>";
+    }).join("") + "</div>";
+  }).join("");
+  var labs = groups.map(function(g){ return "<div class='ch-l'>" + esc(g.l) + "</div>"; }).join("");
+  el.innerHTML = "<div class='chart'><div class='ch-grid'>" + grid + "</div><div class='ch-groups'>" + bars + "</div><div class='ch-labels'>" + labs + "</div></div>";
+}
+
+/* ═════════ TESTE DO VENDEDOR ═════════ */
+function sellerTest() {
+  var out = $("stOut"), car = cars.find(function(c){ return c.id === S.stCar; }) || cars[0];
+  SELLER = null;
+  var n = S.stN > 0 ? Math.round(S.stN) : S.prazo;
+  var auto = car.price - S.entrada;
+  $("stN").placeholder = String(S.prazo);
+  $("stBase").placeholder = auto > 0 ? String(Math.round(auto)) : "";
+  var base = S.stBase > 0 ? S.stBase : auto, parc = S.stParc;
+  if (!(parc > 0)) { out.innerHTML = "<div class='empty'>Digite ao lado o valor da parcela que o vendedor falou.<br>Vamos mostrar na hora se ela está justa.</div>"; return; }
+  if (!(base > 0)) { out.innerHTML = "<div class='empty'>A entrada é maior que o preço do carro: não há o que financiar.</div>"; return; }
+  var rate = solveRate(base, parc, n);
+  if (rate === null) { out.innerHTML = "<div class='sres bad'><h3>Os números não fecham</h3><p>Essa parcela vezes " + n + " é menor que o valor financiado (" + brl(base) + "). Confira o valor da parcela, o número de parcelas e o valor financiado.</p></div>"; return; }
+
+  var i = S.mkt / 10000;
+  var f = S.iof ? iofFactor(i, n, false) : 0;
+  var pref = pmt(base / (1 - f), i, n);
+  var cetRef = solveRate(base, pref, n);
+  var diff = parc - pref, pct = diff / pref * 100, tot = parc * n, jur = tot - base;
+  var lvl, title, text;
+  if (pct > 8)      { lvl = "bad";  title = "Atenção: parcela bem acima do esperado"; text = "Para esse valor e prazo, com a taxa média do mercado, a parcela seria perto de " + brl(pref) + ". A diferença costuma vir de seguro, tarifas ou comissão da loja embutidos. Peça o detalhamento e o CET por escrito."; }
+  else if (pct > 2) { lvl = "warn"; title = "Um pouco acima do esperado"; text = "Dá para negociar. Peça o CET e veja o que está dentro do valor financiado (seguro, tarifas, acessórios)."; }
+  else if (pct >= -2) { lvl = "ok"; title = "Parece justa"; text = "A parcela está dentro do que o mercado costuma cobrar para esse valor e prazo."; }
+  else              { lvl = "ok";   title = "Abaixo da média — bom sinal"; text = "A parcela está abaixo do que a taxa média do mercado daria. Confira se o preço do carro e o valor financiado estão corretos, e se não há condição escondida."; }
+
+  SELLER = { lvl: lvl, title: title, text: text, pct: pct };
+  out.innerHTML =
+    "<div class='sres " + lvl + "'><h3>" + title + "</h3><p>" + text + "</p>" +
+    "<div class='cmp'>" +
+      "<div><small>Taxa que a proposta embute (tudo incluso)</small><b>" + pct2(rate * 100) + " ao mês</b><small>" + pct1(aa(rate)) + " ao ano</small></div>" +
+      "<div><small>Esperado na média do mercado (com IOF)</small><b>" + (cetRef == null ? "—" : pct2(cetRef * 100) + " ao mês") + "</b><small>" + (cetRef == null ? "" : pct1(aa(cetRef)) + " ao ano") + "</small></div>" +
+      "<div><small>Parcela da proposta</small><b>" + brl(parc) + "</b><small>esperado: " + brl(pref) + "</small></div>" +
+      "<div><small>Diferença no total</small><b class='" + (diff > 0.5 ? "red" : "grn") + "'>" + (diff > 0 ? "+" : "") + brl(diff * n) + "</b><small>" + (diff > 0 ? "a mais" : "a menos") + " em " + n + " parcelas</small></div>" +
+    "</div>" +
+    "<p class='more'>Por <b>" + brl(base) + "</b> emprestados, você devolveria <b>" + brl(tot) + "</b>: <b class='red'>" + brl(jur) + "</b> de juros e encargos (" + pct1(jur / base * 100) + " a mais).</p>" +
+    "<p class='more' style='color:var(--t2);font-size:13px'>Cálculo considera parcela fixa e que o valor financiado é o informado ao lado. Se o vendedor financiou outro valor, preencha o campo “valor financiado”.</p></div>";
+}
+
+/* ═════════ ALERTAS ═════════ */
+function buildAlerts(valid, best) {
+  var L = [];
+  function add(l, t, d) { L.push({ l: l, t: t, d: d }); }
+  var ratio = S.rate / S.mkt, pr = pct2(S.rate / 100), mk = pct2(S.mkt / 100);
+
+  if (S.rate <= 100) add("warn", "Taxa muito baixa: confira o preço do carro", "Promoções de montadora existem, mas muitas vezes o carro é vendido mais caro que à vista. Pergunte o preço à vista, sem financiar.");
+  else if (ratio <= 1.05) add("ok", "Taxa de juros na média do mercado (ou abaixo)", "Você usou " + pr + " ao mês; a média do mercado é " + mk + ".");
+  else if (ratio <= 1.25) add("warn", "Taxa acima da média do mercado", pr + " ao mês contra " + mk + " de média. Peça simulações em outros bancos e use como argumento.");
+  else add("bad", "Taxa bem acima da média do mercado", pr + " ao mês contra " + mk + " de média. Isso encarece muito o carro. Simule no seu banco antes de fechar.");
+
+  if (best) {
+    var jr = best.custo / best.base * 100;
+    if (jr >= 80) add("bad", "Os juros e encargos pesam muito", "Você pagaria " + brl0(best.custo) + " além do preço — " + pct1(jr) + " do valor financiado. Tente aumentar a entrada ou reduzir o prazo.");
+    else if (jr >= 50) add("warn", "Os juros e encargos são altos", "Você pagaria " + brl0(best.custo) + " além do preço — " + pct1(jr) + " do valor financiado. Uma entrada maior ou menos parcelas reduzem isso.");
+    else add("ok", "Juros e encargos moderados", "Custo de " + brl0(best.custo) + " além do preço (" + pct1(jr) + " do valor financiado).");
+
+    if (best.cet != null) {
+      var dif = aa(best.cet) - aa(S.rate / 10000);
+      if (dif > 3) add("warn", "IOF, tarifas e seguro encarecem o financiamento", "O custo real (CET) é de " + pct1(aa(best.cet)) + " ao ano, enquanto a taxa de juros sozinha equivale a " + pct1(aa(S.rate / 10000)) + ". Compare sempre pelo CET.");
+    }
+    if (S.renda > 0) {
+      var cp = best.p1 / S.renda * 100;
+      if (cp > 35) add("bad", "A parcela pesa demais na sua renda", "Ela consome " + pct1(cp) + " do que você ganha. Pela regra prática de mercado, o ideal é até 30%.");
+      else if (cp > 30) add("warn", "A parcela pesa na sua renda", "Ela consome " + pct1(cp) + " do que você ganha. A regra prática de mercado é até 30%.");
+      else add("ok", "A parcela cabe na sua renda", "Ela consome " + pct1(cp) + " do que você ganha (regra prática: até 30%).");
+    }
+  }
+  if (S.prazo >= 72) add("bad", "Prazo muito longo", "Com " + S.prazo + " parcelas você paga juros por muito tempo e o carro desvaloriza: pode acabar devendo mais do que ele vale.");
+  else if (S.prazo >= 60) add("warn", "Prazo longo", "Com " + S.prazo + " parcelas, a parcela é menor, mas o total de juros cresce bastante.");
+  var ep = S.entrada / minPrice() * 100;
+  if (ep < 10) add("bad", "Entrada muito pequena", "Você está dando " + pct1(ep) + " do valor do carro. Entrada baixa aumenta os juros e o risco de ficar devendo mais que o carro vale.");
+  else if (ep < 20) add("warn", "Entrada abaixo do ideal", "Você está dando " + pct1(ep) + " do valor do carro. Tente chegar perto de 20% ou mais.");
+  else add("ok", "Boa entrada", "Você está dando " + pct1(ep) + " do valor do carro, o que ajuda a reduzir os juros.");
+  if (S.seguro > 0 || S.tarifas > 0) add("info", "Você incluiu seguro ou tarifas", "Lembre: seguro não pode ser obrigatório, e tarifas precisam de serviço prestado e valor justo. Peça cada valor por escrito.");
+  if (SELLER && SELLER.lvl !== "ok") add(SELLER.lvl, "Proposta do vendedor: " + SELLER.title.toLowerCase(), SELLER.text);
+  else if (SELLER) add("ok", "Proposta do vendedor: " + SELLER.title.toLowerCase(), SELLER.text);
+
+  var ord = { bad: 0, warn: 1, info: 2, ok: 3 };
+  L.sort(function (a, b) { return ord[a.l] - ord[b.l]; });
+  var sym = { ok: "✓", warn: "!", bad: "✕", info: "i" };
+  $("alerts").innerHTML = L.map(function (x) {
+    return "<li class='al " + x.l + "'><span class='al-i' aria-hidden='true'>" + sym[x.l] + "</span><div><b>" + esc(x.t) + "</b><p>" + esc(x.d) + "</p></div></li>";
+  }).join("");
+  return L.some(function (x) { return x.l === "bad"; }) ? "bad" : (L.some(function (x) { return x.l === "warn"; }) ? "warn" : "ok");
+}
+
+/* ═════════ RENDER ═════════ */
+function syncControls() {
+  var minP = minPrice(), ep = S.entrada / minP * 100;
+  $("iofOn").checked = S.iof; $("finEnc").checked = S.finEnc;
+  document.querySelectorAll("#chips .chip").forEach(function(b){ b.classList.toggle("on", +b.dataset.r === S.rate); });
+  document.querySelectorAll("#eChips .chip").forEach(function(b){ b.classList.toggle("on", Math.abs(S.entrada - ePctToR(+b.dataset.ep)) < 1); });
+  document.querySelectorAll("#sistTabs .chip").forEach(function(b){ b.classList.toggle("on", (b.dataset.s === "sac") === S.sac); });
+  document.querySelectorAll("#prazoTabs .pz").forEach(function(b){ b.classList.toggle("on", +b.dataset.p === S.prazo); });
+
+  var eI = "Você dá <b>" + brl0(S.entrada) + "</b> do seu bolso (" + pct1(ep) + " do carro mais barato) e financia o resto.";
+  if (ep < 10) eI += " Entrada pequena deixa juros e parcela mais altos.";
+  else if (ep >= 30) eI += " Ótimo: entrada grande reduz bastante os juros.";
+  $("eInfo").innerHTML = eI;
+
+  var ra = aa(S.rate / 10000);
+  $("rInfo").innerHTML = pct2(S.rate / 100) + " ao mês equivale a <b>" + pct1(ra) + " ao ano</b>. A média do mercado é " + pct2(S.mkt / 100) + " ao mês.";
+  var ratio = S.rate / S.mkt, tg = $("rTag");
+  if (ratio <= 1.05) { tg.className = "tag ok"; tg.textContent = "✓ Na média do mercado ou abaixo"; }
+  else if (ratio <= 1.25) { tg.className = "tag warn"; tg.textContent = "▲ Acima da média do mercado"; }
+  else { tg.className = "tag bad"; tg.textContent = "✕ Bem acima da média do mercado"; }
+}
+
+function render() {
+  syncControls();
+  var n = S.prazo, res = cars.map(function(c){ return calc(c, n); });
+  R = {}; res.forEach(function(r){ R[r.id] = r; });
+  var valid = res.filter(function(r){ return !r.inv; });
+  var best = valid.length ? valid.reduce(function(a, b){ return b.total < a.total ? b : a; }) : null;
+  var minT = best ? best.total : 0;
+  var minP = valid.length ? Math.min.apply(null, valid.map(function(r){ return r.p1; })) : 0;
+
+  /* parcela por prazo (usada nos botões e nas tabelas) */
+  var mxData = cars.map(function(c){ return PRAZOS.map(function(p){ return calc(c, p); }); });
+  document.querySelectorAll("#prazoTabs .pz").forEach(function(b, pi) {
+    var vs = mxData.map(function(row){ return row[pi]; }).filter(function(x){ return !x.inv; });
+    var s1 = b.querySelector(".s1"), s2 = b.querySelector(".s2");
+    if (!vs.length) { s1.textContent = "—"; s2.textContent = ""; return; }
+    s1.textContent = brl0(Math.min.apply(null, vs.map(function(x){ return x.p1; }))) + "/mês";
+    s2.textContent = "total " + brl0(Math.min.apply(null, vs.map(function(x){ return x.total; })));
+  });
+  var anos = n / 12;
+  $("pzInfo").className = "st-i" + (n >= 60 ? " warn" : "");
+  $("pzInfo").innerHTML = (n >= 60 ? "<b>Atenção:</b> " : "") + n + " parcelas = " + (anos % 1 === 0 ? anos : anos.toFixed(1).replace(".", ",")) + " " + plural(anos, "ano", "anos") + " pagando. Mais parcelas deixam cada parcela menor, mas <b>você paga bem mais juros no total</b>. Compare os totais nos botões acima.";
+
+  var inv = res.filter(function(r){ return r.inv; }).map(function(r){ return cars.find(function(c){ return c.id === r.id; }).name; });
+  $("warnBox").style.display = inv.length ? "block" : "none";
+  $("warnBox").textContent = "A entrada é maior ou igual ao preço de: " + inv.join(", ") + ". Diminua a entrada ou corrija o preço.";
+
+  /* seletor do vendedor */
+  var sel = $("stCar");
+  if (!cars.some(function(c){ return c.id === S.stCar; })) S.stCar = cars[0].id;
+  sel.innerHTML = cars.map(function(c){ return "<option value='" + c.id + "'" + (c.id === S.stCar ? " selected" : "") + ">" + esc(c.name) + "</option>"; }).join("");
+  sellerTest();
+
+  var worst = buildAlerts(valid, best);
+
+  /* veredito */
+  if (best) {
+    var extra = best.total - best.price, extraPct = extra / best.price * 100;
+    var vt = { ok: "Boa notícia: nada fora do normal", warn: "Atenção: dá para melhorar essa simulação", bad: "Cuidado: há pontos preocupantes nessa simulação" }[worst];
+    var vi = { ok: "✓", warn: "!", bad: "✕" }[worst];
+    $("verdict").innerHTML = "<div class='verdict " + worst + "'><span class='v-ic' aria-hidden='true'>" + vi + "</span><div><h3>" + vt + "</h3><p>" +
+      (valid.length > 1 ? "O carro que sai mais barato no fim é o <b>" + esc(best.name) + "</b>: " : "No <b>" + esc(best.name) + "</b>, ") +
+      "você paga <b>" + brl0(best.total) + "</b> no total e <b class='red'>" + brl0(extra) + " a mais</b> que o preço (" + pct1(extraPct) + "). " +
+      "<a href='#sec-alertas'>Ver pontos de atenção</a></p></div></div>";
+  } else $("verdict").innerHTML = "";
+
+  /* resumo ao vivo + barra inferior */
+  if (best) {
+    var ex = best.total - best.price;
+    $("live").innerHTML =
+      "<h3>Resumo ao vivo</h3><div class='nm'>" + esc(best.name) + "</div>" +
+      "<div class='big'>" + brl(best.p1) + "<small>" + (S.sac ? "na 1ª parcela, depois diminui · " : "por mês · ") + n + " meses</small></div>" +
+      "<div style='height:10px'></div>" +
+      "<div class='row'><span>Total pago no fim</span><b>" + brl0(best.total) + "</b></div>" +
+      "<div class='row'><span>Preço do carro</span><b>" + brl0(best.price) + "</b></div>" +
+      "<div class='row'><span>Você paga a mais</span><b class='red'>" + brl0(ex) + " (" + pct1(ex / best.price * 100) + ")</b></div>" +
+      "<a class='btn' href='#sec-resultado'>Ver o resultado completo</a>";
+    $("livebar").innerHTML = "<div><small>Parcela</small><b>" + brl0(best.p1) + "</b></div><div><small>Total pago</small><b>" + brl0(best.total) + "</b></div><a class='btn' href='#sec-resultado'>Detalhes</a>";
+  } else {
+    $("live").innerHTML = "<h3>Resumo ao vivo</h3><p style='margin-top:10px;color:var(--t2)'>Informe o preço do carro e uma entrada menor que ele para ver o resultado.</p>";
+    $("livebar").innerHTML = "<div><small>Resumo</small><b>Revise a entrada</b></div>";
+  }
+
+  /* cartões */
+  $("cardsGrid").innerHTML = res.map(function(r) {
+    var car = cars.find(function(c){ return c.id === r.id; });
+    var head = "<div class='c-top'><span class='c-dot' style='background:" + esc(car.color) + "'></span><span class='c-nm'>" + esc(car.name) + "</span>";
+    if (r.inv) return "<div class='card'>" + head + "<span class='badge r'>Entrada maior que o preço</span></div></div>";
+    var isBest = valid.length > 1 && Math.abs(r.total - minT) < 0.01;
+    var tot = r.total, a = S.entrada / tot * 100, b = r.base / tot * 100, c = r.custo / tot * 100;
+    var extra = r.total - r.price;
+    var per100 = (r.custo / r.base + 1) * 100;
+    var comp = "";
+    if (S.renda > 0) { var cp = r.p1 / S.renda * 100; comp = "<div class='rw'><span>" + hp("renda", "Peso na sua renda") + "</span><b class='" + (cp > 30 ? "red" : "grn") + "'>" + pct1(cp) + "</b></div>"; }
+    return "<div class='card" + (isBest ? " best" : "") + "'>" + head + (isBest ? "<span class='badge'>Mais barato no total</span>" : "") + "</div>" +
+      "<div class='c-pm'>" + brl(r.p1) + "<small>" + (S.sac ? "na 1ª parcela, diminuindo até " + brl(r.pN) + " · " : "por mês, durante ") + n + (S.sac ? " meses" : " meses") + "</small></div>" +
+      "<div class='stack' role='img' aria-label='Divisão do total pago'><span style='width:" + a.toFixed(1) + "%;background:var(--blue)'></span><span style='width:" + b.toFixed(1) + "%;background:var(--green)'></span><span style='width:" + c.toFixed(1) + "%;background:var(--red)'></span></div>" +
+      "<div class='stack-l'>" +
+        "<span><i style='background:var(--blue)'></i>Sua entrada<b>" + brl0(S.entrada) + "</b></span>" +
+        "<span><i style='background:var(--green)'></i>O carro financiado<b>" + brl0(r.base) + "</b></span>" +
+        "<span><i style='background:var(--red)'></i>Juros e encargos<b>" + brl0(r.custo) + "</b></span>" +
+      "</div>" +
+      "<div class='c-sum'>No final você terá pago <b>" + brl0(r.total) + "</b> por um carro de " + brl0(r.price) + ".<div class='x'><b class='red'>" + brl0(extra) + " a mais</b> que o preço (" + pct1(extra / r.price * 100) + ").</div>" +
+      "<div class='y'>A cada R$ 100 financiados, você devolve R$ " + Math.round(per100) + ".</div></div>" +
+      "<details><summary>Ver como chegamos nesses números</summary>" +
+        "<div class='rw'><span>Preço do carro</span><b>" + brl(r.price) + "</b></div>" +
+        "<div class='rw'><span>" + hp("entrada", "Entrada") + " (" + pct1(r.ep) + ")</span><b>" + brl(S.entrada) + "</b></div>" +
+        "<div class='rw'><span>" + hp("financiado", "Valor financiado") + "</span><b>" + brl(r.base) + "</b></div>" +
+        (r.iof > 0 ? "<div class='rw'><span>" + hp("iof", "IOF") + (S.finEnc ? "" : " (pago à vista)") + "</span><b>" + brl(r.iof) + "</b></div>" : "") +
+        (r.tarifas > 0 ? "<div class='rw'><span>" + hp("tarifas", "Tarifas") + "</span><b>" + brl(r.tarifas) + "</b></div>" : "") +
+        (r.seguro > 0 ? "<div class='rw'><span>" + hp("seguro", "Seguro") + "</span><b>" + brl(r.seguro) + "</b></div>" : "") +
+        "<div class='rw'><span>" + hp("contratado", "Valor contratado") + "</span><b>" + brl(r.P) + "</b></div>" +
+        "<div class='rw'><span>" + hp("juros", "Juros pagos") + "</span><b class='red'>" + brl(r.jur) + "</b></div>" +
+        "<div class='rw'><span>" + hp("cet", "CET (custo real)") + "</span><b>" + (r.cet == null ? "—" : pct2(r.cet * 100) + " ao mês · " + pct1(aa(r.cet)) + " ao ano") + "</b></div>" +
+        "<div class='rw'><span>" + hp("total", "Total pago") + "</span><b>" + brl(r.total) + "</b></div>" +
+        comp +
+      "</details></div>";
+  }).join("");
+
+  /* detalhes técnicos */
+  $("sumTable").innerHTML = "<thead><tr><th>Carro</th><th class='r'>Preço</th><th class='r'>Parcela (" + n + "x)</th><th class='r'>Total pago</th><th class='r'>A mais</th><th class='r'>CET ao ano</th></tr></thead><tbody>" +
+    res.map(function(r) {
+      var car = cars.find(function(c){ return c.id === r.id; });
+      var dot = "<span style='display:inline-block;width:9px;height:9px;border-radius:50%;background:" + esc(car.color) + ";margin-right:7px'></span>";
+      if (r.inv) return "<tr><td>" + dot + esc(car.name) + "</td><td colspan='5' class='tr'>Entrada inválida</td></tr>";
+      return "<tr><td>" + dot + esc(r.name) + "</td><td class='r'>" + brl(r.price) + "</td>" +
+        "<td class='r " + (Math.abs(r.p1 - minP) < 0.01 ? "tg" : "") + "'>" + brl(r.p1) + (S.sac ? " → " + brl(r.pN) : "") + "</td>" +
+        "<td class='r " + (Math.abs(r.total - minT) < 0.01 ? "tg" : "") + "'>" + brl(r.total) + "</td><td class='r tr'>" + brl(r.total - r.price) + "</td>" +
+        "<td class='r'>" + (r.cet == null ? "—" : pct1(aa(r.cet))) + "</td></tr>";
+    }).join("") + "</tbody>";
+  $("mxTable").innerHTML = "<thead><tr><th>Carro</th>" + PRAZOS.map(function(p){ return "<th class='r'>" + p + "x</th>"; }).join("") + "</tr></thead><tbody>" +
+    cars.map(function(c, ci) {
+      return "<tr><td>" + esc(c.name) + "</td>" + PRAZOS.map(function(p, pi) {
+        var x = mxData[ci][pi];
+        return x.inv ? "<td class='r'>—</td>" : "<td class='r'>" + brl(x.p1) + "<small>total " + brl(x.total) + "</small></td>";
+      }).join("") + "</tr>";
+    }).join("") + "</tbody>";
+  barChart($("chart2"), PRAZOS.map(function(p, pi) {
+    return { l: p + "x", sel: p === S.prazo, bars: cars.map(function(c, ci) {
+      var x = mxData[ci][pi];
+      return { v: x.inv ? 0 : x.p1, c: c.color, t: c.name + " · " + p + "x: " + (x.inv ? "—" : brl(x.p1)) };
+    }) };
+  }));
+  $("legend2").innerHTML = cars.map(function(c){ return "<span><i style='background:" + esc(c.color) + "'></i>" + esc(shortName(c.name)) + "</span>"; }).join("");
+
+  $("noteEl").textContent = "Simulação de referência: juros de " + pct2(S.rate / 100) + " ao mês (" + pct1(aa(S.rate / 10000)) + " ao ano) em " +
+    (S.sac ? "SAC" : "Tabela Price") + ". O IOF é calculado sobre cada parcela (primeira em 30 dias, base máxima de 365 dias)" +
+    (S.iof ? "" : " — DESLIGADO") + ". O CET aqui inclui IOF, tarifas e seguro informados. Tarifas e seguro variam por banco e estado: o CET real da proposta pode ser diferente. Confirme tudo com a instituição antes de fechar.";
+
+  buildSchedSel(); renderSched();
+  save();
+}
+
+function buildSchedSel() {
+  var sel = $("schedSel");
+  if (!cars.some(function(c){ return c.id === S.sched; })) S.sched = cars[0].id;
+  sel.innerHTML = cars.map(function(c){ return "<option value='" + c.id + "'" + (c.id === S.sched ? " selected" : "") + ">" + esc(c.name) + "</option>"; }).join("");
+}
+function renderSched() {
+  var r = R[S.sched];
+  if (!r || r.inv) { $("schedTable").innerHTML = "<tbody><tr><td class='tr'>Entrada inválida</td></tr></tbody>"; return; }
+  $("schedTable").innerHTML = "<thead><tr><th>Mês</th><th class='r'>Parcela</th><th class='r'>Juros</th><th class='r'>Abate da dívida</th><th class='r'>Ainda deve</th></tr></thead><tbody>" +
+    r.rows.map(function(x){ return "<tr><td>" + x.k + "</td><td class='r'>" + brl(x.parc) + "</td><td class='r tr'>" + brl(x.j) + "</td><td class='r'>" + brl(x.am) + "</td><td class='r'>" + brl(x.saldo) + "</td></tr>"; }).join("") + "</tbody>";
+}
+
+/* ═════════ CARROS (passo 1) ═════════ */
+function buildCarRows() {
+  var box = $("carRows"); box.innerHTML = "";
+  cars.forEach(function (car) {
+    var div = document.createElement("div"); div.className = "carrow";
+    div.innerHTML =
+      "<div class='color-btn' style='background:" + esc(car.color) + "' title='Cor do carro nos gráficos'><input type='color' value='" + esc(car.color) + "' aria-label='Cor'></div>" +
+      "<input class='inp cn' type='text' value='" + esc(car.name) + "' placeholder='Nome do carro' aria-label='Nome do carro'>" +
+      "<label class='money'><span>Preço R$</span><input class='cp' type='number' value='" + car.price + "' min='1' step='100' inputmode='decimal' aria-label='Preço do carro'></label>" +
+      (cars.length > 1 ? "<button class='del-btn' type='button' title='Remover este carro' aria-label='Remover este carro'>&times;</button>" : "<span></span>");
+    var sw = div.querySelector(".color-btn"), cp = div.querySelector("input[type=color]");
+    cp.addEventListener("input", function(){ car.color = cp.value; sw.style.background = car.color; render(); });
+    div.querySelector(".cn").addEventListener("input", function(e){ car.name = e.target.value || "Carro"; render(); });
+    div.querySelector(".cp").addEventListener("input", function(e){
+      var v = parseFloat(e.target.value);
+      if (v > 0) { car.price = v; eSlider.value = eRToPct(S.entrada); render(); }
+    });
+    var del = div.querySelector(".del-btn");
+    if (del) del.addEventListener("click", function(){ cars = cars.filter(function(c){ return c.id !== car.id; }); buildCarRows(); render(); });
+    box.appendChild(div);
+  });
+}
+$("addCar").addEventListener("click", function () {
+  cars.push({ id:_nextId++, name:"Carro " + (cars.length + 1), brand:"", price:100000, color:nextColor() });
+  buildCarRows(); render();
+});
+
+/* ═════════ LISTA DE PERGUNTAS ═════════ */
+function buildChecklist() {
+  $("checklist").innerHTML = QUESTIONS.map(function (q, i) {
+    return "<li><label><input type='checkbox' data-q='" + i + "'" + (S.chk && S.chk[i] ? " checked" : "") + "><span>" + esc(q[0]) + "<small>" + esc(q[1]) + "</small></span></label></li>";
+  }).join("");
+  $("checklist").addEventListener("change", function (e) {
+    var i = e.target.getAttribute && e.target.getAttribute("data-q");
+    if (i === null || i === undefined) return;
+    if (!S.chk) S.chk = {};
+    S.chk[i] = e.target.checked; save();
+  });
+}
+$("copyBtn").addEventListener("click", function () {
+  var txt = "Perguntas para fazer ao vendedor:\n" + QUESTIONS.map(function (q, i) { return (i + 1) + ". " + q[0]; }).join("\n");
+  var btn = this, old = btn.textContent;
+  function ok() { btn.textContent = "Copiado! Cole no WhatsApp ou nas notas"; setTimeout(function(){ btn.textContent = old; }, 2500); }
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(txt).then(ok, fallback); return; }
+  } catch (e) {}
+  fallback();
+  function fallback() {
+    try { var ta = document.createElement("textarea"); ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); ok(); }
+    catch (e) { btn.textContent = "Não deu para copiar — selecione a lista e copie"; }
+  }
+});
+
+/* ═════════ GLOSSÁRIO ═════════ */
+$("gloss").innerHTML = GLOSS.map(function (g) {
+  return "<details class='acc'><summary>" + esc(g[1]) + "</summary><div>" + esc(g[2]) + "</div></details>";
+}).join("");
+
+/* ═════════ INÍCIO ═════════ */
+$("brandIc").innerHTML = ic("car");
+setTheme(document.documentElement.getAttribute("data-theme") || "light");
+eSlider.value = eRToPct(S.entrada); eTyped.value = S.entrada;
+rSlider.value = clamp(S.rate, 50, 400); rTyped.value = (S.rate / 100).toFixed(2);
+$("tarifas").value = S.tarifas || ""; $("seguro").value = S.seguro || ""; $("renda").value = S.renda || "";
+$("mkt").value = (S.mkt / 100).toFixed(2);
+$("stParc").value = S.stParc || ""; $("stN").value = S.stN || ""; $("stBase").value = S.stBase || "";
+buildCarRows(); buildChecklist(); render();
+</script>
+</body>
+</html>

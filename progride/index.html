@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progride</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+
+        :root {
+            --bg: #ece8f6;
+            --s1: #f7f5fc;
+            --s2: #ffffff;
+            --s3: #f2eefb;
+            --bd: #ebe6f5;
+            --acc: #6c3ce0;
+            --acc2: #c13cb4;
+            --grad: linear-gradient(135deg, #6c3ce0 0%, #9a3ccc 55%, #c13cb4 100%);
+            --tint: #efe9fd;
+            --ink: #1b1530;
+            --tx: #1b1530;
+            --mu: #8e89a3;
+            --re: #e5487d;
+            --am: #f29a2e;
+            --gr: #1fb57a;
+            --bl: #3d7bf2;
+            --sh: 0 10px 30px -12px rgba(76, 46, 160, .22);
+            --sh-sm: 0 4px 14px -6px rgba(76, 46, 160, .18);
+            --mono: 'DM Mono', monospace;
+            --sans: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--sans);
+            color: var(--tx);
+            overflow: hidden;
+            background-image: radial-gradient(ellipse at 15% 20%, rgba(193, 60, 180, .14) 0%, transparent 55%),
+                radial-gradient(ellipse at 85% 85%, rgba(108, 60, 224, .16) 0%, transparent 55%);
+        }
+
+        button, input { font-family: inherit; color: inherit }
+
+        .phone {
+            width: 375px;
+            height: 812px;
+            background: var(--s1);
+            border-radius: 48px;
+            border: 8px solid #fff;
+            box-shadow: 0 40px 80px -30px rgba(60, 30, 140, .35), 0 0 0 1px rgba(108, 60, 224, .06);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .phone::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 104px;
+            height: 28px;
+            background: #14101f;
+            border-radius: 20px;
+            z-index: 100;
+        }
+
+        @media(max-width:600px) {
+            body { padding: 0; align-items: flex-start; background: var(--s1) }
+            .phone { width: 100vw; height: 100dvh; border-radius: 0; border: none; box-shadow: none }
+            .phone::before { display: none }
+            .sb { padding-top: 12px; height: 52px }
+            .nav { margin-bottom: 10px }
+        }
+
+        /* ─── FRAME ─── */
+        .sb {
+            height: 48px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 0 26px 6px;
+            flex-shrink: 0;
+            font-size: 11px;
+            color: var(--ink);
+        }
+
+        .sb .t { font-size: 13px; font-weight: 600 }
+
+        .screens { flex: 1; position: relative; overflow: hidden }
+
+        .scr {
+            position: absolute;
+            inset: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            opacity: 0;
+            pointer-events: none;
+            scrollbar-width: none;
+            transition: opacity .22s ease, transform .22s ease;
+            transform: translateX(20px);
+            padding-bottom: 24px;
+        }
+
+        .scr::-webkit-scrollbar { display: none }
+        .scr.on { opacity: 1; transform: translateX(0); pointer-events: all }
+
+        .nav {
+            height: 70px;
+            margin: 0 14px 14px;
+            background: var(--s2);
+            border-radius: 26px;
+            box-shadow: var(--sh);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 4px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 5;
+        }
+
+        .nav.hide { display: none }
+
+        .nb {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 0;
+            color: var(--mu);
+            font-size: 10px;
+            font-weight: 500;
+            transition: color .2s;
+        }
+
+        .nb .nb-i {
+            width: 44px;
+            height: 30px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background .2s;
+        }
+
+        .nb.on { color: var(--acc); font-weight: 600 }
+        .nb.on .nb-i { background: var(--tint) }
+
+        .nb.fab { margin-top: -34px; gap: 6px }
+
+        .nb.fab .nb-i {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: var(--grad);
+            color: #fff;
+            border: 5px solid var(--s1);
+            box-shadow: 0 12px 24px -10px rgba(108, 60, 224, .8);
+        }
+
+        .nb.fab .ic { width: 24px; height: 24px }
+
+        .toast {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: var(--ink);
+            border-radius: 999px;
+            padding: 10px 18px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #fff;
+            white-space: nowrap;
+            z-index: 999;
+            box-shadow: 0 12px 30px -10px rgba(27, 21, 48, .5);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s, transform .2s;
+        }
+
+        .toast.on { opacity: 1; transform: translateX(-50%) translateY(0) }
+
+        /* ─── SHARED ─── */
+        .ic {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+
+        .phdr { padding: 16px 20px 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px }
+        .phdr h1 { font-size: 26px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; flex: 1 }
+        .phdr p { font-size: 12px; color: var(--mu); margin-top: 2px }
+
+        .hdr-sub { padding: 14px 20px 12px; display: flex; align-items: center; gap: 12px }
+        .hdr-sub h1 { font-size: 21px; font-weight: 700; letter-spacing: -.02em; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+
+        .back, .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--s2);
+            border: none;
+            box-shadow: var(--sh-sm);
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .back .ic, .icon-btn .ic { width: 20px; height: 20px }
+
+        .badge .ic { width: 12px; height: 12px; vertical-align: -2px; stroke-width: 2.2 }
+
+        .badge {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--acc);
+            background: var(--tint);
+            padding: 5px 11px;
+            border-radius: 999px;
+            letter-spacing: .03em;
+            white-space: nowrap;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--mu);
+            background: var(--s3);
+            padding: 3px 9px;
+            border-radius: 999px;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .chip .ic { width: 12px; height: 12px; stroke-width: 2 }
+        .chip.acc { color: var(--acc); background: var(--tint) }
+        .chip.ok { color: var(--gr); background: #e3f6ee }
+        .chip.gold { color: #c9761a; background: #fdf0e0 }
+
+        .slabel {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--ink);
+            padding: 0 20px;
+            margin: 20px 0 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .slabel small { font-size: 12px; font-weight: 500; color: var(--mu) }
+
+        .card {
+            background: var(--s2);
+            border-radius: 22px;
+            box-shadow: var(--sh-sm);
+            padding: 16px;
+            margin: 0 20px 12px;
+        }
+
+        .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px }
+        .card p { font-size: 12px; color: var(--mu); line-height: 1.55 }
+
+        .btn {
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: opacity .15s, transform .1s;
+            padding: 14px 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .btn .ic { width: 18px; height: 18px }
+        .btn:active { opacity: .85; transform: scale(.98) }
+        .bp { background: var(--grad); color: #fff; box-shadow: 0 10px 22px -10px rgba(108, 60, 224, .7) }
+        .bo { background: var(--s2); color: var(--ink); box-shadow: var(--sh-sm) }
+        .bw { background: #fff; color: var(--acc) }
+        .bt { background: none; color: var(--mu); font-weight: 500; font-size: 13px }
+
+        .br { display: flex; gap: 10px; padding: 0 20px; margin-bottom: 10px }
+        .br .btn { flex: 1 }
+
+        .tile {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .tile .ic { width: 21px; height: 21px }
+        .t-acc { background: var(--tint); color: var(--acc) }
+        .t-bl { background: #e6eefd; color: var(--bl) }
+        .t-am { background: #fdf0e0; color: #c9761a }
+        .t-re { background: #fde8ef; color: var(--re) }
+        .t-gr { background: #e3f6ee; color: var(--gr) }
+        .t-pk { background: #f9e6f6; color: var(--acc2) }
+
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            padding: 4px 20px 14px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .filter-row::-webkit-scrollbar { display: none }
+
+        .fc {
+            flex-shrink: 0;
+            background: var(--s2);
+            border: none;
+            border-radius: 999px;
+            box-shadow: var(--sh-sm);
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--mu);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+        }
+
+        .fc.on { background: var(--ink); color: #fff; font-weight: 600 }
+
+        .lrow { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--bd); cursor: pointer }
+        .lrow:last-child { border-bottom: none }
+        .lrow:active { opacity: .7 }
+        .lbody { flex: 1; min-width: 0 }
+        .lname { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; flex-wrap: wrap }
+        .lmeta { font-size: 11px; color: var(--mu); margin-top: 1px }
+        .lend { color: var(--mu); display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500 }
+        .lend .ic { width: 18px; height: 18px }
+        .list { margin: 0 20px 12px; background: var(--s2); border-radius: 22px; box-shadow: var(--sh-sm); padding: 2px 16px }
+
+        .empty { text-align: center; padding: 30px 30px 10px; color: var(--mu); font-size: 13px }
+        .empty .tile { width: 64px; height: 64px; border-radius: 22px; margin: 0 auto 14px; background: var(--tint); color: var(--acc) }
+        .empty .tile .ic { width: 30px; height: 30px }
+        .empty b { display: block; color: var(--ink); font-size: 16px; margin-bottom: 4px }
+
+        .bar { height: 6px; border-radius: 3px; background: var(--s3); overflow: hidden; margin-top: 8px }
+        .bar i { display: block; height: 100%; border-radius: 3px; background: var(--grad) }
+
+        /* ─── HERO ─── */
+        .hero {
+            margin: 0 20px 14px;
+            background: var(--grad);
+            color: #fff;
+            border-radius: 28px;
+            padding: 18px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 18px 34px -16px rgba(108, 60, 224, .75);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            right: -40px;
+            top: -40px;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .1);
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            right: 30px;
+            bottom: -60px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .07);
+        }
+
+        .hero > * { position: relative; z-index: 1 }
+        .hero .k { font-size: 11px; font-weight: 500; opacity: .8; letter-spacing: .04em; text-transform: uppercase }
+        .hero h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; margin: 4px 0 2px }
+        .hero p { font-size: 12px; opacity: .85; line-height: 1.5 }
+        .hero .btn { margin-top: 14px }
+        .hero .hico { position: absolute; right: 18px; top: 18px; width: 52px; height: 52px; border-radius: 18px; background: rgba(255, 255, 255, .18); display: flex; align-items: center; justify-content: center }
+        .hero .hico .ic { width: 28px; height: 28px }
+        .hero .bar { background: rgba(255, 255, 255, .25) }
+        .hero .bar i { background: #fff }
+
+        /* ─── STATS ─── */
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 20px; margin-bottom: 4px }
+        .stat { background: var(--s2); border-radius: 18px; box-shadow: var(--sh-sm); padding: 12px }
+        .stat b { display: block; font-family: var(--mono); font-size: 20px; font-weight: 500; letter-spacing: -.02em }
+        .stat span { font-size: 10px; color: var(--mu); font-weight: 500 }
+
+        /* ─── PROGRAM GRID ─── */
+        .pgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 20px; margin-bottom: 12px }
+        .pcard { background: var(--s2); border-radius: 22px; box-shadow: var(--sh-sm); padding: 14px; cursor: pointer; border: none; text-align: left; transition: transform .1s }
+        .pcard:active { transform: scale(.97) }
+        .pcard .tile { margin-bottom: 10px }
+        .pcard b { display: block; font-size: 14px; font-weight: 600 }
+        .pcard span { font-size: 11px; color: var(--mu) }
+
+        /* ─── WEEKS ─── */
+        .week { background: var(--s2); border-radius: 22px; box-shadow: var(--sh-sm); padding: 14px 16px; margin: 0 20px 10px }
+        .week-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px }
+        .week-h b { font-size: 14px; font-weight: 600 }
+        .week-h span { font-size: 11px; color: var(--mu) }
+        .days { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px }
+        .day { border: none; background: var(--s3); border-radius: 14px; padding: 10px 6px; cursor: pointer; text-align: center; font-size: 11px; font-weight: 600; color: var(--ink); display: flex; flex-direction: column; align-items: center; gap: 2px }
+        .day small { font-size: 10px; font-weight: 500; color: var(--mu); font-family: var(--mono) }
+        .day.done { background: #e3f6ee; color: var(--gr) }
+        .day.done small { color: var(--gr) }
+        .day.next { background: var(--grad); color: #fff; box-shadow: 0 8px 16px -8px rgba(108, 60, 224, .7) }
+        .day.next small { color: rgba(255, 255, 255, .8) }
+        .day.off { opacity: .45 }
+        .day .ic { width: 14px; height: 14px; stroke-width: 2.4 }
+
+        /* ─── TEST ─── */
+        .num-in { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 14px 0 6px }
+        .num-in button { width: 44px; height: 44px; border-radius: 50%; border: none; background: var(--s3); font-size: 22px; font-weight: 500; cursor: pointer; color: var(--acc) }
+        .num-in input { width: 110px; text-align: center; font-family: var(--mono); font-size: 40px; font-weight: 500; border: none; background: none; outline: none; color: var(--ink) }
+        .num-in input::-webkit-outer-spin-button, .num-in input::-webkit-inner-spin-button { -webkit-appearance: none }
+        .num-in input[type=number] { -moz-appearance: textfield }
+        .opts { display: flex; flex-direction: column; gap: 8px; margin-top: 12px }
+        .opt { border: 2px solid var(--bd); background: var(--s2); border-radius: 16px; padding: 12px 14px; text-align: left; font-size: 13px; font-weight: 500; cursor: pointer }
+        .opt.on { border-color: var(--acc); background: var(--tint); color: var(--acc) }
+
+        /* ─── SESSION ─── */
+        .ring { position: relative; width: 210px; height: 210px; margin: 6px auto 10px }
+        .ring svg { width: 100%; height: 100%; transform: rotate(-90deg) }
+        .ring .c { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center }
+        .ring .c b { font-family: var(--mono); font-size: 48px; font-weight: 500; letter-spacing: -.03em; line-height: 1 }
+        .ring .c span { font-size: 12px; color: var(--mu); margin-top: 6px; font-weight: 500 }
+        .ring .c em { font-style: normal; font-size: 11px; font-weight: 600; color: var(--acc); background: var(--tint); padding: 3px 10px; border-radius: 999px; margin-bottom: 8px }
+        .ring .c em.rest { color: #c9761a; background: #fdf0e0 }
+        .ring .c em.walk { color: var(--bl); background: #e6eefd }
+        .ring .c em.run { color: var(--gr); background: #e3f6ee }
+
+        .adj { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px }
+        .adj button { width: 44px; height: 44px; border-radius: 50%; border: none; background: var(--s2); box-shadow: var(--sh-sm); font-size: 20px; color: var(--acc); cursor: pointer }
+
+        .steps { display: flex; gap: 6px; padding: 0 20px; margin-bottom: 14px; flex-wrap: wrap; justify-content: center }
+        .step { min-width: 40px; padding: 6px 10px; border-radius: 12px; background: var(--s2); box-shadow: var(--sh-sm); font-family: var(--mono); font-size: 13px; font-weight: 500; text-align: center }
+        .step.on { background: var(--grad); color: #fff }
+        .step.ok { background: #e3f6ee; color: var(--gr); box-shadow: none }
+
+        .cue { margin: 0 20px 14px; text-align: center; font-size: 12px; color: var(--mu); line-height: 1.5; min-height: 36px }
+        .cue b { display: block; color: var(--ink); font-size: 15px; margin-bottom: 2px }
+
+        .done-ic { width: 84px; height: 84px; border-radius: 30px; background: var(--grad); color: #fff; display: flex; align-items: center; justify-content: center; margin: 30px auto 16px; box-shadow: 0 18px 34px -14px rgba(108, 60, 224, .8) }
+        .done-ic .ic { width: 40px; height: 40px; stroke-width: 2.2 }
+        .center { text-align: center; padding: 0 30px }
+        .center h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em }
+        .center p { font-size: 13px; color: var(--mu); margin: 6px 0 20px; line-height: 1.5 }
+
+        /* ─── TIPS ─── */
+        .tip { cursor: pointer }
+        .tip .th { display: flex; align-items: center; gap: 12px }
+        .tip .th b { flex: 1; font-size: 14px; font-weight: 600 }
+        .tip .th .ic { width: 18px; height: 18px; color: var(--mu); transition: transform .2s }
+        .tip .tb { display: none; font-size: 12px; color: var(--mu); line-height: 1.6; margin-top: 10px }
+        .tip.open .tb { display: block }
+        .tip.open .th .ic { transform: rotate(180deg) }
+
+        .note { margin: 0 20px 12px; background: #fdf0e0; color: #8a5414; border-radius: 18px; padding: 12px 14px; font-size: 11px; line-height: 1.55 }
+    </style>
+</head>
+
+<body>
+    <div class="phone">
+        <div class="sb"><span class="t" id="clock">9:41</span><span>Progride</span></div>
+
+        <div class="screens">
+            <section class="scr on" id="s-home"></section>
+            <section class="scr" id="s-progs"></section>
+            <section class="scr" id="s-prog"></section>
+            <section class="scr" id="s-sess"></section>
+            <section class="scr" id="s-stats"></section>
+            <section class="scr" id="s-tips"></section>
+        </div>
+
+        <nav class="nav" id="nav">
+            <button class="nb on" data-go="home"><span class="nb-i"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" /></svg></span>Início</button>
+            <button class="nb" data-go="progs"><span class="nb-i"><svg class="ic" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2" /><rect x="13" y="4" width="7" height="7" rx="2" /><rect x="4" y="13" width="7" height="7" rx="2" /><rect x="13" y="13" width="7" height="7" rx="2" /></svg></span>Desafios</button>
+            <button class="nb fab" id="fab"><span class="nb-i"><svg class="ic" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>Treinar</button>
+            <button class="nb" data-go="stats"><span class="nb-i"><svg class="ic" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg></span>Progresso</button>
+            <button class="nb" data-go="tips"><span class="nb-i"><svg class="ic" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z" /></svg></span>Dicas</button>
+        </nav>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        /* ─── ÍCONES ─── */
+        const I = {
+            flexoes: 'M3 18h18M6 15l4-3 5 1 4 3M6 15l-1 3M9 7.5a1.6 1.6 0 1 0 .01 0',
+            barra: 'M3 4h18M8 4v4M16 4v4M8 8l4 3 4-3M12 11v5M10 21l2-5 2 5',
+            agach: 'M12 2.5a1.6 1.6 0 1 0 .01 0M12 6.5v5l-4 2.5v5M12 11.5l4 2.5v5M7 8.5h10',
+            abdom: 'M3 19h18M6 19l4-6 4 3M10 13l3-5M15 5.5a1.6 1.6 0 1 0 .01 0',
+            corrida: 'M15 3.5a1.6 1.6 0 1 0 .01 0M9 9l4-1.5 2 3 3 1M13 7.5l-2 6.5 3 3v4M11 14l-3 2-3-1',
+            along: 'M12 2.5a1.6 1.6 0 1 0 .01 0M12 6.5v6M12 8.5L5 5.5M12 8.5l7-3M12 12.5l-4 8.5M12 12.5l4 8.5',
+            back: 'M15 18l-6-6 6-6',
+            chev: 'M9 18l6-6-6-6',
+            down: 'M6 9l6 6 6-6',
+            check: 'M5 12.5l4.5 4.5L19 7',
+            play: 'M8 5v14l11-7z',
+            pause: 'M8 5v14M16 5v14',
+            skip: 'M5 5l10 7-10 7zM19 5v14',
+            flame: 'M12 3c1 3 4 4.5 4 9a4 4 0 0 1-8 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 0-8z',
+            refresh: 'M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5',
+            clock: 'M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z',
+            target: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM12 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2z'
+        };
+        const ic = (k, c = '') => `<svg class="ic ${c}" viewBox="0 0 24 24"><path d="${I[k]}"/></svg>`;
+
+        /* ─── PROGRAMAS ─── */
+        const PR = [
+            {
+                id: 'flexoes', name: '100 Flexões', short: 'Flexões', kind: 'reps', goal: 100, unit: 'flexões', col: 't-acc',
+                desc: 'Seis semanas de séries progressivas até chegar a 100 flexões seguidas.',
+                test: 'Faça o máximo de flexões que conseguir, sem parar e sem perder a técnica (corpo reto, peito perto do chão).',
+                cue: 'Mãos na linha dos ombros, abdômen firme, desça até o peito quase tocar o chão.'
+            },
+            {
+                id: 'barra', name: '50 Barras', short: 'Barra fixa', kind: 'reps', goal: 50, unit: 'barras', col: 't-bl',
+                desc: 'Ganhe força nas costas e nos braços até completar 50 barras.',
+                test: 'Faça o máximo de barras que conseguir, partindo do braço estendido até o queixo passar a barra.',
+                cue: 'Comece pendurado com os braços estendidos, puxe os cotovelos para baixo e passe o queixo da barra.'
+            },
+            {
+                id: 'agach', name: '300 Agachamentos', short: 'Agachamento', kind: 'reps', goal: 300, unit: 'agachamentos', col: 't-am',
+                desc: 'Pernas e glúteos mais fortes e resistentes, até 300 agachamentos.',
+                test: 'Faça o máximo de agachamentos que conseguir, sem parar, descendo até a coxa ficar paralela ao chão.',
+                cue: 'Pés na largura dos ombros, peso nos calcanhares, joelhos acompanhando a ponta dos pés.'
+            },
+            {
+                id: 'abdom', name: '300 Abdominais', short: 'Abdominal', kind: 'reps', goal: 300, unit: 'abdominais', col: 't-re',
+                desc: 'Core mais forte, série a série, até chegar a 300 abdominais.',
+                test: 'Faça o máximo de abdominais (crunch) que conseguir, sem parar e sem puxar o pescoço.',
+                cue: 'Lombar apoiada, tire só as escápulas do chão e solte o ar na subida.'
+            },
+            {
+                id: 'corrida', name: 'Correr 40 min', short: 'Corrida', kind: 'run', unit: 'min', col: 't-gr',
+                desc: 'Oito semanas alternando corrida e caminhada até correr 40 minutos sem parar.',
+                test: 'Hoje, quanto tempo você consegue correr sem parar, num ritmo confortável?',
+                cue: ''
+            },
+            {
+                id: 'along', name: 'Alongar', short: 'Alongamento', kind: 'flex', unit: 'min', col: 't-pk',
+                desc: 'Quatro semanas de rotinas curtas para ganhar mobilidade e soltar o corpo.',
+                test: '',
+                cue: ''
+            }
+        ];
+        const byId = id => PR.find(p => p.id === id);
+
+        /* corrida: [min correndo, min caminhando, repetições] por semana */
+        const RUN = [[1, 2, 10], [2, 2, 8], [3, 2, 7], [5, 2, 5], [8, 2, 4], [12, 2, 3], [18, 2, 2], [0, 0, 1]];
+        const RUN_FINAL = [30, 35, 40];
+        const RUN_LEVELS = [
+            { l: 'Menos de 1 minuto', w: 0 },
+            { l: 'De 1 a 5 minutos', w: 2 },
+            { l: 'De 5 a 15 minutos', w: 4 },
+            { l: 'Mais de 15 minutos', w: 6 }
+        ];
+
+        /* alongamento: rotinas (s = repetir dos dois lados) */
+        const FLEX = [
+            {
+                n: 'Despertar', items: [
+                    { n: 'Inclinação lateral do pescoço', c: 'Orelha em direção ao ombro, ombros relaxados.', s: 1 },
+                    { n: 'Círculos com os ombros', c: 'Giros lentos e amplos para trás.' },
+                    { n: 'Gato e vaca', c: 'De quatro apoios, alterne arredondar e arquear a coluna no ritmo da respiração.' },
+                    { n: 'Inclinação lateral em pé', c: 'Braço acima da cabeça, incline o tronco para o lado oposto.', s: 1 },
+                    { n: 'Flexão à frente', c: 'Joelhos levemente dobrados, deixe o tronco pender e a cabeça solta.' },
+                    { n: 'Afundo com quadril à frente', c: 'Joelho de trás no chão, empurre o quadril à frente até sentir a virilha.', s: 1 },
+                    { n: 'Panturrilha na parede', c: 'Calcanhar de trás no chão, joelho estendido, incline o corpo para a parede.', s: 1 }
+                ]
+            },
+            {
+                n: 'Pós-treino', items: [
+                    { n: 'Quadríceps em pé', c: 'Segure o pé atrás, joelhos juntos e quadril neutro.', s: 1 },
+                    { n: 'Posterior da coxa sentado', c: 'Uma perna estendida, incline o tronco a partir do quadril, coluna longa.', s: 1 },
+                    { n: 'Glúteo em quatro', c: 'Deitado, cruze o tornozelo sobre o joelho oposto e puxe a coxa para o peito.', s: 1 },
+                    { n: 'Peitoral na porta', c: 'Antebraço apoiado no batente, gire o corpo para o lado oposto.', s: 1 },
+                    { n: 'Tríceps acima da cabeça', c: 'Mão nas costas, a outra empurra o cotovelo suavemente.', s: 1 },
+                    { n: 'Joelhos ao peito', c: 'Deitado, abrace os joelhos e balance devagar para soltar a lombar.' }
+                ]
+            },
+            {
+                n: 'Antes de dormir', items: [
+                    { n: 'Postura de descanso', c: 'Sente nos calcanhares, braços à frente e testa no chão.' },
+                    { n: 'Borboleta', c: 'Sentado, solas dos pés juntas, deixe os joelhos caírem para os lados.' },
+                    { n: 'Torção deitado', c: 'Joelhos dobrados caem para um lado, olhar para o lado oposto.', s: 1 },
+                    { n: 'Pernas na parede', c: 'Deitado, pernas apoiadas na parede, braços soltos.' },
+                    { n: 'Respiração lenta', c: 'Inspire contando 4, expire contando 6. Deixe o corpo pesar.' }
+                ]
+            }
+        ];
+
+        /* ─── DICAS ─── */
+        const TIPS = {
+            flexoes: [
+                ['Técnica básica', 'Mãos um pouco mais abertas que os ombros, cotovelos a uns 45° do corpo. Do calcanhar à cabeça, o corpo forma uma linha reta: sem quadril caído nem bumbum para cima.'],
+                ['Se ainda não consegue nenhuma', 'Comece com as mãos apoiadas numa mesa ou banco. Quanto mais alto o apoio, mais fácil. Vá baixando a altura a cada semana até chegar ao chão. Flexão com joelhos apoiados também vale.'],
+                ['Respiração', 'Inspire na descida e solte o ar ao empurrar o chão. Prender o ar acelera o cansaço.'],
+                ['Erros comuns', 'Descer só até a metade, abrir demais os cotovelos (sobrecarrega o ombro) e deixar a cabeça cair à frente.']
+            ],
+            barra: [
+                ['Pegada', 'Pegada pronada (palmas para a frente), um pouco mais aberta que os ombros. A pegada supinada (palmas para você) é um pouco mais fácil e conta como variação.'],
+                ['Se ainda não consegue nenhuma', 'Faça negativas: suba com a ajuda de uma cadeira e desça o mais devagar que conseguir (3 a 5 segundos). Elástico preso na barra também ajuda.'],
+                ['Ative as costas', 'Antes de puxar, "abaixe" os ombros, afastando-os das orelhas. Pense em levar os cotovelos ao bolso.'],
+                ['Erros comuns', 'Balançar o corpo para ganhar impulso, não estender os braços embaixo e esticar o pescoço para alcançar a barra.']
+            ],
+            agach: [
+                ['Postura', 'Pés na largura dos ombros, pontas levemente para fora. Leve o quadril para trás como quem vai sentar numa cadeira, peito aberto.'],
+                ['Profundidade', 'Desça até a coxa ficar paralela ao chão, ou o mais fundo que conseguir mantendo os calcanhares no chão e a coluna neutra.'],
+                ['Joelhos', 'Os joelhos acompanham a direção das pontas dos pés. Se eles se fecham para dentro na subida, diminua a amplitude e fortaleça o glúteo.'],
+                ['Ritmo', 'Com muitas repetições, mantenha um ritmo constante: cerca de 2 segundos por repetição. Acelerar demais faz a técnica ser a primeira a desaparecer.']
+            ],
+            abdom: [
+                ['Crunch bem feito', 'Joelhos dobrados, pés no chão. Tire só as escápulas do chão, sem subir até sentar. A lombar fica apoiada o tempo todo.'],
+                ['Pescoço', 'As mãos só encostam na cabeça, sem puxar. Imagine uma laranja entre o queixo e o peito.'],
+                ['Respiração', 'Solte o ar ao subir e contraia o abdômen como se fosse fechar uma calça apertada.'],
+                ['Varie', 'Nos dias de descanso, prancha e elevação de pernas fortalecem o core por outros ângulos e ajudam a progredir.']
+            ],
+            corrida: [
+                ['Ritmo de conversa', 'Corra num ritmo em que ainda dá para falar frases curtas. Se não dá, desacelere. A meta é tempo, não velocidade.'],
+                ['Passada', 'Passos curtos e rápidos, pé tocando o chão embaixo do corpo. Passadas longas freiam a corrida e sobrecarregam os joelhos.'],
+                ['Repetir semana', 'Se uma semana ficou pesada demais, repita-a. Progredir mais devagar é melhor que se machucar.'],
+                ['Tênis e piso', 'Use um tênis confortável e com amortecimento. Prefira pisos regulares: pista, parque ou esteira.']
+            ],
+            along: [
+                ['Sem dor', 'Alongue até sentir tensão, nunca dor. Se arder ou fisgar, recue um pouco.'],
+                ['Sem embalo', 'Mantenha a posição parada. Balançar para ir mais longe ativa o reflexo de proteção do músculo.'],
+                ['Respire', 'Expire devagar ao entrar na posição. A cada expiração, o corpo costuma ceder um pouco mais.'],
+                ['Constância', 'Cinco a dez minutos quase todo dia rendem mais que uma sessão longa por semana.']
+            ]
+        };
+
+        /* ─── ESTADO ─── */
+        const KEY = 'progride.v1';
+        let st = load();
+        function load() {
+            try { return JSON.parse(localStorage.getItem(KEY)) || { p: {}, log: [] } } catch (e) { return { p: {}, log: [] } }
+        }
+        function save() { try { localStorage.setItem(KEY, JSON.stringify(st)) } catch (e) { } }
+        const ps = id => st.p[id] || (st.p[id] = { on: false, tests: [], done: {}, start: 0 });
+        const lastTest = id => { const t = ps(id).tests; return t.length ? t[t.length - 1].v : 0 };
+        const bestTest = id => ps(id).tests.reduce((a, t) => Math.max(a, t.v), 0);
+        const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const today = () => iso(new Date());
+
+        /* ─── PLANOS ─── */
+        function plan(p) {
+            if (p.kind === 'reps') return repPlan(lastTest(p.id));
+            if (p.kind === 'run') return runPlan();
+            return flexPlan();
+        }
+
+        function repPlan(M) {
+            const r = x => Math.max(1, Math.round(x)), weeks = [];
+            for (let w = 0; w < 6; w++) {
+                const days = [];
+                for (let d = 0; d < 3; d++) {
+                    const b = r(M * (.45 + (w * 3 + d) * .04));
+                    const sets = [b, r(b * 1.15), r(b * .9), b, r(b * 1.25)];
+                    days.push({ sets, rest: d === 2 ? 90 : 60, total: sets.reduce((a, c) => a + c, 0) });
+                }
+                weeks.push(days);
+            }
+            return weeks;
+        }
+
+        function runPlan() {
+            return RUN.map(([run, walk, reps]) => [0, 1, 2].map(d => {
+                const items = [{ n: 'Aquecimento', c: 'Caminhada em ritmo animado.', t: 'walk', s: 300 }];
+                if (!walk) items.push({ n: 'Correr', c: 'Ritmo de conversa, sem parar.', t: 'run', s: RUN_FINAL[d] * 60 });
+                else for (let i = 0; i < reps; i++) {
+                    items.push({ n: 'Correr', c: `Bloco ${i + 1} de ${reps}. Ritmo de conversa.`, t: 'run', s: run * 60 });
+                    if (i < reps - 1) items.push({ n: 'Caminhar', c: 'Recupere o fôlego sem parar de andar.', t: 'walk', s: walk * 60 });
+                }
+                items.push({ n: 'Desaquecimento', c: 'Caminhada leve.', t: 'walk', s: 300 });
+                const runMin = walk ? run * reps : RUN_FINAL[d];
+                return { items, total: Math.round(items.reduce((a, i) => a + i.s, 0) / 60), label: walk ? `${run}′ corre · ${walk}′ anda × ${reps}` : `${runMin}′ sem parar`, runMin };
+            }));
+        }
+
+        function flexPlan() {
+            const weeks = [];
+            for (let w = 0; w < 4; w++) {
+                const hold = 20 + w * 5;
+                weeks.push(FLEX.map(r => {
+                    const items = [];
+                    r.items.forEach(x => {
+                        if (x.s) ['direito', 'esquerdo'].forEach(l => items.push({ n: x.n, c: `Lado ${l}. ${x.c}`, t: 'hold', s: hold }));
+                        else items.push({ n: x.n, c: x.c, t: 'hold', s: hold });
+                    });
+                    return { items, total: Math.round(items.reduce((a, i) => a + i.s, 0) / 60), label: r.n };
+                }));
+            }
+            return weeks;
+        }
+
+        function nextDay(p) {
+            const s = ps(p.id);
+            if (!s.on) return null;
+            const weeks = plan(p);
+            for (let w = s.start; w < weeks.length; w++)
+                for (let d = 0; d < 3; d++) if (!s.done[`${w}-${d}`]) return { w, d };
+            return null;
+        }
+
+        function cycleInfo(p) {
+            const s = ps(p.id), weeks = plan(p), total = (weeks.length - s.start) * 3;
+            const done = Object.keys(s.done).filter(k => +k.split('-')[0] >= s.start).length;
+            return { done, total, pct: total ? done / total : 0 };
+        }
+
+        function level(p) {
+            if (p.kind === 'run') return ps(p.id).on ? `Começou na semana ${ps(p.id).start + 1}` : '';
+            if (p.kind === 'flex') return '';
+            const m = lastTest(p.id) / p.goal;
+            return m < .1 ? 'Iniciante' : m < .25 ? 'Intermediário' : m < .5 ? 'Avançado' : 'Elite';
+        }
+
+        function progressPct(p) {
+            if (p.kind === 'reps') return Math.min(1, bestTest(p.id) / p.goal);
+            return cycleInfo(p).pct;
+        }
+
+        function streak() {
+            const days = new Set(st.log.map(l => l.d));
+            const d = new Date();
+            if (!days.has(iso(d))) d.setDate(d.getDate() - 1);
+            let n = 0;
+            while (days.has(iso(d))) { n++; d.setDate(d.getDate() - 1) }
+            return n;
+        }
+
+        /* ─── NAVEGAÇÃO ─── */
+        let cur = 'home', stack = [], view = { prog: null, tipsFilter: 'flexoes', progsFilter: 'all' };
+        const R = { home: rHome, progs: rProgs, prog: rProg, sess: rSess, stats: rStats, tips: rTips };
+        const TABS = ['home', 'progs', 'stats', 'tips'];
+
+        function go(id, push = true) {
+            if (cur === 'sess' && id !== 'sess') stopTimer();
+            if (push && cur !== id && cur !== 'sess') stack.push(cur);
+            while (stack.length && stack[stack.length - 1] === id) stack.pop();
+            if (TABS.includes(id)) stack = [];
+            cur = id;
+            R[id]();
+            document.querySelectorAll('.scr').forEach(s => s.classList.toggle('on', s.id === 's-' + id));
+            document.querySelectorAll('.nb[data-go]').forEach(b => b.classList.toggle('on', b.dataset.go === id));
+            $('#nav').classList.toggle('hide', id === 'sess');
+            $('#s-' + id).scrollTop = 0;
+        }
+        function back() { go(stack.pop() || 'home', false) }
+
+        const $ = s => document.querySelector(s);
+        let toastT;
+        function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2200) }
+
+        function openProg(id) { view.prog = id; view.retest = false; go('prog') }
+
+        /* ─── TELAS ─── */
+        function hdr(title, sub) {
+            return `<div class="hdr-sub"><button class="back" onclick="back()">${ic('back')}</button><h1>${title}</h1>${sub || ''}</div>`;
+        }
+
+        function pcard(p) {
+            const s = ps(p.id), pct = Math.round(progressPct(p) * 100);
+            const meta = !s.on ? (p.kind === 'reps' ? `Meta: ${p.goal} ${p.unit}` : p.kind === 'run' ? '8 semanas' : '4 semanas')
+                : p.kind === 'reps' ? `Recorde ${bestTest(p.id)} / ${p.goal}` : `${pct}% do plano`;
+            return `<button class="pcard" onclick="openProg('${p.id}')"><div class="tile ${p.col}">${ic(p.id)}</div><b>${p.name}</b><span>${meta}</span>${s.on ? `<div class="bar"><i style="width:${pct}%"></i></div>` : ''}</button>`;
+        }
+
+        function suggestion() {
+            const active = PR.filter(p => ps(p.id).on && nextDay(p));
+            if (!active.length) return null;
+            const lastP = st.log.length ? st.log[st.log.length - 1].p : null;
+            const notToday = active.filter(p => !st.log.some(l => l.p === p.id && l.d === today()));
+            const pool = notToday.length ? notToday : active;
+            return pool.find(p => p.id !== lastP) || pool[0];
+        }
+
+        function rHome() {
+            const sug = suggestion(), mine = PR.filter(p => ps(p.id).on), rest = PR.filter(p => !ps(p.id).on);
+            const reps = st.log.filter(l => l.unit !== 'min').reduce((a, l) => a + l.total, 0);
+            const mins = st.log.filter(l => l.unit === 'min').reduce((a, l) => a + l.total, 0);
+            const h = new Date().getHours(), hi = h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
+            let hero;
+            if (sug) {
+                const n = nextDay(sug), day = plan(sug)[n.w][n.d];
+                const what = sug.kind === 'reps' ? `${day.sets.length} séries · ${day.total} ${sug.unit}` : `${day.label} · ${day.total} min`;
+                hero = `<div class="hero"><div class="hico">${ic(sug.id)}</div><div class="k">Próximo treino</div><h2>${sug.name}</h2><p>Semana ${n.w + 1} · Dia ${n.d + 1}<br>${what}</p><button class="btn bw" onclick="startSess('${sug.id}',${n.w},${n.d})">${ic('play')} Começar</button></div>`;
+            } else {
+                hero = `<div class="hero"><div class="hico">${ic('target')}</div><div class="k">Bem-vindo</div><h2>Escolha um desafio</h2><p>Faça um teste rápido e receba um plano feito para o seu nível.</p><button class="btn bw" onclick="go('progs')">Ver desafios ${ic('chev')}</button></div>`;
+            }
+            $('#s-home').innerHTML = `
+                <div class="phdr"><div><h1>${hi}!</h1><p>${new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}</p></div><span class="badge">${ic('flame')} ${streak()} dia${streak() === 1 ? '' : 's'}</span></div>
+                ${hero}
+                <div class="stats">
+                    <div class="stat"><b>${st.log.length}</b><span>treinos</span></div>
+                    <div class="stat"><b>${reps}</b><span>repetições</span></div>
+                    <div class="stat"><b>${mins}</b><span>minutos</span></div>
+                </div>
+                ${mine.length ? `<div class="slabel">Seus desafios<small>${mine.length} ativo${mine.length > 1 ? 's' : ''}</small></div><div class="pgrid">${mine.map(pcard).join('')}</div>` : ''}
+                ${rest.length ? `<div class="slabel">${mine.length ? 'Explorar' : 'Desafios'}</div><div class="pgrid">${rest.map(pcard).join('')}</div>` : ''}`;
+        }
+
+        function rProgs() {
+            const f = view.progsFilter;
+            const groups = [['all', 'Todos'], ['reps', 'Força'], ['run', 'Corrida'], ['flex', 'Mobilidade']];
+            const list = PR.filter(p => f === 'all' || p.kind === f);
+            $('#s-progs').innerHTML = `
+                <div class="phdr"><div><h1>Desafios</h1><p>Planos progressivos para treinar em casa</p></div></div>
+                <div class="filter-row">${groups.map(([k, l]) => `<button class="fc ${k === f ? 'on' : ''}" onclick="view.progsFilter='${k}';rProgs()">${l}</button>`).join('')}</div>
+                <div class="list">${list.map(p => {
+                const s = ps(p.id), n = nextDay(p);
+                const tag = !s.on ? '<span class="chip">Novo</span>' : n ? `<span class="chip acc">S${n.w + 1} · D${n.d + 1}</span>` : '<span class="chip ok">Concluído</span>';
+                return `<div class="lrow" onclick="openProg('${p.id}')"><div class="tile ${p.col}">${ic(p.id)}</div><div class="lbody"><div class="lname">${p.name} ${tag}</div><div class="lmeta">${p.desc}</div></div><div class="lend">${ic('chev')}</div></div>`;
+            }).join('')}</div>`;
+        }
+
+        let testVal = 10, runOpt = null;
+
+        function rProg() {
+            const p = byId(view.prog), s = ps(p.id), lv = level(p);
+            let body = '';
+            if (!s.on || view.retest) {
+                if (p.kind === 'reps') {
+                    testVal = lastTest(p.id) || 10;
+                    body = `<div class="slabel">${s.on ? 'Novo teste' : 'Teste inicial'}</div>
+                    <div class="card"><h3>Quantas ${p.unit} você faz seguidas?</h3><p>${p.test}</p>
+                        <div class="num-in"><button onclick="adjTest(-1)">−</button><input id="tv" type="number" min="0" max="999" value="${testVal}" oninput="testVal=Math.max(0,+this.value||0)"><button onclick="adjTest(1)">+</button></div>
+                    </div>
+                    <div class="br"><button class="btn bp" onclick="saveTest()">${ic('check')} Gerar meu plano</button></div>
+                    ${s.on ? `<div class="br"><button class="btn bt" onclick="view.retest=false;rProg()">Cancelar</button></div>` : ''}`;
+                } else if (p.kind === 'run') {
+                    runOpt = null;
+                    body = `<div class="slabel">${s.on ? 'Recomeçar' : 'Ponto de partida'}</div>
+                    <div class="card"><h3>${p.test}</h3><div class="opts">${RUN_LEVELS.map((o, i) => `<button class="opt" onclick="pickRun(${i},this)">${o.l}</button>`).join('')}</div></div>
+                    <div class="br"><button class="btn bp" onclick="saveRun()">${ic('check')} Montar meu plano</button></div>`;
+                } else {
+                    body = `<div class="card"><h3>Como funciona</h3><p>Três rotinas que se alternam: Despertar, Pós-treino e Antes de dormir. Cada posição começa com 20 segundos e ganha 5 segundos por semana.</p></div>
+                    <div class="br"><button class="btn bp" onclick="saveFlex()">${ic('play')} Começar</button></div>`;
+                }
+            } else {
+                const weeks = plan(p), n = nextDay(p), ci = cycleInfo(p);
+                body = `<div class="hero" style="margin-top:2px"><div class="hico">${ic(p.id)}</div><div class="k">${n ? 'Próximo' : 'Plano concluído'}</div>
+                    <h2>${n ? `Semana ${n.w + 1} · Dia ${n.d + 1}` : p.kind === 'reps' ? 'Hora do teste final' : 'Parabéns!'}</h2>
+                    <p>${n ? `${ci.done} de ${ci.total} treinos feitos` : p.kind === 'reps' ? `Tente fazer ${p.goal} ${p.unit} seguidas, ou faça um novo teste para outro ciclo.` : 'Você terminou o plano. Recomece ou mantenha a rotina.'}</p>
+                    <div class="bar"><i style="width:${Math.round(ci.pct * 100)}%"></i></div>
+                    ${n ? `<button class="btn bw" onclick="startSess('${p.id}',${n.w},${n.d})">${ic('play')} Treinar agora</button>` : `<button class="btn bw" onclick="view.retest=true;rProg()">${ic('refresh')} ${p.kind === 'reps' ? 'Registrar teste' : 'Recomeçar'}</button>`}
+                </div>
+                <div class="slabel">Plano<small>${weeks.length - s.start} semanas · 3 dias</small></div>
+                ${weeks.map((days, w) => `<div class="week" style="${w < s.start ? 'opacity:.5' : ''}">
+                    <div class="week-h"><b>Semana ${w + 1}</b><span>${w < s.start ? 'pulada' : p.kind === 'run' ? days[0].label : p.kind === 'reps' ? `descanso ${days[0].rest}–${days[2].rest}s` : `${20 + w * 5}s por posição`}</span></div>
+                    <div class="days">${days.map((day, d) => {
+                    const k = `${w}-${d}`, done = s.done[k], isN = n && n.w === w && n.d === d;
+                    const sm = p.kind === 'reps' ? `${day.total}` : p.kind === 'run' ? `${day.total} min` : day.label;
+                    return `<button class="day ${done ? 'done' : ''} ${isN ? 'next' : ''} ${w < s.start ? 'off' : ''}" onclick="previewSess('${p.id}',${w},${d})">${done ? ic('check') : ''}Dia ${d + 1}<small>${sm}</small></button>`;
+                }).join('')}</div></div>`).join('')}
+                <div class="br" style="margin-top:6px"><button class="btn bo" onclick="view.retest=true;rProg()">${ic('refresh')} ${p.kind === 'reps' ? 'Novo teste' : 'Recomeçar plano'}</button></div>`;
+            }
+            $('#s-prog').innerHTML = hdr(p.name, lv ? `<span class="badge">${lv}</span>` : '') +
+                `<div class="card" style="display:flex;gap:12px;align-items:center"><div class="tile ${p.col}">${ic(p.id)}</div><p style="flex:1">${p.desc}</p></div>` + body;
+        }
+
+        function adjTest(d) { testVal = Math.max(0, testVal + d); $('#tv').value = testVal }
+        function saveTest() {
+            const p = byId(view.prog), s = ps(p.id);
+            if (testVal < 1) { toast('Registre pelo menos 1 repetição'); return }
+            s.tests.push({ d: today(), v: testVal }); s.on = true; s.done = {}; s.start = 0; view.retest = false;
+            save(); rProg(); toast(testVal >= p.goal ? `Meta de ${p.goal} batida!` : 'Plano gerado para o seu nível');
+        }
+        function pickRun(i, el) { runOpt = i; document.querySelectorAll('.opt').forEach(o => o.classList.toggle('on', o === el)) }
+        function saveRun() {
+            if (runOpt === null) { toast('Escolha uma opção'); return }
+            const s = ps('corrida'); s.on = true; s.start = RUN_LEVELS[runOpt].w; s.done = {}; view.retest = false;
+            save(); rProg(); toast(`Você começa na semana ${s.start + 1}`);
+        }
+        function saveFlex() { const s = ps('along'); s.on = true; s.start = 0; s.done = {}; view.retest = false; save(); rProg() }
+
+        /* ─── SESSÃO ─── */
+        let ses = null, tmr = null;
+
+        function previewSess(pid, w, d) {
+            if (w < ps(pid).start) { toast('Semana pulada pelo seu nível'); return }
+            ses = { pid, w, d, phase: 'preview' }; go('sess');
+        }
+        function startSess(pid, w, d) {
+            const p = byId(pid), day = plan(p)[w][d];
+            ses = { pid, w, d, phase: p.kind === 'reps' ? 'work' : 'timed', idx: 0, results: [], left: 0, end: 0, run: false };
+            if (p.kind === 'reps') ses.val = day.sets[0];
+            else { ses.left = day.items[0].s; }
+            if (cur === 'sess') rSess(); else go('sess');
+            if (p.kind !== 'reps') play();
+        }
+
+        function rSess() {
+            const p = byId(ses.pid), day = plan(p)[ses.w][ses.d], el = $('#s-sess');
+            const title = `Semana ${ses.w + 1} · Dia ${ses.d + 1}`;
+            if (ses.phase === 'preview') {
+                const rows = p.kind === 'reps'
+                    ? day.sets.map((n, i) => `<div class="lrow" style="cursor:default"><div class="tile t-acc" style="font-family:var(--mono);font-weight:500">${i + 1}</div><div class="lbody"><div class="lname">${i === day.sets.length - 1 ? `Máximo (mín. ${n})` : `${n} ${p.unit}`}</div><div class="lmeta">${i < day.sets.length - 1 ? `descanso ${day.rest}s` : 'vá até onde aguentar'}</div></div></div>`).join('')
+                    : day.items.map(it => `<div class="lrow" style="cursor:default"><div class="tile ${it.t === 'run' ? 't-gr' : it.t === 'walk' ? 't-bl' : 't-pk'}">${ic(it.t === 'hold' ? 'along' : it.t === 'run' ? 'corrida' : 'clock')}</div><div class="lbody"><div class="lname">${it.n}</div><div class="lmeta">${it.c}</div></div><div class="lend" style="font-family:var(--mono)">${fmt(it.s)}</div></div>`).join('');
+                const done = ps(p.id).done[`${ses.w}-${ses.d}`];
+                el.innerHTML = hdr(title, done ? '<span class="chip ok">Feito</span>' : '') +
+                    `<div class="card"><h3>${p.name}</h3><p>${p.kind === 'reps' ? `${day.sets.length} séries · ${day.total} ${p.unit} no total` : `${day.label} · ${day.total} min`}</p></div>
+                    <div class="list">${rows}</div>
+                    <div class="br"><button class="btn bp" onclick="startSess('${p.id}',${ses.w},${ses.d})">${ic('play')} ${done ? 'Treinar de novo' : 'Começar'}</button></div>`;
+                return;
+            }
+            if (ses.phase === 'end') {
+                const tot = p.kind === 'reps' ? ses.results.reduce((a, c) => a + c, 0) : day.total;
+                el.innerHTML = `<div class="done-ic">${ic('check')}</div>
+                    <div class="center"><h2>Treino concluído!</h2><p>${p.name} · ${title}<br><b style="color:var(--ink);font-size:20px;font-family:var(--mono)">${tot}</b> ${p.kind === 'reps' ? p.unit : 'minutos'}</p></div>
+                    ${p.kind === 'reps' ? `<div class="steps">${ses.results.map(r => `<span class="step ok">${r}</span>`).join('')}</div>` : ''}
+                    <div class="note">Descanse pelo menos um dia antes do próximo treino deste desafio. Se as últimas séries ficaram muito difíceis, repita este dia.</div>
+                    <div class="br"><button class="btn bp" onclick="go('home')">Voltar ao início</button></div>
+                    <div class="br"><button class="btn bt" onclick="go('prog')">Ver plano</button></div>`;
+                return;
+            }
+            const R2 = 96, C = 2 * Math.PI * R2;
+            const ring = (label, cls, big, sub) => `<div class="ring"><svg viewBox="0 0 210 210"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6c3ce0"/><stop offset="1" stop-color="#c13cb4"/></linearGradient></defs><circle cx="105" cy="105" r="${R2}" fill="none" stroke="#efe9fd" stroke-width="12"/><circle id="arc" cx="105" cy="105" r="${R2}" fill="none" stroke="url(#g)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="0"/></svg><div class="c"><em class="${cls}">${label}</em><b id="big">${big}</b><span>${sub}</span></div></div>`;
+            const quit = `<div class="br"><button class="btn bt" onclick="quitSess()">Encerrar treino</button></div>`;
+
+            if (p.kind === 'reps') {
+                const last = ses.idx === day.sets.length - 1;
+                const steps = `<div class="steps">${day.sets.map((n, i) => `<span class="step ${i < ses.idx ? 'ok' : i === ses.idx ? 'on' : ''}">${i < ses.idx ? ses.results[i] : (i === day.sets.length - 1 ? n + '+' : n)}</span>`).join('')}</div>`;
+                if (ses.phase === 'rest') {
+                    el.innerHTML = hdr(title) + ring('Descanso', 'rest', fmt(ses.left), `próxima: ${day.sets[ses.idx]}${ses.idx === day.sets.length - 1 ? '+' : ''} ${p.unit}`) + steps +
+                        `<div class="cue"><b>Respire fundo</b>Solte os braços e as pernas e beba um gole de água.</div>
+                        <div class="br"><button class="btn bo" onclick="addRest(15)">+15s</button><button class="btn bp" onclick="endRest()">${ic('skip')} Pular</button></div>` + quit;
+                } else {
+                    el.innerHTML = hdr(title) + ring(`Série ${ses.idx + 1} de ${day.sets.length}`, '', ses.val, last ? `máximo · mín. ${day.sets[ses.idx]}` : p.unit) +
+                        `<div class="adj"><button onclick="adjVal(-1)">−</button><button onclick="adjVal(1)">+</button></div>` + steps +
+                        `<div class="cue"><b>${last ? 'Vá até o limite!' : 'Ajuste se fez mais ou menos'}</b>${p.cue}</div>
+                        <div class="br"><button class="btn bp" onclick="doneSet()">${ic('check')} Série concluída</button></div>` + quit;
+                }
+                return;
+            }
+            const it = day.items[ses.idx];
+            const cls = it.t === 'run' ? 'run' : it.t === 'walk' ? 'walk' : '';
+            const nx = day.items[ses.idx + 1];
+            el.innerHTML = hdr(title) + ring(`${ses.idx + 1} de ${day.items.length}`, cls, fmt(ses.left), it.n) +
+                `<div class="cue"><b>${it.n}</b>${it.c}</div>
+                <div class="card" style="display:flex;align-items:center;gap:12px;padding:12px 16px"><div class="lbody"><div class="lmeta">A seguir</div><div class="lname">${nx ? nx.n : 'Fim do treino'}</div></div><div class="lend" style="font-family:var(--mono)">${nx ? fmt(nx.s) : ''}</div></div>
+                <div class="br"><button class="btn bo" id="pp" onclick="ses.run?pause():play()">${ses.run ? ic('pause') + ' Pausar' : ic('play') + ' Continuar'}</button><button class="btn bp" onclick="nextItem()">${ic('skip')} Próximo</button></div>` + quit;
+            arc();
+        }
+
+        const fmt = s => { const t = Math.max(0, Math.ceil(s)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}` };
+
+        function adjVal(d) { ses.val = Math.max(0, ses.val + d); $('#big').textContent = ses.val }
+        function doneSet() {
+            const day = plan(byId(ses.pid))[ses.w][ses.d];
+            ses.results.push(ses.val); ses.idx++;
+            if (ses.idx >= day.sets.length) return finish();
+            ses.phase = 'rest'; ses.val = day.sets[ses.idx]; ses.left = day.rest; ses.dur = day.rest;
+            rSess(); play();
+        }
+        function addRest(s) { ses.left += s; ses.dur += s; if (ses.run) ses.end += s * 1000; tick() }
+        function endRest() { stopTimer(); ses.phase = 'work'; beep(660); rSess() }
+
+        function play() {
+            ses.run = true; ses.end = Date.now() + ses.left * 1000;
+            if (ses.dur == null || ses.phase === 'timed') ses.dur = ses.phase === 'timed' ? plan(byId(ses.pid))[ses.w][ses.d].items[ses.idx].s : ses.dur;
+            clearInterval(tmr); tmr = setInterval(tick, 250);
+            const pp = $('#pp'); if (pp) pp.innerHTML = ic('pause') + ' Pausar';
+        }
+        function pause() {
+            ses.run = false; clearInterval(tmr); ses.left = Math.max(0, (ses.end - Date.now()) / 1000);
+            const pp = $('#pp'); if (pp) pp.innerHTML = ic('play') + ' Continuar';
+        }
+        function stopTimer() { clearInterval(tmr); tmr = null; if (ses) ses.run = false }
+
+        function tick() {
+            if (!ses) return;
+            if (ses.run) ses.left = Math.max(0, (ses.end - Date.now()) / 1000);
+            const big = $('#big');
+            if (big) big.textContent = fmt(ses.left);
+            arc();
+            if (ses.run && ses.left <= 0) {
+                if (ses.phase === 'rest') endRest();
+                else { beep(880); nextItem() }
+            }
+        }
+        function arc() {
+            const a = $('#arc'); if (!a || !ses.dur) return;
+            const C = 2 * Math.PI * 96; a.setAttribute('stroke-dashoffset', C * (1 - ses.left / ses.dur));
+        }
+        function nextItem() {
+            const day = plan(byId(ses.pid))[ses.w][ses.d];
+            stopTimer(); ses.idx++;
+            if (ses.idx >= day.items.length) return finish();
+            ses.left = ses.dur = day.items[ses.idx].s;
+            rSess(); play();
+        }
+
+        function finish() {
+            stopTimer();
+            const p = byId(ses.pid), s = ps(p.id), day = plan(p)[ses.w][ses.d];
+            const total = p.kind === 'reps' ? ses.results.reduce((a, c) => a + c, 0) : day.total;
+            s.done[`${ses.w}-${ses.d}`] = today();
+            st.log.push({ p: p.id, d: today(), w: ses.w, day: ses.d, total, unit: p.kind === 'reps' ? 'reps' : 'min' });
+            save(); ses.phase = 'end'; beep(990, 300); rSess();
+        }
+        function quitSess() { if (confirm('Encerrar sem salvar este treino?')) { stopTimer(); ses = null; back() } }
+
+        let ac;
+        function beep(f = 880, ms = 160) {
+            try {
+                ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+                const o = ac.createOscillator(), g = ac.createGain();
+                o.frequency.value = f; o.connect(g); g.connect(ac.destination);
+                g.gain.setValueAtTime(.15, ac.currentTime); g.gain.exponentialRampToValueAtTime(.001, ac.currentTime + ms / 1000);
+                o.start(); o.stop(ac.currentTime + ms / 1000);
+            } catch (e) { }
+            try { navigator.vibrate && navigator.vibrate(120) } catch (e) { }
+        }
+
+        /* ─── PROGRESSO ─── */
+        function rStats() {
+            const mine = PR.filter(p => ps(p.id).on);
+            const log = st.log.slice(-30).reverse();
+            $('#s-stats').innerHTML = `
+                <div class="phdr"><div><h1>Progresso</h1><p>Recordes, planos e histórico</p></div></div>
+                ${mine.length ? mine.map(p => {
+                const ci = cycleInfo(p), s = ps(p.id);
+                const head = p.kind === 'reps' ? `Recorde <b style="font-family:var(--mono)">${bestTest(p.id)}</b> de ${p.goal}` : `${ci.done} de ${ci.total} treinos`;
+                const tests = p.kind === 'reps' && s.tests.length > 1 ? `<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${s.tests.map(t => `<span class="chip">${t.d.slice(8, 10)}/${t.d.slice(5, 7)} · ${t.v}</span>`).join('')}</div>` : '';
+                return `<div class="card" onclick="openProg('${p.id}')" style="cursor:pointer"><div style="display:flex;align-items:center;gap:12px"><div class="tile ${p.col}">${ic(p.id)}</div><div class="lbody"><div class="lname">${p.name}</div><div class="lmeta">${head}</div></div><span class="chip acc">${Math.round(progressPct(p) * 100)}%</span></div><div class="bar"><i style="width:${Math.round(progressPct(p) * 100)}%"></i></div>${tests}</div>`;
+            }).join('') : `<div class="empty"><div class="tile">${ic('target')}</div><b>Nada por aqui ainda</b>Comece um desafio para acompanhar sua evolução.</div><div class="br"><button class="btn bp" onclick="go('progs')">Ver desafios</button></div>`}
+                ${log.length ? `<div class="slabel">Histórico<small>últimos ${log.length}</small></div><div class="list">${log.map(l => {
+                const p = byId(l.p);
+                return `<div class="lrow" style="cursor:default"><div class="tile ${p.col}">${ic(p.id)}</div><div class="lbody"><div class="lname">${p.short}</div><div class="lmeta">Semana ${l.w + 1} · Dia ${l.day + 1} · ${l.d.slice(8, 10)}/${l.d.slice(5, 7)}</div></div><div class="lend" style="font-family:var(--mono);color:var(--ink)">${l.total} ${l.unit === 'min' ? 'min' : ''}</div></div>`;
+            }).join('')}</div>` : ''}`;
+        }
+
+        /* ─── DICAS ─── */
+        function rTips() {
+            const f = view.tipsFilter, p = byId(f);
+            $('#s-tips').innerHTML = `
+                <div class="phdr"><div><h1>Dicas</h1><p>Técnica, respiração e erros comuns</p></div></div>
+                <div class="filter-row">${PR.map(x => `<button class="fc ${x.id === f ? 'on' : ''}" onclick="view.tipsFilter='${x.id}';rTips()">${x.short}</button>`).join('')}</div>
+                ${TIPS[f].map((t, i) => `<div class="card tip ${i === 0 ? 'open' : ''}" onclick="this.classList.toggle('open')"><div class="th"><div class="tile ${p.col}" style="width:34px;height:34px;border-radius:12px">${ic(i === 0 ? p.id : 'target')}</div><b>${t[0]}</b>${ic('down')}</div><div class="tb">${t[1]}</div></div>`).join('')}
+                <div class="note">Os planos são uma referência geral. Se tiver dor, lesão ou alguma condição de saúde, converse com um profissional antes de começar. Dor aguda é sinal para parar.</div>`;
+        }
+
+        /* ─── INIT ─── */
+        document.querySelectorAll('.nb[data-go]').forEach(b => b.onclick = () => go(b.dataset.go));
+        $('#fab').onclick = () => {
+            const s = suggestion();
+            if (!s) { toast('Comece um desafio primeiro'); go('progs'); return }
+            const n = nextDay(s); previewSess(s.id, n.w, n.d);
+        };
+        const clk = () => $('#clock').textContent = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        clk(); setInterval(clk, 30000);
+        go('home', false);
+    </script>
+</body>
+
+</html>

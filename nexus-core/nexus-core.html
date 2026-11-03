@@ -1,0 +1,1060 @@
+<title>Davi Cezário Borges — Portfólio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --primary: #16324F;
+    --primary-light: #3E6E96;
+    --secondary: #4C616B;
+    --accent: #C1272D;
+    --accent-foreground: #ffffff;
+
+    --neutral-50: #F6F8F7;
+    --neutral-100: #EBF0F1;
+    --neutral-200: #DCE4E7;
+    --neutral-300: #C2CDD2;
+    --neutral-400: #93A4AC;
+    --neutral-500: #6B7E87;
+    --neutral-600: #4C616B;
+    --neutral-700: #33454E;
+    --neutral-800: #1D2C33;
+    --neutral-900: #0F1A1F;
+
+    --background: #F6F7F5;
+    --surface: #ffffff;
+    --foreground: #101820;
+    --border: #D2DBDD;
+    --destructive: #C1272D;
+
+    --font-heading: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+    --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    line-height: 1.6;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; }
+  input, textarea { font-family: inherit; font-size: 0.875rem; color: var(--foreground); background: var(--surface); }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+  @media (min-width: 1024px) { .container { padding: 0 32px; } }
+
+  /* ============================================================ */
+  /* SIGNATURE: registration marks (fixed print/blueprint frame)   */
+  /* ============================================================ */
+  .reg-marks { position: fixed; inset: 0; pointer-events: none; z-index: 80; }
+  .reg-mark { position: fixed; width: 18px; height: 18px; opacity: 0.4; }
+  .reg-mark::before, .reg-mark::after { content: ""; position: absolute; background: var(--neutral-400); }
+  .reg-mark::before { top: 50%; left: 0; width: 100%; height: 1px; transform: translateY(-50%); }
+  .reg-mark::after { left: 50%; top: 0; height: 100%; width: 1px; transform: translateX(-50%); }
+  .reg-mark--tl { top: 16px; left: 16px; }
+  .reg-mark--tr { top: 16px; right: 16px; }
+  .reg-mark--bl { bottom: 16px; left: 16px; }
+  .reg-mark--br { bottom: 16px; right: 16px; }
+  @media (max-width: 767px) { .reg-marks { display: none; } }
+
+  /* ============================================================ */
+  /* VIEW SWITCHING                                                */
+  /* ============================================================ */
+  .view { display: none; }
+  .view.is-active { display: block; }
+  .view.is-active--grid { display: grid; }
+
+  /* ============================================================ */
+  /* HOME (public site)                                            */
+  /* ============================================================ */
+  #homeView {
+    background-image:
+      linear-gradient(var(--neutral-200) 1px, transparent 1px),
+      linear-gradient(90deg, var(--neutral-200) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: -1px -1px;
+    background-attachment: fixed;
+  }
+
+  header.site {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(246, 247, 245, 0.88);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .site__bar { height: 68px; display: flex; align-items: center; justify-content: space-between; }
+
+  .site__name { font-family: var(--font-heading); font-weight: 700; font-size: 1.0625rem; letter-spacing: -0.01em; display: block; }
+  .site__tagline { display: block; font-family: var(--font-heading); font-size: 0.6875rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--neutral-500); margin-top: 2px; }
+
+  .site__nav { display: none; align-items: center; gap: 32px; }
+  @media (min-width: 768px) { .site__nav { display: flex; } }
+
+  .site__nav a {
+    color: var(--neutral-600); font-size: 0.8125rem; font-family: var(--font-heading);
+    text-transform: uppercase; letter-spacing: 0.06em; transition: color 200ms;
+    position: relative; padding-bottom: 2px;
+  }
+  .site__nav a::after { content: ""; position: absolute; left: 0; bottom: -2px; width: 0; height: 1.5px; background: var(--accent); transition: width 200ms; }
+  .site__nav a:hover { color: var(--foreground); }
+  .site__nav a:hover::after { width: 100%; }
+
+  .site__actions { display: none; align-items: center; gap: 20px; }
+  @media (min-width: 768px) { .site__actions { display: flex; } }
+
+  .icon-link {
+    color: var(--neutral-600);
+    display: flex;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: color 200ms;
+  }
+  .icon-link:hover { color: var(--primary); }
+  .icon-link:focus-visible { outline: 2px solid var(--primary-light); outline-offset: 3px; border-radius: 2px; }
+
+  .divider-v { width: 1px; height: 20px; background: var(--border); }
+
+  #adminEntry { flex-shrink: 0; }
+
+  .hero {
+    position: relative;
+    min-height: 88vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding: 80px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero__content { position: relative; max-width: 860px; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px; border-radius: 2px;
+    background: transparent; border: 1.5px solid var(--accent);
+    font-family: var(--font-heading); font-size: 0.75rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent);
+    margin-bottom: 32px; transform: rotate(-1.2deg);
+  }
+
+  .badge__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  @media (prefers-reduced-motion: reduce) { .badge__dot { animation: none; } }
+
+  h1.hero__title {
+    font-family: var(--font-heading); font-weight: 700;
+    font-size: clamp(2.25rem, 5.4vw, 3.75rem); line-height: 1.15; letter-spacing: -0.01em;
+    margin: 0 0 24px; text-wrap: balance;
+  }
+  .hero__title span { color: var(--primary-light); }
+
+  .hero__subtitle { font-size: 1.125rem; line-height: 1.7; color: var(--neutral-600); max-width: 620px; margin: 0 0 40px; }
+
+  .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 22px; border-radius: 3px;
+    font-family: var(--font-heading); font-weight: 600; font-size: 0.8125rem;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    border: 1.5px solid transparent; cursor: pointer;
+    transition: transform 150ms, box-shadow 150ms, background-color 150ms, border-color 150ms;
+  }
+  .btn:focus-visible { outline: 2px solid var(--primary-light); outline-offset: 3px; }
+
+  .btn--accent {
+    background: var(--primary); color: #fff; border-color: var(--primary);
+    box-shadow: 4px 4px 0 var(--neutral-300);
+  }
+  .btn--accent:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--neutral-300); }
+
+  .btn--outline { background: var(--surface); color: var(--foreground); border-color: var(--foreground); }
+  .btn--outline:hover { background: var(--neutral-100); }
+
+  .btn--ghost { background: transparent; color: var(--neutral-600); padding: 13px 8px; border: none; }
+  .btn--ghost:hover { color: var(--foreground); }
+
+  .stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+    margin-top: 64px; max-width: 640px; border-top: 1px solid var(--border);
+  }
+
+  .stats > div { padding: 20px 20px 0 0; border-left: 1px solid var(--border); padding-left: 20px; }
+  .stats > div:first-child { border-left: none; padding-left: 0; }
+
+  .stat__value {
+    font-family: var(--font-heading); font-size: 1.75rem; font-weight: 700;
+    color: var(--primary); font-variant-numeric: tabular-nums; margin-bottom: 6px;
+  }
+  .stat__label { font-family: var(--font-heading); color: var(--neutral-500); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  section.block { padding: 96px 0; border-bottom: 1px solid var(--border); }
+  @media (max-width: 767px) { section.block { padding: 64px 0; } }
+
+  .block--tinted { background: rgba(255,255,255,0.5); }
+
+  .eyebrow {
+    font-family: var(--font-heading); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 14px; display: flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::before { content: ""; width: 20px; height: 1.5px; background: var(--accent); display: inline-block; }
+
+  h2.block__title {
+    font-family: var(--font-heading); font-weight: 700;
+    font-size: clamp(1.75rem, 3.6vw, 2.5rem); letter-spacing: -0.01em; margin: 0 0 16px; text-wrap: balance;
+  }
+
+  .block__lede { color: var(--neutral-600); font-size: 1.0625rem; max-width: 620px; margin: 0 0 56px; }
+
+  .skills-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  @media (max-width: 1023px) { .skills-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .skills-grid { grid-template-columns: 1fr; } }
+
+  .skill-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 22px;
+    box-shadow: 3px 3px 0 var(--neutral-200);
+    transition: transform 180ms, box-shadow 180ms, border-color 180ms;
+  }
+  .skill-card:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--neutral-300); border-color: var(--primary); }
+
+  .skill-card__icon {
+    width: 40px; height: 40px; border-radius: 4px; background: transparent; border: 1.5px solid var(--primary);
+    display: flex; align-items: center; justify-content: center; color: var(--primary); margin-bottom: 16px;
+  }
+
+  .skill-card__title {
+    font-family: var(--font-heading); font-weight: 600; font-size: 0.8125rem; margin: 0 0 14px;
+    text-transform: uppercase; letter-spacing: 0.05em; color: var(--neutral-500);
+  }
+
+  .skill-card__list { list-style: none; margin: 0; padding: 0; }
+  .skill-card__list li { display: flex; align-items: center; gap: 10px; font-size: 0.9375rem; color: var(--foreground); font-weight: 500; padding: 5px 0; }
+  .skill-card__list li::before { content: ""; width: 5px; height: 5px; background: var(--accent); flex-shrink: 0; }
+
+  .projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+  @media (max-width: 767px) { .projects-grid { grid-template-columns: 1fr; } }
+
+  .project-card {
+    border: 1px solid var(--border); border-radius: 4px; overflow: hidden; background: var(--surface);
+    box-shadow: 4px 4px 0 var(--neutral-200);
+    transition: transform 180ms, box-shadow 180ms;
+  }
+  .project-card:hover { transform: translate(-3px, -3px); box-shadow: 7px 7px 0 var(--neutral-300); }
+
+  .project-card__media {
+    height: 180px; background: var(--primary);
+    background-image:
+      linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 20px 20px;
+    position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 16px;
+  }
+  .project-card__media--warm { background-color: var(--neutral-800); }
+
+  .project-card__fig {
+    font-family: var(--font-heading); font-size: 0.6875rem; color: rgba(255,255,255,0.55);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+
+  .project-card__tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .tag {
+    font-family: var(--font-heading); font-size: 0.6875rem; font-weight: 500; padding: 3px 9px; border-radius: 2px;
+    background: transparent; border: 1px solid rgba(255,255,255,0.35); color: #fff;
+  }
+
+  .project-card__body { padding: 24px; }
+  .project-card__title { font-family: var(--font-heading); font-weight: 700; font-size: 1.0625rem; margin: 0 0 10px; }
+  .project-card__desc { color: var(--neutral-600); font-size: 0.9375rem; margin: 0 0 18px; }
+  .project-card__links { display: flex; gap: 16px; }
+  .project-card__links a {
+    font-family: var(--font-heading); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--primary); display: inline-flex; align-items: center; gap: 6px;
+  }
+  .project-card__links a:hover { text-decoration: underline; }
+
+  footer.site { border-top: 1px solid var(--border); padding: 28px 0; }
+  .site__foot {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+    color: var(--neutral-500); font-size: 0.75rem; font-family: var(--font-heading); text-transform: uppercase; letter-spacing: 0.04em;
+  }
+
+  /* ============================================================ */
+  /* LOGIN                                                         */
+  /* ============================================================ */
+  .login-shell { min-height: 100vh; display: flex; flex-direction: column;
+    background-image:
+      linear-gradient(var(--neutral-200) 1px, transparent 1px),
+      linear-gradient(90deg, var(--neutral-200) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .login-topbar {
+    height: 68px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
+    background: rgba(246, 247, 245, 0.88); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0;
+  }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 0.8125rem; color: var(--neutral-600);
+    font-family: var(--font-heading); text-transform: uppercase; letter-spacing: 0.04em;
+    background: none; border: none; cursor: pointer; padding: 0;
+    transition: color 200ms;
+  }
+  .back-link:hover { color: var(--foreground); }
+
+  .login-main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; }
+
+  .login-card {
+    width: 100%; max-width: 400px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 40px 32px; box-shadow: 6px 6px 0 var(--neutral-300);
+  }
+
+  .login-icon {
+    width: 52px; height: 52px; border-radius: 4px; background: var(--primary); color: #fff;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;
+  }
+
+  h1.login-title { font-family: var(--font-heading); font-weight: 700; font-size: 1.375rem; text-align: center; margin: 0 0 4px; }
+  .login-sub { text-align: center; font-size: 0.875rem; color: var(--neutral-500); margin: 0 0 32px; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+  .field label { font-size: 0.8125rem; font-weight: 600; font-family: var(--font-heading); text-transform: uppercase; letter-spacing: 0.03em; color: var(--neutral-600); }
+  .field-input-wrap { position: relative; }
+
+  .field input {
+    width: 100%; padding: 12px 16px; border-radius: 4px; border: 1px solid var(--border);
+    outline: none; transition: border-color 150ms, box-shadow 150ms;
+  }
+  .field input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(22, 50, 79, 0.12); }
+  .field-input-wrap input { padding-right: 44px; }
+
+  .toggle-visibility {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: var(--neutral-400); cursor: pointer; display: flex; padding: 4px;
+  }
+  .toggle-visibility:hover { color: var(--neutral-600); }
+
+  .login-submit {
+    width: 100%; padding: 13px; border-radius: 4px; border: none; background: var(--primary); color: #fff;
+    font-weight: 700; font-size: 0.8125rem; cursor: pointer; font-family: var(--font-heading);
+    text-transform: uppercase; letter-spacing: 0.05em;
+    transition: opacity 200ms, transform 100ms; margin-top: 4px;
+  }
+  .login-submit:hover { opacity: 0.92; }
+  .login-submit:active { transform: scale(0.98); }
+  .login-submit:focus-visible { outline: 2px solid var(--primary-light); outline-offset: 2px; }
+
+  .login-footnote { text-align: center; font-size: 0.75rem; color: var(--neutral-400); margin-top: 24px; }
+
+  /* ============================================================ */
+  /* DASHBOARD                                                     */
+  /* ============================================================ */
+  #dashView { grid-template-columns: 260px 1fr; min-height: 100vh; }
+
+  .dash__sidebar { background: var(--neutral-900); color: var(--neutral-200); padding: 24px 16px; display: flex; flex-direction: column; gap: 4px; }
+
+  .dash__brand { font-family: var(--font-heading); font-weight: 700; font-size: 0.9375rem; letter-spacing: 0.02em; color: #fff; padding: 8px 12px 24px; }
+  .dash__brand span { color: var(--neutral-400); font-weight: 500; }
+
+  .dash__navitem {
+    display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 4px;
+    font-size: 0.8125rem; font-weight: 500; color: var(--neutral-400);
+    background: transparent; border: none; text-align: left; cursor: pointer; width: 100%;
+    transition: background-color 150ms, color 150ms;
+  }
+  .dash__navitem:hover { background: rgba(255,255,255,0.06); color: #fff; }
+  .dash__navitem.is-active-tab { background: var(--primary); color: #fff; }
+  .dash__navitem svg { flex-shrink: 0; }
+
+  .dash__sidebar-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); }
+
+  .dash__logout {
+    display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 4px;
+    font-size: 0.8125rem; font-weight: 500; color: var(--neutral-400);
+    background: transparent; border: none; width: 100%; text-align: left; cursor: pointer;
+    transition: background-color 150ms, color 150ms;
+  }
+  .dash__logout:hover { background: rgba(255,255,255,0.06); color: #fff; }
+
+  .dash__main { padding: 40px 44px; background: var(--background); overflow-y: auto; }
+  @media (max-width: 900px) { #dashView { grid-template-columns: 1fr; } .dash__sidebar { flex-direction: row; overflow-x: auto; } .dash__main { padding: 28px 20px; } }
+
+  .dash__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 32px; flex-wrap: wrap; }
+  .dash__title { font-family: var(--font-heading); font-weight: 700; font-size: 1.5rem; margin: 0 0 6px; }
+  .dash__subtitle { color: var(--neutral-500); font-size: 0.875rem; margin: 0; }
+
+  .save-btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 4px;
+    border: 1.5px solid var(--accent); background: var(--accent); color: #fff; font-weight: 600; font-size: 0.8125rem; cursor: pointer;
+    font-family: var(--font-heading); text-transform: uppercase; letter-spacing: 0.04em;
+    transition: transform 150ms, box-shadow 150ms;
+    box-shadow: 3px 3px 0 var(--neutral-300);
+  }
+  .save-btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--neutral-300); }
+
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 28px; max-width: 720px; }
+
+  .form-grid { display: grid; gap: 20px; }
+  .form-grid .field { margin-bottom: 0; }
+
+  textarea.f-input, input.f-input {
+    width: 100%; padding: 11px 14px; border-radius: 4px; border: 1px solid var(--border);
+    outline: none; transition: border-color 150ms, box-shadow 150ms; resize: vertical;
+  }
+  textarea.f-input:focus, input.f-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(22, 50, 79, 0.12); }
+
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .stat-input-pair { display: flex; flex-direction: column; gap: 8px; }
+  .stat-input-pair input { padding: 9px 12px; font-size: 0.8125rem; }
+
+  .switch-row { display: flex; align-items: center; gap: 12px; padding-top: 4px; }
+
+  .switch { position: relative; width: 44px; height: 24px; border-radius: 999px; background: var(--primary); border: none; cursor: pointer; flex-shrink: 0; }
+  .switch::after { content: ""; position: absolute; top: 3px; left: 22px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left 200ms; }
+
+  .entity-list { display: flex; flex-direction: column; gap: 16px; max-width: 780px; }
+
+  .entity-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 20px 22px; }
+  .entity-card__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .entity-card__title { font-weight: 700; font-size: 0.9375rem; font-family: var(--font-heading); }
+  .entity-card__meta { font-size: 0.8125rem; color: var(--neutral-500); margin-top: 3px; }
+  .entity-card__actions { display: flex; align-items: center; gap: 6px; }
+
+  .icon-btn-sm {
+    width: 32px; height: 32px; border-radius: 4px; border: none; background: transparent; color: var(--neutral-500);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: background-color 150ms, color 150ms;
+  }
+  .icon-btn-sm:hover { background: var(--neutral-100); color: var(--foreground); }
+  .icon-btn-sm.danger:hover { background: #fdeceb; color: var(--destructive); }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .chip {
+    font-family: var(--font-heading); font-size: 0.6875rem; padding: 3px 9px; border-radius: 2px;
+    background: transparent; border: 1px solid var(--border); color: var(--neutral-600); font-weight: 500;
+  }
+
+  .add-entity-btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 4px;
+    border: 1.5px dashed var(--border); background: transparent; color: var(--neutral-600);
+    font-weight: 600; font-size: 0.8125rem; cursor: pointer; font-family: var(--font-heading);
+    text-transform: uppercase; letter-spacing: 0.03em;
+    transition: border-color 150ms, color 150ms, background-color 150ms;
+  }
+  .add-entity-btn:hover { border-color: var(--primary); color: var(--primary); background: rgba(22, 50, 79, 0.03); }
+
+  .skillcat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 780px; }
+  @media (max-width: 900px) { .skillcat-grid { grid-template-columns: 1fr; } }
+
+  .skillcat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 20px; }
+  .skillcat-card__title { font-weight: 700; font-family: var(--font-heading); font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--neutral-500); margin-bottom: 14px; }
+
+  .skillchip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .skillchip {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 0.8125rem; padding: 5px 6px 5px 12px;
+    border-radius: 2px; background: transparent; border: 1px solid var(--border); color: var(--neutral-700); font-weight: 500;
+  }
+  .skillchip button { background: none; border: none; color: var(--neutral-400); display: flex; cursor: pointer; padding: 2px; }
+  .skillchip button:hover { color: var(--destructive); }
+
+  /* ---------- Dark mode (Home + login only — admin stays light, it's an internal tool) ---------- */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --background: #0B2138;
+      --foreground: #E7F1F7;
+      --border: #1E3E57;
+      --surface: #0F2A44;
+      --neutral-50: #14304C;
+      --neutral-100: #1A3B57;
+      --neutral-200: #234A67;
+      --neutral-300: #2F5A78;
+      --neutral-400: #5C87A3;
+      --neutral-500: #85ABC4;
+      --neutral-600: #ACC9DB;
+      --neutral-700: #CADFEB;
+      --neutral-800: #E7F1F7;
+      --neutral-900: #F5FAFC;
+      --primary: #7FB8DC;
+      --primary-light: #A9D2EA;
+      --accent: #FF7A59;
+    }
+    :root:not([data-theme="light"]) header.site,
+    :root:not([data-theme="light"]) .login-topbar { background: rgba(11, 33, 56, 0.86); }
+    :root:not([data-theme="light"]) #homeView,
+    :root:not([data-theme="light"]) .login-shell {
+      background-image:
+        linear-gradient(var(--neutral-100) 1px, transparent 1px),
+        linear-gradient(90deg, var(--neutral-100) 1px, transparent 1px);
+    }
+    :root:not([data-theme="light"]) .btn--accent { color: #0B2138; box-shadow: 4px 4px 0 rgba(0,0,0,0.35); }
+    :root:not([data-theme="light"]) .login-icon,
+    :root:not([data-theme="light"]) .stat__value { color: #0B2138; }
+  }
+  :root[data-theme="dark"] {
+    --background: #0B2138;
+    --foreground: #E7F1F7;
+    --border: #1E3E57;
+    --surface: #0F2A44;
+    --neutral-50: #14304C;
+    --neutral-100: #1A3B57;
+    --neutral-200: #234A67;
+    --neutral-300: #2F5A78;
+    --neutral-400: #5C87A3;
+    --neutral-500: #85ABC4;
+    --neutral-600: #ACC9DB;
+    --neutral-700: #CADFEB;
+    --neutral-800: #E7F1F7;
+    --neutral-900: #F5FAFC;
+    --primary: #7FB8DC;
+    --primary-light: #A9D2EA;
+    --accent: #FF7A59;
+  }
+  :root[data-theme="dark"] header.site,
+  :root[data-theme="dark"] .login-topbar { background: rgba(11, 33, 56, 0.86); }
+  :root[data-theme="dark"] #homeView,
+  :root[data-theme="dark"] .login-shell {
+    background-image:
+      linear-gradient(var(--neutral-100) 1px, transparent 1px),
+      linear-gradient(90deg, var(--neutral-100) 1px, transparent 1px);
+  }
+  :root[data-theme="dark"] .btn--accent { color: #0B2138; box-shadow: 4px 4px 0 rgba(0,0,0,0.35); }
+  :root[data-theme="dark"] .login-icon,
+  :root[data-theme="dark"] .stat__value { color: #0B2138; }
+</style>
+
+<div class="reg-marks" aria-hidden="true">
+  <span class="reg-mark reg-mark--tl"></span>
+  <span class="reg-mark reg-mark--tr"></span>
+  <span class="reg-mark reg-mark--bl"></span>
+  <span class="reg-mark reg-mark--br"></span>
+</div>
+
+<!-- ============ HOME (public site) ============ -->
+<div class="view is-active" id="homeView">
+  <header class="site">
+    <div class="container site__bar">
+      <a href="#sobre" style="display:block;">
+        <span class="site__name">Davi Cezário Borges</span>
+        <span class="site__tagline">Full Stack · Rev. 2026.08</span>
+      </a>
+      <nav class="site__nav">
+        <a href="#sobre">Sobre</a>
+        <a href="#habilidades">Habilidades</a>
+        <a href="#experiencia">Experiência</a>
+        <a href="#projetos">Projetos</a>
+        <a href="#contato">Contato</a>
+      </nav>
+      <div class="site__actions">
+        <a class="icon-link" href="#" aria-label="GitHub">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.5 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1 .07 1.53 1.05 1.53 1.05.9 1.57 2.34 1.12 2.91.85.09-.67.35-1.12.64-1.38-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.72 0 0 .84-.27 2.75 1.05a9.3 9.3 0 0 1 5 0c1.9-1.32 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.93-2.35 4.79-4.58 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .28.18.6.69.5A10.26 10.26 0 0 0 22 12.25C22 6.58 17.52 2 12 2z" fill="currentColor"/></svg>
+        </a>
+        <a class="icon-link" href="#" aria-label="LinkedIn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6.94 5a2 2 0 1 1-4-.02 2 2 0 0 1 4 .02zM7 8.48H3V21h4V8.48zm6.32 0H9.34V21h3.94v-6.57c0-3.66 4.77-3.96 4.77 0V21H22v-7.93c0-6.17-7.06-5.94-8.68-2.91V8.48z" fill="currentColor"/></svg>
+        </a>
+        <a class="icon-link" href="#" aria-label="E-mail">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 6.5L12 13l8.5-6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </a>
+        <div class="divider-v"></div>
+      </div>
+      <button class="icon-link" id="adminEntry" aria-label="Área administrativa" title="Área administrativa" onclick="goTo('loginView')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M19.4 13.5a1.7 1.7 0 0 0 .34 1.87l.06.06a2.06 2.06 0 1 1-2.92 2.92l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56v.17a2.06 2.06 0 1 1-4.12 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2.06 2.06 0 1 1-2.92-2.92l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1.03h-.17a2.06 2.06 0 1 1 0-4.12h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2.06 2.06 0 1 1 2.92-2.92l.06.06a1.7 1.7 0 0 0 1.87.34h.08a1.7 1.7 0 0 0 1.03-1.56v-.17a2.06 2.06 0 1 1 4.12 0v.09a1.7 1.7 0 0 0 1.03 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2.06 2.06 0 1 1 2.92 2.92l-.06.06a1.7 1.7 0 0 0-.34 1.87v.08a1.7 1.7 0 0 0 1.56 1.03h.17a2.06 2.06 0 1 1 0 4.12h-.09a1.7 1.7 0 0 0-1.55 1.03z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="sobre">
+      <div class="hero__glow hero__glow--a"></div>
+      <div class="hero__glow hero__glow--b"></div>
+      <div class="container">
+        <div class="hero__content">
+          <div class="badge">
+            <span class="badge__dot"></span>
+            Disponível para novos projetos
+          </div>
+          <h1 class="hero__title">Desenvolvedor Full Stack<br><span>criando soluções digitais</span></h1>
+          <p class="hero__subtitle">Especializado em desenvolvimento web e mobile moderno, transformando ideias em aplicações escaláveis e performáticas com foco em experiência do usuário.</p>
+          <div class="cta-row">
+            <a class="btn btn--accent" href="#projetos">
+              Ver projetos
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a class="btn btn--outline" href="#contato">Entre em contato</a>
+            <a class="btn btn--ghost" href="#">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 19h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Baixar CV
+            </a>
+          </div>
+          <div class="stats">
+            <div>
+              <div class="stat__value">5+</div>
+              <div class="stat__label">Anos de experiência</div>
+            </div>
+            <div>
+              <div class="stat__value">50+</div>
+              <div class="stat__label">Projetos concluídos</div>
+            </div>
+            <div>
+              <div class="stat__value">20+</div>
+              <div class="stat__label">Clientes satisfeitos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block block--tinted" id="habilidades">
+      <div class="container">
+        <div class="eyebrow">O que eu uso</div>
+        <h2 class="block__title">Habilidades técnicas</h2>
+        <p class="block__lede">Um repertório construído entre backend, frontend e operação — a mesma stack usada nos projetos abaixo.</p>
+
+        <div class="skills-grid">
+          <div class="skill-card">
+            <div class="skill-card__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 20h8M12 18v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            <h3 class="skill-card__title">Frontend</h3>
+            <ul class="skill-card__list">
+              <li>Flutter</li><li>React</li><li>TypeScript</li><li>Next.js</li>
+            </ul>
+          </div>
+          <div class="skill-card">
+            <div class="skill-card__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <h3 class="skill-card__title">Backend</h3>
+            <ul class="skill-card__list">
+              <li>Node.js</li><li>Golang</li><li>PostgreSQL</li><li>REST / GraphQL</li>
+            </ul>
+          </div>
+          <div class="skill-card">
+            <div class="skill-card__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4.5v9L12 20l-8-4.5v-9L12 2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 11v9M4 6.5l8 4.5 8-4.5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            </div>
+            <h3 class="skill-card__title">DevOps</h3>
+            <ul class="skill-card__list">
+              <li>Docker</li><li>CI/CD</li><li>Git</li><li>Firebase</li>
+            </ul>
+          </div>
+          <div class="skill-card">
+            <div class="skill-card__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M5 20c1.2-3.6 4.2-5.5 7-5.5s5.8 1.9 7 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            <h3 class="skill-card__title">Soft Skills</h3>
+            <ul class="skill-card__list">
+              <li>Trabalho em equipe</li><li>Comunicação</li><li>Resolução de problemas</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="projetos">
+      <div class="container">
+        <div class="eyebrow">Trabalho recente</div>
+        <h2 class="block__title">Projetos selecionados</h2>
+        <p class="block__lede">Uma amostra do que venho construindo — do protótipo à arquitetura completa.</p>
+
+        <div class="projects-grid">
+          <article class="project-card">
+            <div class="project-card__media">
+              <span class="project-card__fig">Fig. 01 — GymTag</span>
+              <div class="project-card__tags">
+                <span class="tag">Flutter</span><span class="tag">NFC</span><span class="tag">BLE</span>
+              </div>
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">GymTag</h3>
+              <p class="project-card__desc">App de academia com identificação de máquinas via NFC, monitor cardíaco por Bluetooth e comprovante de treino impresso.</p>
+              <div class="project-card__links">
+                <a href="#">Repositório →</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-card__media project-card__media--warm">
+              <span class="project-card__fig">Fig. 02 — Beatspan</span>
+              <div class="project-card__tags">
+                <span class="tag">Flutter</span><span class="tag">Spotify</span><span class="tag">QR Scan</span>
+              </div>
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">Beatspan</h3>
+              <p class="project-card__desc">Jogo de cartas de música: escaneia um QR code, toca a faixa pelo Spotify e desafia os jogadores a acertar o ano de lançamento.</p>
+              <div class="project-card__links">
+                <a href="#">Repositório →</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="block block--tinted" id="contato">
+      <div class="container">
+        <div class="eyebrow">Vamos conversar</div>
+        <h2 class="block__title">Contato</h2>
+        <p class="block__lede">Disponível para novos projetos e colaborações — mande uma mensagem.</p>
+        <a class="btn btn--accent" href="#">
+          Enviar e-mail
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div class="container site__foot">
+      <span>© 2026 Davi Cezário Borges</span>
+      <span>Sheet 01/01 · Construído com Flutter</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ============ LOGIN ============ -->
+<div class="view" id="loginView">
+  <div class="login-shell">
+    <div class="login-topbar">
+      <span style="font-family: var(--font-heading); font-weight: 700;">&nbsp;</span>
+      <button class="back-link" onclick="goTo('homeView')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Voltar ao portfólio
+      </button>
+    </div>
+
+    <div class="login-main">
+      <div class="login-card">
+        <div class="login-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M19.4 13.5a1.7 1.7 0 0 0 .34 1.87 2.06 2.06 0 1 1-2.92 2.92 1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56 2.06 2.06 0 1 1-4.12 0 1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.87.34 2.06 2.06 0 1 1-2.92-2.92 1.7 1.7 0 0 0 .34-1.87A1.7 1.7 0 0 0 2.7 12H2.6a2.06 2.06 0 1 1 0-4.12h.1a1.7 1.7 0 0 0 1.55-1.03 1.7 1.7 0 0 0-.34-1.87 2.06 2.06 0 1 1 2.92-2.92 1.7 1.7 0 0 0 1.87.34 1.7 1.7 0 0 0 1.03-1.55 2.06 2.06 0 1 1 4.12 0 1.7 1.7 0 0 0 1.03 1.55 1.7 1.7 0 0 0 1.87-.34 2.06 2.06 0 1 1 2.92 2.92 1.7 1.7 0 0 0-.34 1.87c.24.63.83 1.03 1.55 1.03h.1a2.06 2.06 0 1 1 0 4.12h-.1c-.72 0-1.31.4-1.55 1.03z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        </div>
+        <h1 class="login-title">Área Administrativa</h1>
+        <p class="login-sub">Faça login para acessar o painel</p>
+
+        <form onsubmit="event.preventDefault(); goTo('dashView'); return false;">
+          <div class="field">
+            <label for="user">Usuário</label>
+            <input id="user" type="text" placeholder="Digite seu usuário" autocomplete="username">
+          </div>
+          <div class="field">
+            <label for="pass">Senha</label>
+            <div class="field-input-wrap">
+              <input id="pass" type="password" placeholder="Digite sua senha" autocomplete="current-password">
+              <button type="button" class="toggle-visibility" aria-label="Mostrar senha" onclick="togglePass()">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/></svg>
+              </button>
+            </div>
+          </div>
+          <button type="button" class="login-submit" onclick="goTo('dashView');">Entrar</button>
+        </form>
+        <p class="login-footnote">Acesso restrito ao administrador do portfólio</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DASHBOARD ============ -->
+<div class="view" id="dashView">
+  <aside class="dash__sidebar">
+    <div class="dash__brand">DCB <span>· Painel</span></div>
+
+    <button class="dash__navitem is-active-tab" onclick="showTab('perfil', this)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 20c1.3-4 4.3-6 7.5-6s6.2 2 7.5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Perfil
+    </button>
+    <button class="dash__navitem" onclick="showTab('projetos', this)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      Projetos
+    </button>
+    <button class="dash__navitem" onclick="showTab('experiencias', this)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="1.6"/></svg>
+      Experiências
+    </button>
+    <button class="dash__navitem" onclick="showTab('habilidades', this)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      Habilidades
+    </button>
+
+    <div class="dash__sidebar-footer">
+      <button class="dash__logout" onclick="goTo('homeView')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Sair
+      </button>
+    </div>
+  </aside>
+
+  <main class="dash__main">
+
+    <!-- PERFIL -->
+    <section class="tabpanel" id="tab-perfil">
+      <div class="dash__header">
+        <div>
+          <h2 class="dash__title">Perfil</h2>
+          <p class="dash__subtitle">Dados exibidos na seção Hero do portfólio.</p>
+        </div>
+        <button class="save-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Salvar alterações
+        </button>
+      </div>
+
+      <div class="panel">
+        <div class="form-grid">
+          <div class="field">
+            <label>Nome</label>
+            <input class="f-input" type="text" value="Davi Cezário Borges">
+          </div>
+          <div class="field">
+            <label>Título (use quebra de linha para 2 linhas)</label>
+            <textarea class="f-input" rows="2">Desenvolvedor Full Stack
+Criando soluções digitais</textarea>
+          </div>
+          <div class="field">
+            <label>Subtítulo</label>
+            <textarea class="f-input" rows="3">Especializado em desenvolvimento web e mobile moderno, transformando ideias em aplicações escaláveis e performáticas com foco em experiência do usuário.</textarea>
+          </div>
+          <div class="field">
+            <label>GitHub URL</label>
+            <input class="f-input" type="text" value="https://github.com/davicb">
+          </div>
+          <div class="field">
+            <label>LinkedIn URL</label>
+            <input class="f-input" type="text" value="https://linkedin.com/in/davicb">
+          </div>
+          <div class="field">
+            <label>E-mail</label>
+            <input class="f-input" type="text" value="borges.davi.cezar@gmail.com">
+          </div>
+          <div class="field">
+            <label>Localização</label>
+            <input class="f-input" type="text" placeholder="Ex: São Paulo, Brasil">
+          </div>
+
+          <div class="switch-row">
+            <button class="switch" aria-label="Disponível para projetos"></button>
+            <span style="font-size: 0.875rem; font-weight: 500;">Disponível para novos projetos</span>
+          </div>
+
+          <div>
+            <p style="font-size: 0.875rem; font-weight: 500; margin: 4px 0 10px;">Estatísticas</p>
+            <div class="stats-row">
+              <div class="stat-input-pair">
+                <input class="f-input" type="text" value="5+" placeholder="Valor">
+                <input class="f-input" type="text" value="Anos de experiência" placeholder="Label">
+              </div>
+              <div class="stat-input-pair">
+                <input class="f-input" type="text" value="50+" placeholder="Valor">
+                <input class="f-input" type="text" value="Projetos concluídos" placeholder="Label">
+              </div>
+              <div class="stat-input-pair">
+                <input class="f-input" type="text" value="20+" placeholder="Valor">
+                <input class="f-input" type="text" value="Clientes satisfeitos" placeholder="Label">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETOS -->
+    <section class="tabpanel" id="tab-projetos" style="display:none;">
+      <div class="dash__header">
+        <div>
+          <h2 class="dash__title">Projetos</h2>
+          <p class="dash__subtitle">Os cards exibidos na seção Projetos do portfólio.</p>
+        </div>
+        <button class="save-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Salvar alterações
+        </button>
+      </div>
+
+      <div class="entity-list">
+        <div class="entity-card">
+          <div class="entity-card__head">
+            <div>
+              <div class="entity-card__title">GymTag</div>
+              <div class="entity-card__meta">github.com/davicb/gymtag</div>
+            </div>
+            <div class="entity-card__actions">
+              <button class="icon-btn-sm" aria-label="Editar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button class="icon-btn-sm danger" aria-label="Remover">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+          <p style="font-size: 0.875rem; color: var(--neutral-600); margin: 10px 0 0;">App de academia com identificação de máquinas via NFC, monitor cardíaco por Bluetooth e comprovante de treino impresso.</p>
+          <div class="chip-row">
+            <span class="chip">Flutter</span><span class="chip">NFC</span><span class="chip">BLE</span>
+          </div>
+        </div>
+
+        <div class="entity-card">
+          <div class="entity-card__head">
+            <div>
+              <div class="entity-card__title">Beatspan</div>
+              <div class="entity-card__meta">github.com/davicb/beatspan</div>
+            </div>
+            <div class="entity-card__actions">
+              <button class="icon-btn-sm" aria-label="Editar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button class="icon-btn-sm danger" aria-label="Remover">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+          <p style="font-size: 0.875rem; color: var(--neutral-600); margin: 10px 0 0;">Jogo de cartas de música: escaneia um QR code, toca a faixa pelo Spotify e desafia os jogadores a acertar o ano de lançamento.</p>
+          <div class="chip-row">
+            <span class="chip">Flutter</span><span class="chip">Spotify</span><span class="chip">QR Scan</span>
+          </div>
+        </div>
+
+        <button class="add-entity-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Adicionar projeto
+        </button>
+      </div>
+    </section>
+
+    <!-- EXPERIÊNCIAS -->
+    <section class="tabpanel" id="tab-experiencias" style="display:none;">
+      <div class="dash__header">
+        <div>
+          <h2 class="dash__title">Experiências</h2>
+          <p class="dash__subtitle">Histórico profissional exibido na linha do tempo.</p>
+        </div>
+        <button class="save-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Salvar alterações
+        </button>
+      </div>
+
+      <div class="entity-list">
+        <div class="entity-card">
+          <div class="entity-card__head">
+            <div>
+              <div class="entity-card__title">Desenvolvedor Full Stack</div>
+              <div class="entity-card__meta">Remoto · Jan 2023 — Presente</div>
+            </div>
+            <div class="entity-card__actions">
+              <button class="icon-btn-sm" aria-label="Editar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button class="icon-btn-sm danger" aria-label="Remover">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="chip-row">
+            <span class="chip">Flutter</span><span class="chip">Node.js</span><span class="chip">Golang</span>
+          </div>
+        </div>
+
+        <button class="add-entity-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Adicionar experiência
+        </button>
+      </div>
+    </section>
+
+    <!-- HABILIDADES -->
+    <section class="tabpanel" id="tab-habilidades" style="display:none;">
+      <div class="dash__header">
+        <div>
+          <h2 class="dash__title">Habilidades</h2>
+          <p class="dash__subtitle">Categorias e tecnologias exibidas na seção Habilidades.</p>
+        </div>
+        <button class="save-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Salvar alterações
+        </button>
+      </div>
+
+      <div class="skillcat-grid">
+        <div class="skillcat-card">
+          <div class="skillcat-card__title">Frontend</div>
+          <div class="skillchip-row">
+            <span class="skillchip">Flutter <button aria-label="Remover">×</button></span>
+            <span class="skillchip">React <button aria-label="Remover">×</button></span>
+            <span class="skillchip">TypeScript <button aria-label="Remover">×</button></span>
+          </div>
+        </div>
+        <div class="skillcat-card">
+          <div class="skillcat-card__title">Backend</div>
+          <div class="skillchip-row">
+            <span class="skillchip">Node.js <button aria-label="Remover">×</button></span>
+            <span class="skillchip">Golang <button aria-label="Remover">×</button></span>
+            <span class="skillchip">PostgreSQL <button aria-label="Remover">×</button></span>
+          </div>
+        </div>
+        <div class="skillcat-card">
+          <div class="skillcat-card__title">DevOps</div>
+          <div class="skillchip-row">
+            <span class="skillchip">Docker <button aria-label="Remover">×</button></span>
+            <span class="skillchip">CI/CD <button aria-label="Remover">×</button></span>
+          </div>
+        </div>
+        <div class="skillcat-card">
+          <div class="skillcat-card__title">Soft Skills</div>
+          <div class="skillchip-row">
+            <span class="skillchip">Comunicação <button aria-label="Remover">×</button></span>
+            <span class="skillchip">Trabalho em equipe <button aria-label="Remover">×</button></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  function togglePass() {
+    const input = document.getElementById('pass');
+    input.type = input.type === 'password' ? 'text' : 'password';
+  }
+
+  function goTo(viewId) {
+    document.querySelectorAll('.view').forEach(v => {
+      v.classList.remove('is-active', 'is-active--grid');
+    });
+    const target = document.getElementById(viewId);
+    if (viewId === 'dashView') {
+      target.classList.add('is-active--grid');
+      target.style.display = 'grid';
+    } else {
+      target.classList.add('is-active');
+      target.style.display = 'block';
+    }
+    document.querySelectorAll('.view').forEach(v => {
+      if (v.id !== viewId) v.style.display = 'none';
+    });
+    window.scrollTo(0, 0);
+  }
+
+  function showTab(name, btn) {
+    document.querySelectorAll('.tabpanel').forEach(p => p.style.display = 'none');
+    document.getElementById('tab-' + name).style.display = 'block';
+    document.querySelectorAll('.dash__navitem').forEach(b => b.classList.remove('is-active-tab'));
+    btn.classList.add('is-active-tab');
+  }
+
+  // initial state: only Home visible
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('dashView').style.display = 'none';
+</script>

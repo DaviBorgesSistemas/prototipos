@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portal do cliente | Fidelix &amp; Cavalcante</title>
+  <link rel="icon" href="../shared/img/simbolo.png">
+  <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="../portal/style.css">
+  <link rel="stylesheet" href="integrado.css">
+</head>
+<body>
+<script src="../shared/icones.js"></script>
+
+<header class="topo">
+  <div class="topo-dentro">
+    <a class="marca" href="index.html"><img class="marca-logo" src="../shared/img/logo-horizontal.png" alt="Fidelix &amp; Cavalcante, Engenharia Diagnóstica" width="280" height="51"><span class="marca-area">Portal do cliente</span></a>
+    <div class="topo-dir"><span class="avatar" aria-hidden="true" id="avatar"></span><span class="topo-nome" id="nome-cliente"></span><button class="btn vazado pequeno" id="sair" type="button"><svg class="ic"><use href="#i-sair"/></svg>Sair</button></div>
+  </div>
+</header>
+
+<div class="faixa escuro">
+  <div class="faixa-dentro">
+    <p class="sobre" id="faixa-sobre"></p>
+    <h1 id="faixa-titulo"></h1>
+    <p class="endereco" id="faixa-endereco"></p>
+  </div>
+</div>
+
+<main class="miolo" id="miolo" tabindex="-1">
+  <section class="cartao andamento" aria-labelledby="t-andamento">
+    <h2 id="t-andamento">Andamento</h2>
+    <ol class="linha-tempo" id="linha-tempo"></ol>
+    <div class="proximo" id="proximo" aria-live="polite"></div>
+  </section>
+
+  <div class="colunas">
+    <section class="cartao" aria-labelledby="t-docs">
+      <h2 id="t-docs">Documentos</h2>
+      <ul class="docs" id="docs"></ul>
+    </section>
+    <section class="cartao" aria-labelledby="t-pag">
+      <h2 id="t-pag">Pagamentos</h2>
+      <table>
+        <thead><tr><th>Cobrança</th><th>Vence em</th><th class="num">Valor</th><th></th></tr></thead>
+        <tbody id="pagamentos"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <section class="cartao largo" aria-labelledby="t-hist">
+    <h2 id="t-hist">Histórico</h2>
+    <ul class="historico" id="historico"></ul>
+  </section>
+</main>
+
+<dialog id="dialogo"></dialog>
+
+<script src="dados.js"></script>
+<script src="portal.js"></script>
+</body>
+</html>

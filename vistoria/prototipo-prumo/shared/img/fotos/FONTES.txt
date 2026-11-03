@@ -1,0 +1,11 @@
+Fotos do Unsplash (Unsplash License: uso comercial livre, sem atribuição obrigatória).
+Servem de marcador no protótipo; o ideal é trocar por fotos reais das vistorias da empresa.
+
+torre.jpg        https://unsplash.com/photos/3fPZoXU1zH4
+fissura.jpg      https://unsplash.com/photos/AehBpEOj6SI
+infiltracao.jpg  https://unsplash.com/photos/aRUdvi4lFC4
+umidade.jpg      https://unsplash.com/photos/tGn1KGrUKj4
+fachada.jpg      https://unsplash.com/photos/1iGG6k4Ci4E
+escritorio.jpg   https://unsplash.com/photos/SyRlD4s_amw
+projeto.jpg      https://unsplash.com/photos/3QzMBrvCeyQ
+escada.jpg       https://unsplash.com/photos/L7uHzS7rUY8

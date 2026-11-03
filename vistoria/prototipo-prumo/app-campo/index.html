@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Campo | Fidelix &amp; Cavalcante</title>
+  <link rel="icon" href="../shared/img/simbolo.png">
+  <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script src="../shared/icones.js"></script>
+
+<div class="aparelho">
+  <div class="barra-sistema" aria-hidden="true"><span>9:41</span><span class="ilha"></span><span class="sinais"><i></i><i></i><i></i><b></b></span></div>
+
+  <header class="topo-app">
+    <div class="topo-linha">
+      <img class="marca-logo" src="../shared/img/logo-horizontal.png" alt="Fidelix &amp; Cavalcante, Engenharia Diagnóstica" width="280" height="51">
+      <button class="icone-redondo escuro" type="button" aria-label="Notificações"><svg class="ic"><use href="#i-sino"/></svg></button>
+    </div>
+    <div class="conexao">
+      <p class="estado" id="estado" role="status"></p>
+      <label class="chave">
+        <input type="checkbox" id="chave-offline">
+        <span class="chave-trilho" aria-hidden="true"></span>
+        <span>Sem internet</span>
+      </label>
+    </div>
+  </header>
+
+  <main id="tela" tabindex="-1"></main>
+
+  <div class="envio" id="envio" hidden>
+    <span class="envio-icone"><svg class="ic"><use href="#i-nuvem"/></svg></span>
+    <div><b id="envio-titulo"></b><small id="envio-sub"></small></div>
+    <button class="btn-envio" id="btn-enviar" type="button">Enviar</button>
+  </div>
+
+  <nav class="abas" aria-label="Navegação do app">
+    <button type="button" data-aba="lista"><svg class="ic"><use href="#i-painel"/></svg>Início</button>
+    <button type="button" class="fab" id="fab" aria-label="Novo apontamento"><svg class="ic"><use href="#i-mais"/></svg></button>
+    <button type="button" data-aba="envios"><svg class="ic"><use href="#i-nuvem"/></svg>Envios<i id="abas-cont" hidden></i></button>
+  </nav>
+</div>
+
+<div class="aviso-demo">Protótipo: os dados ficam só neste navegador. <button type="button" id="btn-zerar" class="link">Apagar dados de exemplo</button></div>
+
+<script src="script.js"></script>
+</body>
+</html>

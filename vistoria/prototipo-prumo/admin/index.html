@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel | Fidelix &amp; Cavalcante</title>
+  <link rel="icon" href="../shared/img/simbolo.png">
+  <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script src="../shared/icones.js"></script>
+<div class="layout">
+  <aside class="lateral">
+    <div class="marca">
+      <img class="marca-logo" src="../shared/img/logo-horizontal.png" alt="Fidelix &amp; Cavalcante, Engenharia Diagnóstica" width="280" height="51"><span class="marca-area">Painel interno</span>
+    </div>
+    <nav aria-label="Seções do painel" id="nav">
+      <span class="nav-grupo">Operação</span>
+      <a href="#painel"><svg class="ic"><use href="#i-painel"/></svg>Painel</a>
+      <a href="#vistorias"><svg class="ic"><use href="#i-busca"/></svg>Vistorias</a>
+      <a href="#laudo"><svg class="ic"><use href="#i-laudo"/></svg>Laudos</a>
+      <span class="nav-grupo">Comercial</span>
+      <a href="#clientes"><svg class="ic"><use href="#i-usuarios"/></svg>Clientes</a>
+      <a href="#propostas"><svg class="ic"><use href="#i-enviar"/></svg>Propostas</a>
+      <span class="nav-grupo">Gestão</span>
+      <a href="#equipe"><svg class="ic"><use href="#i-maleta"/></svg>Equipe e contratos</a>
+      <a href="#financeiro"><svg class="ic"><use href="#i-carteira"/></svg>Financeiro</a>
+    </nav>
+    <div class="usuaria">
+      <span class="avatar">NS</span>
+      <div><strong>Nome da sócia</strong><span>Sócia, acesso total</span></div>
+    </div>
+  </aside>
+
+  <div class="coluna">
+    <header class="barra-topo">
+      <label class="busca"><svg class="ic"><use href="#i-busca"/></svg><span class="sr-only">Buscar</span><input type="search" placeholder="Buscar cliente, vistoria ou proposta"></label>
+      <div class="barra-dir">
+        <button class="icone-btn" type="button" aria-label="Notificações, 4 novas"><svg class="ic"><use href="#i-sino"/></svg><i>4</i></button>
+        <span class="avatar pequeno" aria-hidden="true">NS</span>
+      </div>
+    </header>
+    <main class="principal" id="principal" tabindex="-1"></main>
+  </div>
+</div>
+
+<dialog id="dialogo"></dialog>
+
+<script src="script.js"></script>
+</body>
+</html>

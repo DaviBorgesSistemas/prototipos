@@ -1,0 +1,871 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vistoria — App do Vistoriador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   PALETA PROVISÓRIA — mesma do prototipo.html.
+   Trocar aqui quando a paleta oficial chegar.
+   ============================================================ */
+:root {
+  --primary: #1E3A5F;
+  --primary-hover: #16304F;
+  --primary-soft: #E6EDF5;
+  --accent: #E8A33D;
+  --bg: #F5F6F8;
+  --surface: #FFFFFF;
+  --border: #E1E4EA;
+  --text: #1A2230;
+  --text-muted: #5E6B7D;
+  --cond-new: #1F9D6B;
+  --cond-good: #4CAF7A;
+  --cond-fair: #D9A11E;
+  --cond-poor: #E07A2E;
+  --cond-damaged: #D64545;
+  --radius: 12px;
+  --shadow: 0 1px 2px rgba(16,24,40,.06), 0 4px 12px rgba(16,24,40,.06);
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #E9ECF1; color: var(--text); font-size: 14px; line-height: 1.45; }
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+h1, h2, h3, h4, p { margin: 0; }
+.muted { color: var(--text-muted); }
+.small { font-size: 12px; }
+
+/* ---------- palco (desktop) ---------- */
+.stage { display: flex; gap: 40px; justify-content: center; align-items: flex-start; padding: 32px 16px; min-height: 100vh; }
+.index { width: 300px; position: sticky; top: 32px; }
+.index h1 { font-size: 20px; }
+.index > p { margin: 6px 0 18px; }
+.index .grp { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin: 16px 0 6px; }
+.index button { display: block; width: 100%; text-align: left; border: 0; background: transparent; padding: 7px 10px; border-radius: 8px; }
+.index button b { display: block; font-weight: 600; font-size: 13px; }
+.index button span { font-size: 12px; color: var(--text-muted); }
+.index button.on { background: var(--surface); box-shadow: var(--shadow); }
+.index a { color: var(--primary); font-weight: 600; font-size: 13px; }
+
+.device { width: 390px; height: 844px; background: #0F1722; border-radius: 52px; padding: 12px; box-shadow: 0 24px 60px rgba(16,24,40,.28); flex: none; }
+.viewport { position: relative; width: 100%; height: 100%; background: var(--bg); border-radius: 42px; overflow: hidden; }
+
+/* ---------- celular de verdade ---------- */
+@media (max-width: 560px) {
+  body { background: var(--bg); }
+  .stage { padding: 0; display: block; }
+  .index { display: none; }
+  .device { width: 100%; height: 100dvh; border-radius: 0; padding: 0; box-shadow: none; }
+  .viewport { border-radius: 0; }
+  .statusbar { display: none !important; }
+}
+
+/* ---------- estrutura da tela ---------- */
+.statusbar { position: absolute; top: 0; left: 0; right: 0; height: 44px; display: flex; justify-content: space-between; align-items: center; padding: 0 28px; font-size: 13px; font-weight: 600; z-index: 30; pointer-events: none; }
+.statusbar.dark { color: #fff; }
+.net { background: var(--accent); color: #1A2230; border-radius: 999px; padding: 1px 8px; font-size: 11px; font-weight: 700; }
+.scr { position: absolute; inset: 0; display: none; flex-direction: column; padding-top: 44px; background: var(--bg); }
+.scr.on { display: flex; }
+@media (max-width: 560px) { .scr { padding-top: env(safe-area-inset-top); } }
+.appbar { display: flex; align-items: center; gap: 10px; padding: 8px 16px 12px; min-height: 56px; }
+.appbar .ttl { flex: 1; min-width: 0; }
+.appbar h2 { font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.appbar .sub { font-size: 12px; color: var(--text-muted); }
+.ibtn { width: 38px; height: 38px; border-radius: 50%; border: 0; background: var(--surface); box-shadow: var(--shadow); display: grid; place-items: center; font-size: 16px; flex: none; }
+.ibtn.flat { background: transparent; box-shadow: none; }
+.content { flex: 1; overflow-y: auto; padding: 0 16px 20px; }
+.bottombar { padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); background: var(--surface); border-top: 1px solid var(--border); display: flex; gap: 8px; }
+.bottombar .btn { flex: 1; }
+
+/* tab bar (telas principais) */
+.tabbar { display: flex; background: var(--surface); border-top: 1px solid var(--border); padding: 6px 8px calc(10px + env(safe-area-inset-bottom)); }
+.tabbar button { flex: 1; border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 11px; font-weight: 600; color: var(--text-muted); padding: 6px 0; position: relative; }
+.tabbar button i { font-style: normal; font-size: 20px; }
+.tabbar button.on { color: var(--primary); }
+.tabbar .dot { position: absolute; top: 4px; left: 55%; background: var(--accent); color: #1A2230; font-size: 10px; border-radius: 999px; padding: 0 5px; }
+.fab { position: absolute; right: 18px; bottom: 92px; height: 54px; padding: 0 20px; border-radius: 16px; border: 0; background: var(--primary); color: #fff; font-weight: 700; box-shadow: 0 8px 20px rgba(30,58,95,.35); display: flex; align-items: center; gap: 8px; z-index: 5; }
+
+/* ---------- componentes ---------- */
+.btn { border: 1px solid transparent; border-radius: 12px; padding: 13px 16px; font-weight: 700; font-size: 15px; display: inline-flex; justify-content: center; align-items: center; gap: 8px; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-ghost { background: var(--surface); border-color: var(--border); }
+.btn-accent { background: var(--accent); color: #1A2230; }
+.btn-block { width: 100%; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+.sec { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin: 18px 2px 8px; }
+.chip { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.chip.dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.c-new { color: var(--cond-new); background: color-mix(in srgb, var(--cond-new) 12%, transparent); }
+.c-good { color: var(--cond-good); background: color-mix(in srgb, var(--cond-good) 13%, transparent); }
+.c-fair { color: #9A6F0A; background: color-mix(in srgb, var(--cond-fair) 17%, transparent); }
+.c-poor { color: var(--cond-poor); background: color-mix(in srgb, var(--cond-poor) 13%, transparent); }
+.c-damaged { color: var(--cond-damaged); background: color-mix(in srgb, var(--cond-damaged) 12%, transparent); }
+.s-blue { color: var(--primary); background: var(--primary-soft); }
+.s-gray { color: var(--text-muted); background: #EBEEF2; }
+.s-warn { color: #8A5A00; background: color-mix(in srgb, var(--accent) 22%, transparent); }
+.photo { border-radius: 10px; aspect-ratio: 1; position: relative; overflow: hidden; }
+.photo .ts { position: absolute; left: 4px; bottom: 3px; font-size: 8px; color: #fff; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,.5); }
+.ph1 { background: linear-gradient(135deg,#A9B8C9,#6F8299); }
+.ph2 { background: linear-gradient(135deg,#C9B9A3,#8F7B62); }
+.ph3 { background: linear-gradient(135deg,#B3C7B9,#6E8C78); }
+.ph4 { background: linear-gradient(135deg,#C5C0D6,#7F7896); }
+.ph5 { background: linear-gradient(135deg,#D3C3B0,#A08060); }
+.list .row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--border); }
+.list .row:last-child { border-bottom: 0; }
+.list .row .grow { flex: 1; min-width: 0; }
+.list .row h4 { font-size: 15px; font-weight: 600; }
+.chev { color: var(--text-muted); font-size: 18px; }
+.tap { cursor: pointer; }
+.tap:active { background: #F0F2F5; }
+.ico { width: 42px; height: 42px; border-radius: 12px; background: var(--primary-soft); display: grid; place-items: center; font-size: 19px; flex: none; }
+.progress { height: 6px; background: #E6E9EE; border-radius: 99px; overflow: hidden; }
+.progress > i { display: block; height: 100%; background: var(--primary); border-radius: 99px; }
+.seg { display: flex; background: #E6E9EE; border-radius: 10px; padding: 3px; }
+.seg button { flex: 1; border: 0; background: transparent; border-radius: 8px; padding: 7px 0; font-weight: 600; font-size: 13px; color: var(--text-muted); }
+.seg button.on { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.field { display: grid; gap: 6px; margin-bottom: 14px; }
+.field label { font-size: 13px; font-weight: 600; }
+.input { border: 1px solid var(--border); background: var(--surface); border-radius: 12px; padding: 12px 14px; width: 100%; }
+.toggle { width: 46px; height: 28px; border-radius: 99px; background: #CDD3DB; position: relative; flex: none; border: 0; }
+.toggle::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: left .15s; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+.toggle.on { background: var(--primary); }
+.toggle.on::after { left: 21px; }
+.banner { display: flex; gap: 10px; align-items: center; padding: 11px 13px; border-radius: 12px; font-size: 13px; }
+.banner.warn { background: color-mix(in srgb, var(--accent) 16%, var(--surface)); }
+.banner.info { background: var(--primary-soft); }
+
+/* ---------- telas específicas ---------- */
+.tgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.tgrid button { border: 1.5px solid var(--border); background: var(--surface); border-radius: 10px; padding: 10px; font-weight: 600; font-size: 13px; text-align: left; }
+.tgrid button.on { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
+
+/* login */
+#s-login .content { display: flex; flex-direction: column; justify-content: center; padding: 0 24px 40px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 22px; color: var(--primary); margin-bottom: 28px; }
+.brand-mark { width: 44px; height: 44px; border-radius: 12px; background: var(--primary); color: #fff; display: grid; place-items: center; font-size: 22px; }
+
+/* início */
+.hello { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px 6px; }
+.hello h2 { font-size: 22px; }
+.avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--primary); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 13px; flex: none; }
+.insp { padding: 14px; margin-bottom: 10px; display: grid; gap: 7px; }
+.insp .top { display: flex; justify-content: space-between; align-items: center; }
+.insp h4 { font-size: 15px; }
+.day { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin: 16px 2px 8px; }
+
+/* vistoria */
+.ring { width: 64px; height: 64px; border-radius: 50%; background: conic-gradient(var(--primary) calc(var(--p) * 1%), #E6E9EE 0); display: grid; place-items: center; flex: none; }
+.ring span { width: 50px; height: 50px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+
+/* item */
+.cond { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.cond button { border: 1.5px solid var(--border); background: var(--surface); border-radius: 10px; padding: 10px 0 8px; font-size: 11px; font-weight: 700; color: var(--text-muted); display: grid; gap: 3px; justify-items: center; }
+.cond button::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+.cond button.sel { background: var(--c); border-color: var(--c); color: #fff; }
+.cond button.sel::before { background: #fff; }
+.cond [data-c=new] { --c: var(--cond-new); }
+.cond [data-c=good] { --c: var(--cond-good); }
+.cond [data-c=fair] { --c: var(--cond-fair); }
+.cond [data-c=poor] { --c: var(--cond-poor); }
+.cond [data-c=damaged] { --c: var(--cond-damaged); }
+.thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.add-tile { border: 1.5px dashed #C3CAD4; border-radius: 10px; aspect-ratio: 1; display: grid; place-items: center; align-content: center; gap: 2px; color: var(--text-muted); font-size: 11px; font-weight: 600; background: var(--surface); }
+.add-tile i { font-style: normal; font-size: 20px; }
+.note-wrap { position: relative; }
+.note { width: 100%; border: 1px solid var(--border); border-radius: 12px; padding: 12px 52px 12px 14px; resize: none; background: var(--surface); min-height: 84px; }
+.mic { position: absolute; right: 8px; bottom: 8px; width: 38px; height: 38px; border-radius: 50%; border: 0; background: var(--primary); color: #fff; font-size: 16px; }
+.ai { border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent); background: var(--primary-soft); border-radius: 12px; padding: 12px; display: grid; gap: 8px; }
+.ai .head { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; color: var(--primary); }
+.ai p { font-size: 13px; }
+.ai .acts { display: flex; gap: 8px; }
+.ai .acts button { border: 0; border-radius: 8px; padding: 6px 12px; font-weight: 600; font-size: 13px; }
+.ref { display: flex; gap: 12px; align-items: center; padding: 10px; }
+.ref .photo { width: 56px; flex: none; }
+
+/* câmera */
+#s-camera { background: #000; color: #fff; }
+.vf { flex: 1; margin: 0; position: relative; background: linear-gradient(160deg,#5D6B7A 0%,#3B4652 55%,#2A323B 100%); overflow: hidden; }
+.vf .grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.18) 1px, transparent 1px); background-size: 33.33% 33.33%; }
+.vf .cabinet { position: absolute; left: 18%; right: 18%; top: 22%; height: 34%; border-radius: 6px; background: linear-gradient(180deg,#B9A27F,#8E7655); box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+.vf .cabinet::before, .vf .cabinet::after { content: ""; position: absolute; top: 8%; bottom: 8%; width: 44%; border: 2px solid rgba(0,0,0,.18); border-radius: 4px; }
+.vf .cabinet::before { left: 4%; transform: rotate(-4deg); transform-origin: top left; }
+.vf .cabinet::after { right: 4%; }
+.vf .counter { position: absolute; left: 50%; bottom: 46%; transform: translateX(-50%); }
+.cam-top { position: absolute; top: 44px; left: 0; right: 0; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 2; }
+.cam-top .where { background: rgba(0,0,0,.45); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600; }
+.cam-top .ibtn { background: rgba(0,0,0,.45); color: #fff; box-shadow: none; }
+.stamp { position: absolute; left: 12px; bottom: 12px; font-size: 11px; font-weight: 600; background: rgba(0,0,0,.45); padding: 4px 8px; border-radius: 6px; }
+.cam-bottom { padding: 14px 20px calc(24px + env(safe-area-inset-bottom)); display: grid; gap: 14px; }
+.cam-modes { display: flex; justify-content: center; gap: 22px; font-size: 13px; font-weight: 700; letter-spacing: .05em; }
+.cam-modes span { opacity: .55; cursor: pointer; }
+.cam-modes span.on { opacity: 1; color: var(--accent); }
+.cam-row { display: flex; align-items: center; justify-content: space-between; }
+.shutter { width: 74px; height: 74px; border-radius: 50%; border: 4px solid #fff; background: transparent; padding: 4px; }
+.shutter i { display: block; width: 100%; height: 100%; border-radius: 50%; background: #fff; transition: transform .1s; }
+.shutter:active i { transform: scale(.88); }
+.shutter.rec i { background: var(--cond-damaged); border-radius: 10px; transform: scale(.6); }
+.last { width: 52px; height: 52px; border-radius: 10px; border: 2px solid #fff; }
+.done-cam { background: transparent; border: 0; color: #fff; font-weight: 700; width: 52px; }
+.strip { display: flex; gap: 6px; overflow-x: auto; }
+.strip .photo { width: 44px; flex: none; border-radius: 6px; }
+
+/* ditado */
+.wave { display: flex; align-items: center; justify-content: center; gap: 4px; height: 70px; }
+.wave i { width: 5px; border-radius: 3px; background: var(--primary); animation: w 1s ease-in-out infinite; }
+@keyframes w { 0%,100% { height: 12px; } 50% { height: var(--h); } }
+.rec-btn { width: 76px; height: 76px; border-radius: 50%; border: 0; background: var(--cond-damaged); color: #fff; font-size: 26px; box-shadow: 0 0 0 8px color-mix(in srgb, var(--cond-damaged) 18%, transparent); }
+.transcript { font-size: 14px; line-height: 1.6; padding: 14px; }
+.transcript mark { background: color-mix(in srgb, var(--accent) 30%, transparent); border-radius: 3px; padding: 0 2px; }
+
+/* comparação */
+.pair { padding: 12px; margin-bottom: 10px; }
+.pair.changed { border-color: var(--cond-poor); }
+.pair h4 { font-size: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.pair .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pair .cols > div { display: grid; gap: 6px; }
+.lbl { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+.pair .photo { aspect-ratio: 4/3; }
+
+/* assinatura */
+.signer { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+.signer:last-child { border-bottom: 0; }
+.signer .grow { flex: 1; }
+.pad { position: relative; height: 180px; border: 1.5px dashed #C3CAD4; border-radius: 12px; background: var(--surface); touch-action: none; }
+.pad canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pad .hint { position: absolute; inset: 0; display: grid; place-items: center; color: var(--text-muted); pointer-events: none; font-size: 13px; }
+.pad .line { position: absolute; left: 20px; right: 20px; bottom: 38px; border-top: 1px solid var(--border); pointer-events: none; }
+
+/* laudo */
+.pages { display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px 10px; }
+.page { width: 120px; flex: none; aspect-ratio: 1/1.414; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 8px; display: grid; gap: 5px; align-content: start; box-shadow: var(--shadow); }
+.page .l { height: 4px; border-radius: 2px; background: #E2E6EC; }
+.page .l.h { height: 7px; background: var(--primary); width: 60%; }
+.page .imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+.page .imgs div { aspect-ratio: 4/3; border-radius: 2px; }
+.share { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.share button { border: 0; background: var(--surface); border-radius: 12px; padding: 12px 0; display: grid; gap: 4px; justify-items: center; font-size: 11px; font-weight: 600; box-shadow: var(--shadow); }
+.share button i { font-style: normal; font-size: 22px; }
+
+/* sheet */
+.sheet-bg { position: absolute; inset: 0; background: rgba(15,23,34,.45); display: none; z-index: 40; }
+.sheet-bg.on { display: block; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--surface); border-radius: 20px 20px 0 0; padding: 10px 16px calc(20px + env(safe-area-inset-bottom)); }
+.sheet .grab { width: 40px; height: 5px; border-radius: 3px; background: #D3D8DF; margin: 0 auto 12px; }
+.sheet button.opt { display: flex; gap: 12px; align-items: center; width: 100%; border: 0; background: transparent; padding: 13px 4px; font-weight: 600; text-align: left; border-bottom: 1px solid var(--border); }
+.sheet button.opt:last-child { border-bottom: 0; }
+.toast { position: absolute; left: 16px; right: 16px; bottom: 100px; background: #1A2230; color: #fff; padding: 12px 14px; border-radius: 12px; font-size: 13px; z-index: 50; opacity: 0; transform: translateY(10px); transition: .2s; pointer-events: none; }
+.toast.on { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- índice de telas (só no desktop) -->
+  <aside class="index">
+    <h1>App do vistoriador</h1>
+    <p class="muted">Protótipo mobile (Flutter, Android e iOS). Feito para uso em campo, com uma mão e sem internet. A gestão fica no <a href="prototipo.html">painel web</a>.</p>
+    <div id="idx"></div>
+  </aside>
+
+  <div class="device"><div class="viewport" id="vp">
+    <div class="statusbar" id="sb"><span>09:41</span><span class="net">● Offline</span></div>
+
+    <!-- ===== LOGIN ===== -->
+    <section class="scr" id="s-login">
+      <div class="content">
+        <div class="brand"><span class="brand-mark">⌂</span>Vistoria</div>
+        <h2 style="font-size:24px;margin-bottom:6px">Entrar</h2>
+        <p class="muted" style="margin-bottom:24px">Use a conta que sua empresa criou para você.</p>
+        <div class="field"><label>E-mail</label><input class="input" value="rafael@limavistorias.com.br"></div>
+        <div class="field"><label>Senha</label><input class="input" type="password" value="12345678"></div>
+        <button class="btn btn-primary btn-block" data-go="home" data-reset>Entrar</button>
+        <p class="muted small" style="text-align:center;margin-top:16px">Depois do primeiro login, o app funciona sem internet.</p>
+      </div>
+    </section>
+
+    <!-- ===== INÍCIO ===== -->
+    <section class="scr" id="s-home">
+      <div class="hello">
+        <div><p class="muted small">Segunda, 12 de outubro</p><h2>Olá, Rafael</h2></div>
+        <div class="avatar">RS</div>
+      </div>
+      <div class="content">
+        <div class="banner warn tap" data-go="sync" style="margin:6px 0 12px"><span>⏳</span><span style="flex:1"><b>Sem conexão.</b> 23 fotos e 4 alterações esperando para enviar.</span><span class="chev">›</span></div>
+        <div class="seg" data-seg><button class="on">Hoje (2)</button><button>Próximas (5)</button><button>Concluídas</button></div>
+        <div class="day">Agora</div>
+        <div class="card insp tap" data-go="insp">
+          <div class="top"><span class="chip s-blue">Saída</span><span class="muted small">09:30 · em andamento</span></div>
+          <h4>Rua das Acácias, 120 · ap. 302</h4>
+          <p class="muted small">Apartamento 2 quartos · Locador: Marina Lopes</p>
+          <div class="progress"><i style="width:48%"></i></div>
+          <p class="muted small">5 de 9 ambientes · 46 fotos</p>
+        </div>
+        <div class="day">Mais tarde</div>
+        <div class="card insp tap" data-go="new">
+          <div class="top"><span class="chip s-gray">Entrada</span><span class="muted small">14:00</span></div>
+          <h4>Av. Brasil, 2045 · casa</h4>
+          <p class="muted small">Casa 3 quartos · Imob. Lar Certo</p>
+          <p class="small" style="color:var(--primary);font-weight:600">📍 3,2 km · Abrir no mapa</p>
+        </div>
+      </div>
+      <button class="fab" data-go="new">＋ Nova vistoria</button>
+      <nav class="tabbar">
+        <button class="on" data-tab="home"><i>📋</i>Vistorias</button>
+        <button data-tab="sync"><i>🔄</i>Envios<span class="dot">27</span></button>
+        <button data-tab="profile"><i>👤</i>Perfil</button>
+      </nav>
+    </section>
+
+    <!-- ===== NOVA VISTORIA ===== -->
+    <section class="scr" id="s-new">
+      <div class="appbar"><button class="ibtn" data-back>✕</button><div class="ttl"><h2>Nova vistoria</h2></div></div>
+      <div class="content">
+        <div class="field"><label>Imóvel</label>
+          <div class="card" style="padding:12px 14px;display:flex;gap:12px;align-items:center"><div class="ico">🏠</div><div style="flex:1"><b>Av. Brasil, 2045 · casa</b><p class="muted small">Imob. Lar Certo · 3 quartos · 140 m²</p></div><span class="link small" style="color:var(--primary);font-weight:600">Trocar</span></div>
+        </div>
+        <div class="field"><label>Tipo</label>
+          <p class="muted small" style="margin:-2px 0 2px">Locação</p>
+          <div class="tgrid" id="type-grid">
+            <button class="on" data-k="loc">🔑 Entrada</button><button data-k="out">↩️ Saída</button><button data-k="loc">📅 Periódica</button><button data-k="loc">🤝 Compra e venda</button>
+          </div>
+          <p class="muted small" style="margin:6px 0 2px">Engenharia</p>
+          <div class="tgrid" id="type-grid-eng">
+            <button data-k="eng">🏗️ Imóvel novo</button><button data-k="eng">🏘️ Cautelar de vizinhança</button><button data-k="eng">🏢 Inspeção predial</button><button data-k="eng">📐 Laudo técnico</button>
+          </div>
+        </div>
+        <div class="field" id="eng-field" style="display:none"><label>Responsável técnico</label>
+          <div class="card list">
+            <div class="row"><div class="grow"><p class="muted small">Engenheiro</p><h4>Ana Lima · CREA-RS 123456</h4></div><span class="chev">›</span></div>
+            <div class="row"><div class="grow"><p class="muted small">ART</p><input class="input" placeholder="Número da ART (pode preencher depois)" style="padding:9px 12px;margin-top:4px"></div></div>
+          </div>
+          <p class="muted small">Itens terão campos de risco, medidas e norma de referência.</p>
+        </div>
+        <div class="field" id="ref-field" style="display:none"><label>Vistoria de entrada para comparar</label>
+          <div class="card" style="padding:12px 14px"><b>#1102 · 03/02/2025</b><p class="muted small">Ana Lima · 9 ambientes · 104 fotos</p></div>
+        </div>
+        <div class="field"><label>Modelo de checklist</label>
+          <div class="card list">
+            <div class="row tap" data-pick><div class="grow"><h4>Casa 3 quartos</h4><p class="muted small">12 ambientes · 94 itens</p></div><span class="pick">◉</span></div>
+            <div class="row tap" data-pick><div class="grow"><h4>Apartamento 2 quartos</h4><p class="muted small">9 ambientes · 67 itens</p></div><span class="pick muted">○</span></div>
+            <div class="row tap" data-pick><div class="grow"><h4>Em branco</h4><p class="muted small">Montar os ambientes na hora</p></div><span class="pick muted">○</span></div>
+          </div>
+        </div>
+        <div class="field"><label>Partes</label>
+          <div class="card list">
+            <div class="row"><div class="grow"><p class="muted small">Locador</p><h4>Imob. Lar Certo</h4></div></div>
+            <div class="row"><div class="grow"><p class="muted small">Locatário</p><h4>Fernanda Alves</h4></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="bottombar"><button class="btn btn-primary" data-go="insp">Começar vistoria</button></div>
+    </section>
+
+    <!-- ===== VISTORIA (ambientes) ===== -->
+    <section class="scr" id="s-insp">
+      <div class="appbar">
+        <button class="ibtn" data-back>←</button>
+        <div class="ttl"><h2>Ap. 302 · Saída</h2><p class="sub">Rua das Acácias, 120 · #2384</p></div>
+        <button class="ibtn flat" data-sheet="sh-insp">⋮</button>
+      </div>
+      <div class="content">
+        <div class="card" style="padding:14px;display:flex;gap:14px;align-items:center">
+          <div class="ring" style="--p:48"><span>48%</span></div>
+          <div style="flex:1"><b>5 de 9 ambientes</b><p class="muted small">46 fotos · 2 vídeos · salvo no aparelho</p></div>
+        </div>
+        <div class="card tap" data-go="compare" style="margin-top:10px;padding:12px 14px;display:flex;gap:12px;align-items:center">
+          <div class="ico">↔️</div><div style="flex:1"><b>Comparar com a entrada</b><p class="muted small">5 itens pioraram até agora</p></div><span class="chev">›</span>
+        </div>
+
+        <div class="sec">Antes de começar</div>
+        <div class="card list">
+          <div class="row tap" data-go="meters"><div class="ico">🔌</div><div class="grow"><h4>Medidores</h4><p class="muted small">Água, energia, gás</p></div><span class="chip c-new">3/3</span><span class="chev">›</span></div>
+          <div class="row tap" data-go="meters"><div class="ico">🔑</div><div class="grow"><h4>Chaves e controles</h4><p class="muted small">4 chaves, 1 controle</p></div><span class="chip c-new">Feito</span><span class="chev">›</span></div>
+        </div>
+
+        <div class="sec">Ambientes</div>
+        <div class="card list">
+          <div class="row tap" data-go="room"><div class="ico">🛋️</div><div class="grow"><h4>Sala de estar</h4><p class="muted small">8/8 itens · 14 fotos</p></div><span class="chip c-new">Feito</span></div>
+          <div class="row tap" data-go="room"><div class="ico">🍳</div><div class="grow"><h4>Cozinha</h4><p class="muted small">5/11 itens · 9 fotos</p></div><span class="chip s-warn">Em curso</span></div>
+          <div class="row tap" data-go="room"><div class="ico">🧺</div><div class="grow"><h4>Área de serviço</h4><p class="muted small">6/6 itens · 7 fotos</p></div><span class="chip c-new">Feito</span></div>
+          <div class="row tap" data-go="room"><div class="ico">🛏️</div><div class="grow"><h4>Quarto 1</h4><p class="muted small">7/7 itens · 10 fotos</p></div><span class="chip c-new">Feito</span></div>
+          <div class="row tap" data-go="room"><div class="ico">🛏️</div><div class="grow"><h4>Quarto 2</h4><p class="muted small">7/7 itens · 6 fotos</p></div><span class="chip c-new">Feito</span></div>
+          <div class="row tap" data-go="room"><div class="ico">🚿</div><div class="grow"><h4>Banheiro social</h4><p class="muted small">0/9 itens</p></div><span class="chip s-gray">A fazer</span></div>
+          <div class="row tap" data-go="room"><div class="ico">🚽</div><div class="grow"><h4>Lavabo</h4><p class="muted small">0/5 itens</p></div><span class="chip s-gray">A fazer</span></div>
+          <div class="row tap" data-go="room"><div class="ico">🚪</div><div class="grow"><h4>Hall de entrada</h4><p class="muted small">0/4 itens</p></div><span class="chip s-gray">A fazer</span></div>
+          <div class="row tap" data-go="room"><div class="ico">🌿</div><div class="grow"><h4>Sacada</h4><p class="muted small">0/4 itens</p></div><span class="chip s-gray">A fazer</span></div>
+          <div class="row tap" data-sheet="sh-room"><div class="ico" style="background:transparent;border:1.5px dashed #C3CAD4">＋</div><div class="grow"><h4 style="color:var(--primary)">Adicionar ambiente</h4></div></div>
+        </div>
+      </div>
+      <div class="bottombar"><button class="btn btn-primary" data-go="review">Revisar e finalizar</button></div>
+    </section>
+
+    <!-- ===== MEDIDORES E CHAVES ===== -->
+    <section class="scr" id="s-meters">
+      <div class="appbar"><button class="ibtn" data-back>←</button><div class="ttl"><h2>Medidores e chaves</h2></div></div>
+      <div class="content">
+        <div class="sec" style="margin-top:4px">Medidores</div>
+        <div class="card" style="padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:center"><div class="photo ph1" style="width:64px;flex:none"></div><div style="flex:1"><b>💧 Água</b><input class="input" value="01.284 m³" style="margin-top:6px;padding:9px 12px"></div></div>
+        <div class="card" style="padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:center"><div class="photo ph3" style="width:64px;flex:none"></div><div style="flex:1"><b>⚡ Energia</b><input class="input" value="45.671 kWh" style="margin-top:6px;padding:9px 12px"></div></div>
+        <div class="card" style="padding:14px;display:flex;gap:12px;align-items:center"><div class="photo ph4" style="width:64px;flex:none"></div><div style="flex:1"><b>🔥 Gás</b><input class="input" value="00.318 m³" style="margin-top:6px;padding:9px 12px"></div></div>
+        <div class="sec">Chaves e controles</div>
+        <div class="card list">
+          <div class="row"><div class="grow"><h4>Chave da porta principal</h4></div><b>2</b></div>
+          <div class="row"><div class="grow"><h4>Chave da área de serviço</h4></div><b>2</b></div>
+          <div class="row"><div class="grow"><h4>Controle do portão</h4></div><b>1</b></div>
+          <div class="row tap"><div class="grow"><h4 style="color:var(--primary)">＋ Adicionar</h4></div></div>
+        </div>
+        <div class="thumbs" style="margin-top:10px"><div class="photo ph5"></div><div class="add-tile" data-go="camera"><i>📷</i>Foto</div></div>
+      </div>
+      <div class="bottombar"><button class="btn btn-primary" data-back>Salvar</button></div>
+    </section>
+
+    <!-- ===== AMBIENTE ===== -->
+    <section class="scr" id="s-room">
+      <div class="appbar">
+        <button class="ibtn" data-back>←</button>
+        <div class="ttl"><h2>Cozinha</h2><p class="sub">5 de 11 itens · 9 fotos</p></div>
+        <button class="ibtn flat" data-sheet="sh-roomopts">⋮</button>
+      </div>
+      <div class="content">
+        <div class="card tap" data-go="dictate" style="padding:14px;display:flex;gap:12px;align-items:center;background:var(--primary);color:#fff;border:0">
+          <div class="ico" style="background:rgba(255,255,255,.15)">🎙️</div>
+          <div style="flex:1"><b>Ditar o ambiente</b><p class="small" style="opacity:.8">Fale o estado de cada item. A IA preenche a lista.</p></div><span>›</span>
+        </div>
+        <div class="sec">Itens</div>
+        <div class="card list">
+          <div class="row tap" data-go="item"><div class="grow"><h4>Piso</h4><p class="muted small">2 fotos · com observação</p></div><span class="chip dot c-fair">Regular</span></div>
+          <div class="row tap" data-go="item"><div class="grow"><h4>Paredes e pintura</h4><p class="muted small">2 fotos</p></div><span class="chip dot c-good">Bom</span></div>
+          <div class="row tap" data-go="item"><div class="grow"><h4>Teto</h4><p class="muted small">1 foto</p></div><span class="chip dot c-good">Bom</span></div>
+          <div class="row tap" data-go="item"><div class="grow"><h4>Bancada e cuba</h4><p class="muted small">1 foto</p></div><span class="chip dot c-good">Bom</span></div>
+          <div class="row tap" data-go="item"><div class="grow"><h4>Armário superior</h4><p class="muted small">3 fotos · com observação</p></div><span class="chip dot c-damaged">Danificado</span></div>
+          <div class="row tap" data-go="item"><div class="grow"><h4>Armário inferior</h4><p class="muted small" style="color:var(--cond-poor)">Sem foto</p></div><span class="chip s-gray">A avaliar</span></div>
+          <div class="row tap" data-go="item"><div class="grow"><h4>Torneira</h4><p class="muted small" style="color:var(--cond-poor)">Sem foto</p></div><span class="chip s-gray">A avaliar</span></div>
+          <div class="row tap" data-go="item"><div class="grow"><h4>Tomadas e interruptores</h4><p class="muted small" style="color:var(--cond-poor)">Sem foto</p></div><span class="chip s-gray">A avaliar</span></div>
+          <div class="row tap" data-go="item"><div class="grow"><h4>Janela</h4><p class="muted small" style="color:var(--cond-poor)">Sem foto</p></div><span class="chip s-gray">A avaliar</span></div>
+          <div class="row tap" data-go="item"><div class="grow"><h4>Porta</h4><p class="muted small" style="color:var(--cond-poor)">Sem foto</p></div><span class="chip s-gray">A avaliar</span></div>
+          <div class="row tap" data-go="item"><div class="grow"><h4>Iluminação</h4><p class="muted small" style="color:var(--cond-poor)">Sem foto</p></div><span class="chip s-gray">A avaliar</span></div>
+          <div class="row tap"><div class="grow"><h4 style="color:var(--primary)">＋ Adicionar item</h4></div></div>
+        </div>
+        <div class="sec">Vista geral do ambiente</div>
+        <div class="thumbs"><div class="photo ph2"></div><div class="photo ph1"></div><div class="add-tile" data-go="camera"><i>🎥</i>Vídeo</div><div class="add-tile" data-go="camera"><i>📷</i>Foto</div></div>
+      </div>
+      <div class="bottombar"><button class="btn btn-ghost" data-go="camera" style="flex:none;width:56px;padding:0">📷</button><button class="btn btn-primary" data-back>Concluir ambiente</button></div>
+    </section>
+
+    <!-- ===== ITEM ===== -->
+    <section class="scr" id="s-item">
+      <div class="appbar">
+        <button class="ibtn" data-back>←</button>
+        <div class="ttl"><h2>Armário superior</h2><p class="sub">Cozinha · item 5 de 11</p></div>
+      </div>
+      <div class="content">
+        <div class="card ref"><div class="photo ph1"></div><div style="flex:1"><p class="lbl">Na entrada (03/02/2025)</p><span class="chip dot c-good" style="margin-top:4px">Bom</span><p class="muted small" style="margin-top:4px">"Portas alinhadas, sem marcas."</p></div></div>
+
+        <div class="sec">Estado</div>
+        <div class="cond" data-cond>
+          <button data-c="new">Novo</button><button data-c="good">Bom</button><button data-c="fair">Regular</button><button data-c="poor">Ruim</button><button data-c="damaged" class="sel">Danif.</button>
+        </div>
+
+        <div class="sec">Fotos e vídeo</div>
+        <div class="thumbs">
+          <div class="photo ph4"><span class="ts">09:52</span></div>
+          <div class="photo ph2"><span class="ts">09:52</span></div>
+          <div class="photo ph5"><span class="ts">09:53</span></div>
+          <div class="add-tile" data-go="camera"><i>📷</i>Adicionar</div>
+        </div>
+
+        <div class="sec">Observação</div>
+        <div class="note-wrap">
+          <textarea class="note" rows="3">Porta esquerda sem dobradiça superior.</textarea>
+          <button class="mic" data-go="dictate" title="Ditar">🎙️</button>
+        </div>
+
+        <div class="ai" style="margin-top:12px" id="ai-box">
+          <div class="head"><span>✨ Sugestão da IA a partir das fotos</span><span class="muted small" style="font-weight:500">ao sincronizar</span></div>
+          <p>"Armário superior em MDF branco, 2 portas. Porta esquerda desalinhada, sem a dobradiça superior. Porta direita com riscos leves no puxador."</p>
+          <div class="acts"><button style="background:var(--primary);color:#fff" data-ai="use">Usar texto</button><button style="background:var(--surface)" data-ai="no">Descartar</button></div>
+        </div>
+      </div>
+      <div class="bottombar"><button class="btn btn-ghost">‹ Anterior</button><button class="btn btn-primary">Próximo item ›</button></div>
+    </section>
+
+    <!-- ===== CÂMERA ===== -->
+    <section class="scr" id="s-camera">
+      <div class="cam-top"><button class="ibtn" data-back>✕</button><span class="where">Cozinha › Armário superior</span><button class="ibtn">⚡</button></div>
+      <div class="vf">
+        <div class="grid"></div>
+        <div class="cabinet"></div>
+        <div class="stamp">12/10/2026 09:53 · -28.26, -52.40</div>
+      </div>
+      <div class="cam-bottom">
+        <div class="strip"><div class="photo ph4"></div><div class="photo ph2"></div><div class="photo ph5"></div></div>
+        <div class="cam-modes"><span class="on" data-mode="foto">FOTO</span><span data-mode="video">VÍDEO</span></div>
+        <div class="cam-row">
+          <div class="last photo ph5"></div>
+          <button class="shutter" id="shutter"><i></i></button>
+          <button class="done-cam" data-back>OK</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== DITADO COM IA ===== -->
+    <section class="scr" id="s-dictate">
+      <div class="appbar"><button class="ibtn" data-back>✕</button><div class="ttl"><h2>Ditar · Cozinha</h2><p class="sub">Fale item por item</p></div></div>
+      <div class="content">
+        <div class="card transcript" id="tx">
+          <p class="muted small" style="margin-bottom:6px">Transcrição</p>
+          "<mark>Armário inferior</mark> bom, sem marcas. <mark>Torneira</mark> bom, funcionando, sem vazamento. <mark>Tomadas</mark> todas funcionando, uma com o espelho trincado do lado da geladeira. <mark>Janela</mark> regular, trilho com sujeira e a borracha ressecada..."
+        </div>
+        <div class="wave" id="wave"></div>
+        <div style="display:flex;justify-content:center;align-items:center;gap:24px;margin:6px 0 4px">
+          <span class="muted" style="width:60px;text-align:right" id="timer">0:42</span>
+          <button class="rec-btn" id="rec">■</button>
+          <span style="width:60px"></span>
+        </div>
+        <p class="muted small" style="text-align:center">Toque para parar</p>
+
+        <div id="ai-result" style="display:none">
+          <div class="sec">A IA organizou em 4 itens</div>
+          <div class="card list">
+            <div class="row"><div class="grow"><h4>Armário inferior</h4><p class="muted small">Sem marcas.</p></div><span class="chip dot c-good">Bom</span></div>
+            <div class="row"><div class="grow"><h4>Torneira</h4><p class="muted small">Funcionando, sem vazamento.</p></div><span class="chip dot c-good">Bom</span></div>
+            <div class="row"><div class="grow"><h4>Tomadas e interruptores</h4><p class="muted small">Espelho trincado ao lado da geladeira.</p></div><span class="chip dot c-fair">Regular</span></div>
+            <div class="row"><div class="grow"><h4>Janela</h4><p class="muted small">Trilho sujo, borracha ressecada.</p></div><span class="chip dot c-fair">Regular</span></div>
+          </div>
+          <p class="muted small" style="margin-top:8px">Sem conexão, o áudio fica salvo e a IA organiza quando o aparelho voltar a ter sinal. Você revisa antes de entrar no laudo.</p>
+        </div>
+      </div>
+      <div class="bottombar" id="dict-bar" style="display:none"><button class="btn btn-ghost" id="redo">Refazer</button><button class="btn btn-primary" data-back>Aplicar aos itens</button></div>
+    </section>
+
+    <!-- ===== ENTRADA × SAÍDA ===== -->
+    <section class="scr" id="s-compare">
+      <div class="appbar"><button class="ibtn" data-back>←</button><div class="ttl"><h2>Entrada × saída</h2><p class="sub">Entrada #1102 · 03/02/2025</p></div></div>
+      <div class="content">
+        <div class="seg" data-seg style="margin-bottom:12px"><button class="on">Só o que mudou (5)</button><button>Todos os itens</button></div>
+        <div class="card pair changed">
+          <h4>Cozinha · Armário superior <span class="chip c-damaged">Piorou</span></h4>
+          <div class="cols"><div><span class="lbl">Entrada</span><div class="photo ph1"></div><span class="chip dot c-good">Bom</span></div><div><span class="lbl">Saída</span><div class="photo ph4"></div><span class="chip dot c-damaged">Danificado</span></div></div>
+        </div>
+        <div class="card pair changed">
+          <h4>Cozinha · Piso <span class="chip c-poor">Piorou</span></h4>
+          <div class="cols"><div><span class="lbl">Entrada</span><div class="photo ph3"></div><span class="chip dot c-good">Bom</span></div><div><span class="lbl">Saída</span><div class="photo ph2"></div><span class="chip dot c-fair">Regular</span></div></div>
+        </div>
+        <div class="card pair changed">
+          <h4>Sala · Paredes e pintura <span class="chip c-poor">Piorou</span></h4>
+          <div class="cols"><div><span class="lbl">Entrada</span><div class="photo ph5"></div><span class="chip dot c-new">Novo</span></div><div><span class="lbl">Saída</span><div class="photo ph2"></div><span class="chip dot c-fair">Regular</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== REVISÃO ===== -->
+    <section class="scr" id="s-review">
+      <div class="appbar"><button class="ibtn" data-back>←</button><div class="ttl"><h2>Revisar</h2><p class="sub">Ap. 302 · Saída</p></div></div>
+      <div class="content">
+        <div class="sec" style="margin-top:4px">Pendências</div>
+        <div class="card list">
+          <div class="row tap" data-go="room"><span style="font-size:18px">⚠️</span><div class="grow"><h4>4 ambientes não iniciados</h4><p class="muted small">Banheiro social, Lavabo, Hall, Sacada</p></div><span class="chev">›</span></div>
+          <div class="row tap" data-go="room"><span style="font-size:18px">📷</span><div class="grow"><h4>6 itens sem foto</h4><p class="muted small">Cozinha</p></div><span class="chev">›</span></div>
+          <div class="row"><span style="font-size:18px">✅</span><div class="grow"><h4>Medidores e chaves</h4><p class="muted small">Completo</p></div></div>
+        </div>
+        <div class="sec">Resumo</div>
+        <div class="card list">
+          <div class="row"><div class="grow">Itens avaliados</div><b>33 de 67</b></div>
+          <div class="row"><div class="grow">Fotos e vídeos</div><b>46 · 2</b></div>
+          <div class="row"><div class="grow">Itens que pioraram desde a entrada</div><b style="color:var(--cond-poor)">5</b></div>
+        </div>
+        <div class="sec">Laudo</div>
+        <div class="card list">
+          <div class="row"><div class="grow"><h4>Incluir vídeos por QR code</h4></div><button class="toggle on" data-toggle></button></div>
+          <div class="row"><div class="grow"><h4>Comparação com a entrada</h4></div><button class="toggle on" data-toggle></button></div>
+          <div class="row"><div class="grow"><h4>Observações gerais</h4><p class="muted small">Imóvel entregue com limpeza parcial.</p></div><span class="chev">›</span></div>
+        </div>
+        <div class="banner info" style="margin-top:12px"><span>ℹ️</span><span>Dá para finalizar com pendências. Elas aparecem no laudo como "não vistoriado".</span></div>
+      </div>
+      <div class="bottombar"><button class="btn btn-primary" data-go="sign">Coletar assinaturas</button></div>
+    </section>
+
+    <!-- ===== ASSINATURAS ===== -->
+    <section class="scr" id="s-sign">
+      <div class="appbar"><button class="ibtn" data-back>←</button><div class="ttl"><h2>Assinaturas</h2><p class="sub">No local ou por link depois</p></div></div>
+      <div class="content">
+        <div class="card" style="margin-top:4px">
+          <div class="signer"><div class="avatar">RS</div><div class="grow"><b>Rafael Souza</b><p class="muted small">Vistoriador</p></div><span class="chip c-new">Assinado</span></div>
+          <div class="signer" style="background:var(--primary-soft)"><div class="avatar" style="background:var(--accent);color:#1A2230">JP</div><div class="grow"><b>João Prado</b><p class="muted small">Locatário · assinando agora</p></div></div>
+          <div class="signer"><div class="avatar" style="background:#8A96A6">ML</div><div class="grow"><b>Marina Lopes</b><p class="muted small">Locadora · não está no local</p></div><span class="chip s-blue">Enviar link</span></div>
+        </div>
+        <div class="sec">Assinatura de João Prado</div>
+        <div class="pad" id="pad"><canvas></canvas><div class="line"></div><div class="hint" id="pad-hint">Assine com o dedo</div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px"><span class="muted small">CPF ***.482.117-**</span><button class="small" id="clear-pad" style="border:0;background:none;color:var(--primary);font-weight:600">Limpar</button></div>
+        <label style="display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:13px"><input type="checkbox" checked style="margin-top:3px"> Declaro que acompanhei a vistoria e recebi cópia do laudo.</label>
+      </div>
+      <div class="bottombar"><button class="btn btn-primary" data-go="report">Finalizar vistoria</button></div>
+    </section>
+
+    <!-- ===== LAUDO ===== -->
+    <section class="scr" id="s-report">
+      <div class="appbar"><button class="ibtn" data-go="home" data-reset>✕</button><div class="ttl"><h2>Laudo</h2></div></div>
+      <div class="content">
+        <div style="text-align:center;padding:10px 0 16px">
+          <div style="width:64px;height:64px;border-radius:50%;background:color-mix(in srgb,var(--cond-new) 14%,transparent);color:var(--cond-new);display:grid;place-items:center;font-size:30px;margin:0 auto 10px">✓</div>
+          <h2 style="font-size:20px">Vistoria finalizada</h2>
+          <p class="muted" style="margin-top:4px">O PDF fica pronto assim que o aparelho enviar as fotos.</p>
+        </div>
+        <div class="banner warn"><span>⏳</span><span style="flex:1">Aguardando conexão · 23 fotos na fila</span></div>
+        <div class="sec">Prévia</div>
+        <div class="pages">
+          <div class="page"><div class="l h"></div><div class="l"></div><div class="l" style="width:70%"></div><div class="l"></div><div class="l" style="width:50%"></div><div class="l"></div></div>
+          <div class="page"><div class="l h" style="width:40%"></div><div class="imgs"><div class="ph1"></div><div class="ph2"></div><div class="ph3"></div><div class="ph4"></div></div><div class="l"></div><div class="l" style="width:60%"></div></div>
+          <div class="page"><div class="l h" style="width:50%"></div><div class="imgs"><div class="ph5"></div><div class="ph2"></div></div><div class="l"></div><div class="l"></div><div class="l" style="width:40%"></div></div>
+        </div>
+        <div class="sec">Enviar para as partes</div>
+        <div class="share">
+          <button><i>💬</i>WhatsApp</button><button><i>✉️</i>E-mail</button><button><i>🔗</i>Copiar link</button><button><i>⬇️</i>PDF</button>
+        </div>
+        <p class="muted small" style="margin-top:12px">O link abre o portal do cliente, onde é possível conferir, contestar itens e assinar. Os envios saem quando houver conexão.</p>
+      </div>
+      <div class="bottombar"><button class="btn btn-primary" data-go="home" data-reset>Voltar para as vistorias</button></div>
+    </section>
+
+    <!-- ===== ENVIOS (sync) ===== -->
+    <section class="scr" id="s-sync">
+      <div class="appbar"><div class="ttl"><h2 style="font-size:22px">Envios</h2></div></div>
+      <div class="content">
+        <div class="card" style="padding:16px;text-align:center">
+          <div style="font-size:30px">📴</div>
+          <b style="display:block;margin-top:4px">Sem conexão desde 09:31</b>
+          <p class="muted small">Tudo está salvo no aparelho. O envio começa sozinho quando o sinal voltar.</p>
+          <button class="btn btn-ghost btn-block" style="margin-top:12px" data-toast="Sem conexão. Tentaremos de novo em instantes.">Tentar agora</button>
+        </div>
+        <div class="sec">Na fila</div>
+        <div class="card list">
+          <div class="row"><div class="ico">📷</div><div class="grow"><h4>23 fotos</h4><p class="muted small">84 MB · Ap. 302</p><div class="progress" style="margin-top:6px"><i style="width:0%"></i></div></div></div>
+          <div class="row"><div class="ico">🎥</div><div class="grow"><h4>2 vídeos</h4><p class="muted small">41 MB · Ap. 302</p></div></div>
+          <div class="row"><div class="ico">📝</div><div class="grow"><h4>4 alterações</h4><p class="muted small">Itens e observações</p></div></div>
+          <div class="row"><div class="ico">🎙️</div><div class="grow"><h4>1 ditado para a IA</h4><p class="muted small">Cozinha · 0:42</p></div></div>
+        </div>
+        <div class="sec">Preferências</div>
+        <div class="card list">
+          <div class="row"><div class="grow"><h4>Enviar usando dados móveis</h4><p class="muted small">Se desligado, só envia no Wi-Fi</p></div><button class="toggle" data-toggle></button></div>
+          <div class="row"><div class="grow"><h4>Espaço usado no aparelho</h4><p class="muted small">1,2 GB · fotos já enviadas são liberadas</p></div></div>
+        </div>
+      </div>
+      <nav class="tabbar">
+        <button data-tab="home"><i>📋</i>Vistorias</button>
+        <button class="on" data-tab="sync"><i>🔄</i>Envios<span class="dot">27</span></button>
+        <button data-tab="profile"><i>👤</i>Perfil</button>
+      </nav>
+    </section>
+
+    <!-- ===== PERFIL ===== -->
+    <section class="scr" id="s-profile">
+      <div class="appbar"><div class="ttl"><h2 style="font-size:22px">Perfil</h2></div></div>
+      <div class="content">
+        <div class="card" style="padding:16px;display:flex;gap:14px;align-items:center"><div class="avatar" style="width:52px;height:52px;font-size:17px">RS</div><div><b style="font-size:16px">Rafael Souza</b><p class="muted small">Vistoriador · Lima Vistorias</p></div></div>
+        <div class="card" style="padding:14px;margin-top:10px">
+          <div style="display:flex;justify-content:space-between"><b>Vistorias este mês</b><b>7 de 10</b></div>
+          <div class="progress" style="margin:8px 0 6px"><i style="width:70%"></i></div>
+          <p class="muted small">Plano da empresa. Renova em 01/11.</p>
+        </div>
+        <div class="sec">Câmera</div>
+        <div class="card list">
+          <div class="row"><div class="grow"><h4>Carimbo de data e local nas fotos</h4></div><button class="toggle on" data-toggle></button></div>
+          <div class="row"><div class="grow"><h4>Qualidade das fotos</h4><p class="muted small">Alta (2048 px)</p></div><span class="chev">›</span></div>
+        </div>
+        <div class="sec">Conta</div>
+        <div class="card list">
+          <div class="row tap"><div class="grow"><h4>Modelos de checklist</h4><p class="muted small">Editados pelo painel web</p></div><span class="chev">›</span></div>
+          <div class="row tap"><div class="grow"><h4>Ajuda e suporte</h4></div><span class="chev">›</span></div>
+          <div class="row tap" data-go="login" data-reset><div class="grow"><h4 style="color:var(--cond-damaged)">Sair</h4><p class="muted small">Envie as pendências antes de sair</p></div></div>
+        </div>
+      </div>
+      <nav class="tabbar">
+        <button data-tab="home"><i>📋</i>Vistorias</button>
+        <button data-tab="sync"><i>🔄</i>Envios<span class="dot">27</span></button>
+        <button class="on" data-tab="profile"><i>👤</i>Perfil</button>
+      </nav>
+    </section>
+
+    <!-- ===== SHEETS ===== -->
+    <div class="sheet-bg" id="sh-room"><div class="sheet"><div class="grab"></div>
+      <p class="lbl" style="margin:0 4px 6px">Adicionar ambiente</p>
+      <button class="opt" data-close>🛏️ Quarto</button><button class="opt" data-close>🚿 Banheiro</button><button class="opt" data-close>🏠 Garagem</button><button class="opt" data-close>✏️ Outro (nome livre)</button>
+    </div></div>
+    <div class="sheet-bg" id="sh-roomopts"><div class="sheet"><div class="grab"></div>
+      <button class="opt" data-close>📄 Replicar ambiente <span class="muted small" style="margin-left:auto">copia itens e estados</span></button>
+      <button class="opt" data-close>✏️ Renomear</button>
+      <button class="opt" data-close>↕️ Reordenar itens</button>
+      <button class="opt" data-close style="color:var(--cond-damaged)">🗑️ Remover ambiente</button>
+    </div></div>
+    <div class="sheet-bg" id="sh-insp"><div class="sheet"><div class="grab"></div>
+      <button class="opt" data-close>👥 Convidar outro vistoriador</button>
+      <button class="opt" data-close>📍 Abrir endereço no mapa</button>
+      <button class="opt" data-close>📞 Ligar para o locador</button>
+      <button class="opt" data-close>📝 Dados do imóvel</button>
+    </div></div>
+
+    <div class="toast" id="toast"></div>
+  </div></div>
+</div>
+
+<script>
+const SCREENS = [
+  ['Acesso', [['login', 'Login', 'Funciona offline depois do 1º acesso']]],
+  ['Rotina', [
+    ['home', 'Vistorias do dia', 'Agenda, status de envio, nova vistoria'],
+    ['new', 'Nova vistoria', 'Imóvel, tipo, modelo de checklist, partes'],
+    ['sync', 'Envios', 'Fila offline e preferências de rede'],
+    ['profile', 'Perfil', 'Uso do plano e configurações'],
+  ]],
+  ['Durante a vistoria', [
+    ['insp', 'Vistoria', 'Progresso e lista de ambientes'],
+    ['meters', 'Medidores e chaves', 'Leituras com foto'],
+    ['room', 'Ambiente', 'Itens com estado, ditado, opções'],
+    ['item', 'Item', 'Estado, fotos, observação, IA'],
+    ['camera', 'Câmera', 'Foto/vídeo com carimbo de data e GPS'],
+    ['dictate', 'Ditar com IA', 'Fala vira itens preenchidos'],
+    ['compare', 'Entrada × saída', 'Só o que mudou, lado a lado'],
+  ]],
+  ['Fechamento', [
+    ['review', 'Revisar', 'Pendências e opções do laudo'],
+    ['sign', 'Assinaturas', 'No local, com o dedo, ou por link'],
+    ['report', 'Laudo', 'Prévia e envio às partes'],
+  ]],
+];
+const TABS = ['home', 'sync', 'profile'];
+const DARK = ['camera'];
+let stack = [];
+
+const idx = document.getElementById('idx');
+SCREENS.forEach(([g, items]) => {
+  idx.insertAdjacentHTML('beforeend', `<div class="grp">${g}</div>`);
+  items.forEach(([id, t, d]) => idx.insertAdjacentHTML('beforeend', `<button data-idx="${id}"><b>${t}</b><span>${d}</span></button>`));
+});
+
+function show(id) {
+  document.querySelectorAll('.scr').forEach(s => s.classList.toggle('on', s.id === 's-' + id));
+  document.querySelectorAll('[data-idx]').forEach(b => b.classList.toggle('on', b.dataset.idx === id));
+  document.getElementById('sb').classList.toggle('dark', DARK.includes(id));
+  document.getElementById('sb').style.display = id === 'login' ? 'none' : '';
+  if (id === 'dictate') startRec();
+  history.replaceState(null, '', '#' + id);
+}
+function go(id, reset) {
+  stack = reset || TABS.includes(id) ? [id] : [...stack, id];
+  show(id);
+}
+function back() {
+  if (stack.length > 1) stack.pop();
+  show(stack[stack.length - 1]);
+}
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-go],[data-back],[data-tab],[data-idx],[data-sheet],[data-close],[data-toggle],[data-toast],[data-pick],[data-ai]');
+  if (!t) return;
+  if (t.matches('.sheet-bg') && e.target !== t) return;
+  if (t.dataset.go) go(t.dataset.go, t.hasAttribute('data-reset'));
+  else if (t.hasAttribute('data-back')) back();
+  else if (t.dataset.tab) go(t.dataset.tab, true);
+  else if (t.dataset.idx) { stack = TABS.includes(t.dataset.idx) || t.dataset.idx === 'login' ? [t.dataset.idx] : ['home', 'insp', t.dataset.idx].filter((v, i, a) => a.indexOf(v) === i); show(t.dataset.idx); }
+  else if (t.dataset.sheet) document.getElementById(t.dataset.sheet).classList.add('on');
+  else if (t.hasAttribute('data-close')) { t.closest('.sheet-bg').classList.remove('on'); toast('Feito (protótipo)'); }
+  else if (t.hasAttribute('data-toggle')) t.classList.toggle('on');
+  else if (t.dataset.toast) toast(t.dataset.toast);
+  else if (t.hasAttribute('data-pick')) {
+    t.parentElement.querySelectorAll('.pick').forEach(p => { p.textContent = '○'; p.classList.add('muted'); });
+    const p = t.querySelector('.pick'); p.textContent = '◉'; p.classList.remove('muted');
+  }
+  else if (t.dataset.ai) {
+    if (t.dataset.ai === 'use') document.querySelector('#s-item .note').value = document.querySelector('#ai-box p').textContent.replace(/"/g, '');
+    document.getElementById('ai-box').style.display = 'none';
+  }
+});
+// fecha sheet ao tocar fora
+document.querySelectorAll('.sheet-bg').forEach(bg => bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('on'); }));
+
+// controles segmentados
+document.querySelectorAll('[data-seg]').forEach(seg => seg.addEventListener('click', e => {
+  if (e.target.tagName !== 'BUTTON') return;
+  seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === e.target));
+}));
+// tipo de vistoria
+document.querySelectorAll('.tgrid').forEach(g => g.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  document.querySelectorAll('.tgrid button').forEach(x => x.classList.toggle('on', x === b));
+  document.getElementById('ref-field').style.display = b.dataset.k === 'out' ? '' : 'none';
+  document.getElementById('eng-field').style.display = b.dataset.k === 'eng' ? '' : 'none';
+}));
+// estado do item
+document.querySelectorAll('[data-cond]').forEach(c => c.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  c.querySelectorAll('button').forEach(x => x.classList.toggle('sel', x === b));
+}));
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 1800);
+}
+
+// câmera
+let camCount = 3, video = false;
+document.getElementById('shutter').onclick = () => {
+  const s = document.getElementById('shutter');
+  if (video) { s.classList.toggle('rec'); toast(s.classList.contains('rec') ? 'Gravando… (máx. 2 min)' : 'Vídeo salvo'); return; }
+  camCount++;
+  const ph = ['ph1','ph2','ph3','ph4','ph5'][camCount % 5];
+  document.querySelector('.strip').insertAdjacentHTML('beforeend', `<div class="photo ${ph}"></div>`);
+  document.querySelector('.last').className = 'last photo ' + ph;
+  toast(`Foto ${camCount} salva no item`);
+};
+document.querySelectorAll('[data-mode]').forEach(m => m.onclick = () => {
+  video = m.dataset.mode === 'video';
+  document.querySelectorAll('[data-mode]').forEach(x => x.classList.toggle('on', x === m));
+  document.getElementById('shutter').classList.remove('rec');
+});
+
+// ditado
+const wave = document.getElementById('wave');
+for (let i = 0; i < 28; i++) wave.insertAdjacentHTML('beforeend', `<i style="--h:${14 + Math.round(Math.random() * 50)}px;animation-delay:${(i % 7) * -0.14}s"></i>`);
+let recTimer;
+function startRec() {
+  document.getElementById('ai-result').style.display = 'none';
+  document.getElementById('dict-bar').style.display = 'none';
+  wave.style.display = 'flex';
+  const rec = document.getElementById('rec'); rec.textContent = '■'; rec.parentElement.style.display = 'flex'; rec.parentElement.nextElementSibling.style.display = '';
+  let s = 42; clearInterval(recTimer);
+  recTimer = setInterval(() => { s++; document.getElementById('timer').textContent = `0:${String(s % 60).padStart(2, '0')}`; }, 1000);
+}
+document.getElementById('rec').onclick = () => {
+  clearInterval(recTimer);
+  wave.style.display = 'none';
+  const rec = document.getElementById('rec'); rec.parentElement.style.display = 'none'; rec.parentElement.nextElementSibling.style.display = 'none';
+  document.getElementById('ai-result').style.display = '';
+  document.getElementById('dict-bar').style.display = 'flex';
+};
+document.getElementById('redo').onclick = startRec;
+
+// assinatura
+(() => {
+  const pad = document.getElementById('pad'), c = pad.querySelector('canvas'), ctx = c.getContext('2d');
+  let drawing = false;
+  const fit = () => { const r = pad.getBoundingClientRect(); if (!r.width) return; c.width = r.width * 2; c.height = r.height * 2; ctx.scale(2, 2); ctx.lineWidth = 2.4; ctx.lineCap = 'round'; ctx.strokeStyle = getComputedStyle(document.body).color; };
+  const pos = e => { const r = c.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  c.addEventListener('pointerdown', e => { if (!c.width || c.width < 10) fit(); drawing = true; ctx.beginPath(); ctx.moveTo(...pos(e)); document.getElementById('pad-hint').style.display = 'none'; c.setPointerCapture(e.pointerId); });
+  c.addEventListener('pointermove', e => { if (!drawing) return; ctx.lineTo(...pos(e)); ctx.stroke(); });
+  c.addEventListener('pointerup', () => drawing = false);
+  document.getElementById('clear-pad').onclick = () => { c.width = 0; fit(); document.getElementById('pad-hint').style.display = ''; };
+  new MutationObserver(() => { if (document.getElementById('s-sign').classList.contains('on')) fit(); }).observe(document.getElementById('s-sign'), { attributes: true });
+})();
+
+// tela inicial (aceita #id na URL)
+const start = location.hash.slice(1);
+if (start && document.getElementById('s-' + start)) {
+  stack = TABS.includes(start) || start === 'login' ? [start] : ['home', 'insp', start].filter((v, i, a) => a.indexOf(v) === i);
+  show(start);
+} else go('login', true);
+</script>
+</body>
+</html>

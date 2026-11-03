@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progride</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+
+        :root {
+            --bg: #ece8f6;
+            --s1: #f7f5fc;
+            --s2: #ffffff;
+            --s3: #f2eefb;
+            --bd: #ebe6f5;
+            --acc: #6c3ce0;
+            --acc2: #c13cb4;
+            --grad: linear-gradient(135deg, #6c3ce0 0%, #9a3ccc 55%, #c13cb4 100%);
+            --tint: #efe9fd;
+            --ink: #1b1530;
+            --tx: #1b1530;
+            --mu: #8e89a3;
+            --re: #e5487d;
+            --am: #f29a2e;
+            --gr: #1fb57a;
+            --bl: #3d7bf2;
+            --sh: 0 10px 30px -12px rgba(76, 46, 160, .22);
+            --sh-sm: 0 4px 14px -6px rgba(76, 46, 160, .18);
+            --mono: 'DM Mono', monospace;
+            --sans: 'Poppins', sans-serif;
+        }
+
+        html { scroll-behavior: smooth }
+
+        body {
+            background: var(--s1);
+            font-family: var(--sans);
+            color: var(--tx);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: radial-gradient(ellipse at 10% 0%, rgba(193, 60, 180, .10) 0%, transparent 45%),
+                radial-gradient(ellipse at 90% 30%, rgba(108, 60, 224, .10) 0%, transparent 45%);
+            background-attachment: fixed;
+        }
+
+        button, input { font-family: inherit; color: inherit }
+        a { color: inherit; text-decoration: none }
+
+        .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; width: 100% }
+
+        /* ─── TOPO ─── */
+        .top { position: sticky; top: 0; z-index: 50; background: rgba(247, 245, 252, .86); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--bd) }
+        .top-in { height: 68px; display: flex; align-items: center; gap: 28px }
+
+        .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 19px; letter-spacing: -.02em; flex-shrink: 0 }
+        .logo i { width: 34px; height: 34px; border-radius: 11px; background: var(--grad); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 18px -8px rgba(108, 60, 224, .7) }
+        .logo i .ic { width: 18px; height: 18px; stroke-width: 2.2 }
+
+        .menu { display: flex; align-items: center; gap: 2px; flex: 1 }
+        .mi { position: relative; display: flex; align-items: center }
+        .mi > a { display: flex; align-items: center; gap: 4px; padding: 9px 14px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--mu); transition: color .15s, background .15s }
+        .mi > a .ic { width: 15px; height: 15px; stroke-width: 2.2 }
+        .mi > a:hover, .mi > a.on { color: var(--acc); background: var(--tint) }
+        .mi > a.on { font-weight: 600 }
+        .car { display: none }
+
+        .dd { position: absolute; top: 100%; left: 0; padding-top: 8px; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .15s, transform .15s, visibility .15s }
+        .mi:hover .dd { opacity: 1; visibility: visible; transform: translateY(0) }
+        .dd-in { background: var(--s2); border-radius: 20px; box-shadow: var(--sh); padding: 8px; min-width: 300px }
+        .dd-g { font-size: 10px; font-weight: 600; color: var(--mu); letter-spacing: .06em; text-transform: uppercase; padding: 8px 10px 4px }
+        .dd a { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 14px; transition: background .15s }
+        .dd a:hover { background: var(--s3) }
+        .dd a b { display: block; font-size: 13px; font-weight: 600 }
+        .dd a span { font-size: 11px; color: var(--mu) }
+        .dd .tile { width: 34px; height: 34px; border-radius: 11px }
+        .dd .tile .ic { width: 17px; height: 17px }
+
+        .top-cta { display: flex; align-items: center; gap: 8px }
+        .burger { display: none }
+
+        @media(max-width:880px) {
+            .top-in { gap: 12px }
+            .burger { display: flex; margin-left: auto }
+            .top-cta .btn.bp { display: none }
+            .menu { display: none; position: absolute; top: 68px; left: 0; right: 0; background: var(--s2); flex-direction: column; align-items: stretch; padding: 10px 16px 16px; box-shadow: var(--sh); max-height: calc(100vh - 68px); overflow-y: auto }
+            .menu.open { display: flex }
+            .mi { flex-wrap: wrap }
+            .mi > a { flex: 1; padding: 12px 14px; font-size: 15px }
+            .car { display: flex; width: 40px; height: 40px; border: none; background: none; border-radius: 50%; align-items: center; justify-content: center; cursor: pointer; color: var(--mu) }
+            .car .ic { width: 18px; height: 18px; transition: transform .2s }
+            .mi.open .car .ic { transform: rotate(180deg) }
+            .dd { position: static; flex-basis: 100%; padding: 0; opacity: 1; visibility: visible; transform: none; display: none }
+            .mi:hover .dd { transform: none }
+            .mi.open .dd { display: block }
+            .dd-in { box-shadow: none; background: var(--s3); min-width: 0 }
+            .menu .m-cta { display: flex; margin-top: 8px }
+        }
+
+        .m-cta { display: none }
+
+        /* ─── SHARED ─── */
+        .ic { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0 }
+
+        .icon-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--s2); border: none; box-shadow: var(--sh-sm); color: var(--ink); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0 }
+        .icon-btn .ic { width: 20px; height: 20px }
+
+        .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: var(--acc); background: var(--tint); padding: 5px 12px; border-radius: 999px; letter-spacing: .03em; white-space: nowrap }
+        .badge .ic { width: 13px; height: 13px; stroke-width: 2.2 }
+        .badge.w { background: rgba(255, 255, 255, .2); color: #fff }
+
+        .chip { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; color: var(--mu); background: var(--s3); padding: 3px 9px; border-radius: 999px; white-space: nowrap; vertical-align: middle }
+        .chip.acc { color: var(--acc); background: var(--tint) }
+        .chip.ok { color: var(--gr); background: #e3f6ee }
+
+        .card { background: var(--s2); border-radius: 24px; box-shadow: var(--sh-sm); padding: 20px }
+        .card h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px }
+        .card p { font-size: 13px; color: var(--mu); line-height: 1.6 }
+
+        .btn { border: none; border-radius: 999px; cursor: pointer; font-weight: 600; transition: opacity .15s, transform .1s, box-shadow .15s; padding: 13px 22px; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap }
+        .btn .ic { width: 18px; height: 18px }
+        .btn:active { opacity: .85; transform: scale(.98) }
+        .btn.sm { padding: 9px 16px; font-size: 13px }
+        .btn.full { width: 100% }
+        .bp { background: var(--grad); color: #fff; box-shadow: 0 10px 22px -10px rgba(108, 60, 224, .7) }
+        .bp:hover { box-shadow: 0 14px 26px -10px rgba(108, 60, 224, .85) }
+        .bo { background: var(--s2); color: var(--ink); box-shadow: var(--sh-sm) }
+        .bw { background: #fff; color: var(--acc) }
+        .bt { background: none; color: var(--mu); font-weight: 500; font-size: 13px }
+        .br { display: flex; gap: 10px; flex-wrap: wrap }
+
+        .tile { width: 46px; height: 46px; border-radius: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0 }
+        .tile .ic { width: 22px; height: 22px }
+        .t-acc { background: var(--tint); color: var(--acc) }
+        .t-bl { background: #e6eefd; color: var(--bl) }
+        .t-am { background: #fdf0e0; color: #c9761a }
+        .t-re { background: #fde8ef; color: var(--re) }
+        .t-gr { background: #e3f6ee; color: var(--gr) }
+        .t-pk { background: #f9e6f6; color: var(--acc2) }
+
+        .bar { height: 6px; border-radius: 3px; background: var(--s3); overflow: hidden; margin-top: 10px }
+        .bar i { display: block; height: 100%; border-radius: 3px; background: var(--grad) }
+
+        .tabs { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-bottom: 20px; padding: 2px }
+        .tabs::-webkit-scrollbar { display: none }
+        .tab { flex-shrink: 0; background: var(--s2); border: none; border-radius: 999px; box-shadow: var(--sh-sm); padding: 9px 18px; font-size: 13px; font-weight: 500; color: var(--mu); cursor: pointer; white-space: nowrap; transition: all .2s }
+        .tab.on { background: var(--ink); color: #fff; font-weight: 600 }
+
+        .crumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--mu); padding: 22px 0 14px; flex-wrap: wrap }
+        .crumb a:hover { color: var(--acc) }
+        .crumb .ic { width: 13px; height: 13px }
+        .crumb b { color: var(--ink); font-weight: 600 }
+
+        .page-h { padding: 8px 0 24px }
+        .page-h h1 { font-size: 34px; font-weight: 700; letter-spacing: -.03em; line-height: 1.15 }
+        .page-h p { font-size: 15px; color: var(--mu); margin-top: 6px }
+
+        .sec { margin: 44px 0 18px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px }
+        .sec h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em }
+        .sec p { font-size: 13px; color: var(--mu); margin-top: 2px }
+        .sec a { font-size: 13px; font-weight: 600; color: var(--acc); display: flex; align-items: center; gap: 4px; white-space: nowrap }
+        .sec a .ic { width: 16px; height: 16px }
+
+        .lrow { display: flex; align-items: center; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--bd) }
+        .lrow:last-child { border-bottom: none }
+        .lbody { flex: 1; min-width: 0 }
+        .lname { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; flex-wrap: wrap }
+        .lmeta { font-size: 12px; color: var(--mu); margin-top: 1px; line-height: 1.5 }
+        .lend { color: var(--mu); font-size: 13px; font-weight: 500; font-family: var(--mono); white-space: nowrap }
+
+        .empty { text-align: center; padding: 50px 30px; color: var(--mu); font-size: 14px }
+        .empty .tile { width: 72px; height: 72px; border-radius: 24px; margin: 0 auto 16px; background: var(--tint); color: var(--acc) }
+        .empty .tile .ic { width: 34px; height: 34px }
+        .empty b { display: block; color: var(--ink); font-size: 18px; margin-bottom: 4px }
+        .empty .btn { margin-top: 18px }
+
+        .note { background: #fdf0e0; color: #8a5414; border-radius: 18px; padding: 14px 16px; font-size: 12px; line-height: 1.6 }
+
+        .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--ink); border-radius: 999px; padding: 11px 20px; font-size: 13px; font-weight: 500; color: #fff; white-space: nowrap; z-index: 999; box-shadow: 0 12px 30px -10px rgba(27, 21, 48, .5); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s }
+        .toast.on { opacity: 1; transform: translateX(-50%) translateY(0) }
+
+        main { flex: 1; padding-bottom: 60px }
+
+        /* ─── GRADIENTE ─── */
+        .grad-card { background: var(--grad); color: #fff; border-radius: 30px; padding: 26px; position: relative; overflow: hidden; box-shadow: 0 22px 40px -18px rgba(108, 60, 224, .75) }
+        .grad-card::before { content: ''; position: absolute; right: -50px; top: -50px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255, 255, 255, .1) }
+        .grad-card::after { content: ''; position: absolute; right: 50px; bottom: -80px; width: 160px; height: 160px; border-radius: 50%; background: rgba(255, 255, 255, .07) }
+        .grad-card > * { position: relative; z-index: 1 }
+        .grad-card .k { font-size: 11px; font-weight: 500; opacity: .8; letter-spacing: .06em; text-transform: uppercase }
+        .grad-card h2 { font-size: 26px; font-weight: 700; letter-spacing: -.02em; margin: 6px 0 4px }
+        .grad-card p { font-size: 13px; opacity: .88; line-height: 1.6 }
+        .grad-card .btn { margin-top: 18px }
+        .grad-card .hico { position: absolute; right: 24px; top: 24px; width: 60px; height: 60px; border-radius: 20px; background: rgba(255, 255, 255, .18); display: flex; align-items: center; justify-content: center }
+        .grad-card .hico .ic { width: 32px; height: 32px }
+        .grad-card .bar { background: rgba(255, 255, 255, .25) }
+        .grad-card .bar i { background: #fff }
+
+        /* ─── INÍCIO ─── */
+        .intro { display: grid; grid-template-columns: 1.15fr 1fr; gap: 40px; align-items: center; padding: 56px 0 20px }
+        .intro h1 { font-size: 48px; font-weight: 700; letter-spacing: -.035em; line-height: 1.08 }
+        .intro h1 em { font-style: normal; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent }
+        .intro > div > p { font-size: 16px; color: var(--mu); line-height: 1.65; margin: 16px 0 26px; max-width: 480px }
+
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 36px }
+        .stat { background: var(--s2); border-radius: 22px; box-shadow: var(--sh-sm); padding: 18px 20px; display: flex; align-items: center; gap: 14px }
+        .stat b { display: block; font-family: var(--mono); font-size: 24px; font-weight: 500; letter-spacing: -.02em; line-height: 1.1 }
+        .stat span { font-size: 12px; color: var(--mu); font-weight: 500 }
+
+        .pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px }
+        .pcard { background: var(--s2); border-radius: 24px; box-shadow: var(--sh-sm); padding: 22px; display: flex; flex-direction: column; transition: transform .15s, box-shadow .15s }
+        .pcard:hover { transform: translateY(-3px); box-shadow: var(--sh) }
+        .pcard .ph { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px }
+        .pcard h3 { font-size: 17px; font-weight: 600 }
+        .pcard p { font-size: 13px; color: var(--mu); line-height: 1.55; margin-top: 4px; flex: 1 }
+        .pcard .pm { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; font-size: 12px; color: var(--mu); font-weight: 500 }
+        .pcard .pm a { color: var(--acc); font-weight: 600; display: flex; align-items: center; gap: 2px }
+        .pcard .pm a .ic { width: 16px; height: 16px }
+
+        .how { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px }
+        .how .card { position: relative }
+        .how .n { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--acc); background: var(--tint); width: 34px; height: 34px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px }
+
+        /* ─── DESAFIO ─── */
+        .banner { display: flex; align-items: center; gap: 22px; padding: 30px }
+        .banner .bico { width: 84px; height: 84px; border-radius: 28px; background: rgba(255, 255, 255, .18); display: flex; align-items: center; justify-content: center; flex-shrink: 0 }
+        .banner .bico .ic { width: 44px; height: 44px }
+        .banner h1 { font-size: 32px; font-weight: 700; letter-spacing: -.03em; line-height: 1.1 }
+        .banner p { margin-top: 6px; max-width: 560px }
+        .banner .badge { margin-top: 12px }
+
+        .layout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; margin-top: 24px; align-items: start }
+        .aside { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 92px }
+
+        .weeks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px }
+        .week { background: var(--s2); border-radius: 22px; box-shadow: var(--sh-sm); padding: 16px 18px }
+        .week-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px }
+        .week-h b { font-size: 15px; font-weight: 600 }
+        .week-h span { font-size: 11px; color: var(--mu); text-align: right }
+        .days { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px }
+        .day { border: none; background: var(--s3); border-radius: 14px; padding: 11px 6px; cursor: pointer; text-align: center; font-size: 12px; font-weight: 600; color: var(--ink); display: flex; flex-direction: column; align-items: center; gap: 2px; transition: transform .1s }
+        .day:hover { transform: translateY(-1px) }
+        .day small { font-size: 10px; font-weight: 500; color: var(--mu); font-family: var(--mono) }
+        .day.done { background: #e3f6ee; color: var(--gr) }
+        .day.done small { color: var(--gr) }
+        .day.next { background: var(--grad); color: #fff; box-shadow: 0 8px 16px -8px rgba(108, 60, 224, .7) }
+        .day.next small { color: rgba(255, 255, 255, .8) }
+        .day.off { opacity: .45; cursor: default }
+        .day .ic { width: 14px; height: 14px; stroke-width: 2.4 }
+
+        .num-in { display: flex; align-items: center; justify-content: center; gap: 18px; margin: 20px 0 10px }
+        .num-in button { width: 48px; height: 48px; border-radius: 50%; border: none; background: var(--s3); font-size: 24px; font-weight: 500; cursor: pointer; color: var(--acc) }
+        .num-in input { width: 130px; text-align: center; font-family: var(--mono); font-size: 48px; font-weight: 500; border: none; background: none; outline: none; color: var(--ink) }
+        .num-in input::-webkit-outer-spin-button, .num-in input::-webkit-inner-spin-button { -webkit-appearance: none }
+        .num-in input[type=number] { -moz-appearance: textfield }
+        .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0 }
+        .opt { border: 2px solid var(--bd); background: var(--s2); border-radius: 16px; padding: 14px 16px; text-align: left; font-size: 14px; font-weight: 500; cursor: pointer }
+        .opt.on { border-color: var(--acc); background: var(--tint); color: var(--acc) }
+
+        .tip-mini { padding: 10px 0; border-bottom: 1px solid var(--bd) }
+        .tip-mini:last-of-type { border-bottom: none }
+        .tip-mini b { font-size: 13px; font-weight: 600; display: block }
+        .tip-mini span { font-size: 12px; color: var(--mu); line-height: 1.55 }
+
+        /* ─── TREINO ─── */
+        .sess { max-width: 620px; margin: 0 auto }
+        .sess .card { padding: 28px }
+        .sess-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px }
+        .sess-h h2 { font-size: 20px; font-weight: 700; letter-spacing: -.02em }
+        .sess-h p { font-size: 12px; color: var(--mu) }
+
+        .ring { position: relative; width: 240px; height: 240px; margin: 14px auto 14px }
+        .ring svg { width: 100%; height: 100%; transform: rotate(-90deg) }
+        .ring .c { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center }
+        .ring .c b { font-family: var(--mono); font-size: 56px; font-weight: 500; letter-spacing: -.03em; line-height: 1 }
+        .ring .c span { font-size: 13px; color: var(--mu); margin-top: 6px; font-weight: 500 }
+        .ring .c em { font-style: normal; font-size: 11px; font-weight: 600; color: var(--acc); background: var(--tint); padding: 4px 11px; border-radius: 999px; margin-bottom: 10px }
+        .ring .c em.rest { color: #c9761a; background: #fdf0e0 }
+        .ring .c em.walk { color: var(--bl); background: #e6eefd }
+        .ring .c em.run { color: var(--gr); background: #e3f6ee }
+
+        .adj { display: flex; justify-content: center; gap: 12px; margin-bottom: 16px }
+        .adj button { width: 48px; height: 48px; border-radius: 50%; border: none; background: var(--s3); font-size: 22px; color: var(--acc); cursor: pointer }
+
+        .steps { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; justify-content: center }
+        .step { min-width: 44px; padding: 7px 11px; border-radius: 12px; background: var(--s3); font-family: var(--mono); font-size: 13px; font-weight: 500; text-align: center }
+        .step.on { background: var(--grad); color: #fff }
+        .step.ok { background: #e3f6ee; color: var(--gr) }
+
+        .cue { text-align: center; font-size: 13px; color: var(--mu); line-height: 1.6; margin-bottom: 20px; min-height: 40px }
+        .cue b { display: block; color: var(--ink); font-size: 16px; margin-bottom: 2px }
+        .sess .br { justify-content: center }
+        .sess .br .btn { flex: 1; max-width: 260px }
+        .nextbox { display: flex; align-items: center; gap: 12px; background: var(--s3); border-radius: 16px; padding: 12px 16px; margin-bottom: 18px }
+
+        .done-ic { width: 92px; height: 92px; border-radius: 32px; background: var(--grad); color: #fff; display: flex; align-items: center; justify-content: center; margin: 10px auto 18px; box-shadow: 0 18px 34px -14px rgba(108, 60, 224, .8) }
+        .done-ic .ic { width: 44px; height: 44px; stroke-width: 2.2 }
+        .center { text-align: center }
+        .center h2 { font-size: 26px; font-weight: 700; letter-spacing: -.02em }
+        .center p { font-size: 14px; color: var(--mu); margin: 6px 0 20px; line-height: 1.6 }
+
+        /* ─── PROGRESSO / DICAS ─── */
+        .pgrid2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px }
+        .tgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px }
+        .tgrid .card .tile { width: 38px; height: 38px; border-radius: 13px; margin-bottom: 12px }
+        .tgrid .card .tile .ic { width: 19px; height: 19px }
+
+        .tbl { width: 100%; border-collapse: collapse; font-size: 13px }
+        .tbl th { text-align: left; font-size: 11px; font-weight: 600; color: var(--mu); text-transform: uppercase; letter-spacing: .05em; padding: 0 12px 10px }
+        .tbl td { padding: 12px; border-top: 1px solid var(--bd) }
+        .tbl td.n { font-family: var(--mono); text-align: right }
+        .tbl th.n { text-align: right }
+        .tbl .pn { display: flex; align-items: center; gap: 10px; font-weight: 600 }
+        .tbl .tile { width: 32px; height: 32px; border-radius: 11px }
+        .tbl .tile .ic { width: 16px; height: 16px }
+
+        /* ─── RODAPÉ ─── */
+        footer { border-top: 1px solid var(--bd); background: var(--s2); padding: 40px 0 28px; font-size: 13px; color: var(--mu) }
+        .foot { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 30px }
+        .foot h4 { font-size: 12px; font-weight: 600; color: var(--ink); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px }
+        .foot ul { list-style: none; display: flex; flex-direction: column; gap: 8px }
+        .foot a:hover { color: var(--acc) }
+        .foot p { line-height: 1.6; margin-top: 12px; max-width: 320px }
+        .copy { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--bd); font-size: 12px }
+
+        @media(max-width:980px) {
+            .layout { grid-template-columns: 1fr }
+            .aside { position: static }
+            .pgrid, .pgrid2 { grid-template-columns: repeat(2, 1fr) }
+        }
+
+        @media(max-width:720px) {
+            .wrap { padding: 0 16px }
+            .intro { grid-template-columns: 1fr; padding-top: 32px; gap: 26px }
+            .intro h1 { font-size: 34px }
+            .stats { grid-template-columns: repeat(2, 1fr) }
+            .pgrid, .pgrid2, .how, .tgrid, .weeks, .opts { grid-template-columns: 1fr }
+            .banner { flex-direction: column; align-items: flex-start; padding: 24px }
+            .banner .bico { width: 64px; height: 64px; border-radius: 22px }
+            .banner .bico .ic { width: 34px; height: 34px }
+            .banner h1 { font-size: 26px }
+            .page-h h1 { font-size: 28px }
+            .foot { grid-template-columns: 1fr }
+            .sess .card { padding: 20px }
+            .tbl .hide-m { display: none }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="top">
+        <div class="wrap top-in">
+            <a class="logo" href="#/"><i><svg class="ic" viewBox="0 0 24 24"><path d="M4 17l5-5 4 4 7-8M15 8h5v5" /></svg></i>Progride</a>
+            <nav class="menu" id="menu"></nav>
+            <div class="top-cta">
+                <button class="btn bp sm" onclick="train()"><svg class="ic" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>Treinar</button>
+                <button class="icon-btn burger" id="burger" aria-label="Menu"><svg class="ic" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" /></svg></button>
+            </div>
+        </div>
+    </header>
+
+    <main id="app"></main>
+
+    <footer>
+        <div class="wrap">
+            <div class="foot" id="foot"></div>
+            <div class="copy">Progride · planos de treino em casa. Os planos são uma referência geral e não substituem orientação profissional.</div>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        /* ─── ÍCONES ─── */
+        const I = {
+            flexoes: 'M3 18h18M6 15l4-3 5 1 4 3M6 15l-1 3M9 7.5a1.6 1.6 0 1 0 .01 0',
+            barra: 'M3 4h18M8 4v4M16 4v4M8 8l4 3 4-3M12 11v5M10 21l2-5 2 5',
+            agach: 'M12 2.5a1.6 1.6 0 1 0 .01 0M12 6.5v5l-4 2.5v5M12 11.5l4 2.5v5M7 8.5h10',
+            abdom: 'M3 19h18M6 19l4-6 4 3M10 13l3-5M15 5.5a1.6 1.6 0 1 0 .01 0',
+            corrida: 'M15 3.5a1.6 1.6 0 1 0 .01 0M9 9l4-1.5 2 3 3 1M13 7.5l-2 6.5 3 3v4M11 14l-3 2-3-1',
+            along: 'M12 2.5a1.6 1.6 0 1 0 .01 0M12 6.5v6M12 8.5L5 5.5M12 8.5l7-3M12 12.5l-4 8.5M12 12.5l4 8.5',
+            back: 'M15 18l-6-6 6-6',
+            chev: 'M9 18l6-6-6-6',
+            down: 'M6 9l6 6 6-6',
+            check: 'M5 12.5l4.5 4.5L19 7',
+            play: 'M8 5v14l11-7z',
+            pause: 'M8 5v14M16 5v14',
+            skip: 'M5 5l10 7-10 7zM19 5v14',
+            flame: 'M12 3c1 3 4 4.5 4 9a4 4 0 0 1-8 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 0-8z',
+            refresh: 'M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5',
+            clock: 'M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z',
+            target: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM12 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2z',
+            list: 'M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01',
+            bulb: 'M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z',
+            phone: 'M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM11 18h2'
+        };
+        const ic = (k, c = '') => `<svg class="ic ${c}" viewBox="0 0 24 24"><path d="${I[k]}"/></svg>`;
+
+        /* ─── PROGRAMAS ─── */
+        const PR = [
+            {
+                id: 'flexoes', name: '100 Flexões', short: 'Flexões', kind: 'reps', goal: 100, unit: 'flexões', col: 't-acc',
+                desc: 'Seis semanas de séries progressivas até chegar a 100 flexões seguidas.',
+                test: 'Faça o máximo de flexões que conseguir, sem parar e sem perder a técnica (corpo reto, peito perto do chão).',
+                cue: 'Mãos na linha dos ombros, abdômen firme, desça até o peito quase tocar o chão.'
+            },
+            {
+                id: 'barra', name: '50 Barras', short: 'Barra fixa', kind: 'reps', goal: 50, unit: 'barras', col: 't-bl',
+                desc: 'Ganhe força nas costas e nos braços até completar 50 barras.',
+                test: 'Faça o máximo de barras que conseguir, partindo do braço estendido até o queixo passar a barra.',
+                cue: 'Comece pendurado com os braços estendidos, puxe os cotovelos para baixo e passe o queixo da barra.'
+            },
+            {
+                id: 'agach', name: '300 Agachamentos', short: 'Agachamento', kind: 'reps', goal: 300, unit: 'agachamentos', col: 't-am',
+                desc: 'Pernas e glúteos mais fortes e resistentes, até 300 agachamentos.',
+                test: 'Faça o máximo de agachamentos que conseguir, sem parar, descendo até a coxa ficar paralela ao chão.',
+                cue: 'Pés na largura dos ombros, peso nos calcanhares, joelhos acompanhando a ponta dos pés.'
+            },
+            {
+                id: 'abdom', name: '300 Abdominais', short: 'Abdominal', kind: 'reps', goal: 300, unit: 'abdominais', col: 't-re',
+                desc: 'Core mais forte, série a série, até chegar a 300 abdominais.',
+                test: 'Faça o máximo de abdominais (crunch) que conseguir, sem parar e sem puxar o pescoço.',
+                cue: 'Lombar apoiada, tire só as escápulas do chão e solte o ar na subida.'
+            },
+            {
+                id: 'corrida', name: 'Correr 40 min', short: 'Corrida', kind: 'run', unit: 'min', col: 't-gr',
+                desc: 'Oito semanas alternando corrida e caminhada até correr 40 minutos sem parar.',
+                test: 'Hoje, quanto tempo você consegue correr sem parar, num ritmo confortável?',
+                cue: ''
+            },
+            {
+                id: 'along', name: 'Alongar', short: 'Alongamento', kind: 'flex', unit: 'min', col: 't-pk',
+                desc: 'Quatro semanas de rotinas curtas para ganhar mobilidade e soltar o corpo.',
+                test: '',
+                cue: ''
+            }
+        ];
+        const byId = id => PR.find(p => p.id === id);
+        const GROUPS = [['reps', 'Força'], ['run', 'Corrida'], ['flex', 'Mobilidade']];
+
+        /* corrida: [min correndo, min caminhando, repetições] por semana */
+        const RUN = [[1, 2, 10], [2, 2, 8], [3, 2, 7], [5, 2, 5], [8, 2, 4], [12, 2, 3], [18, 2, 2], [0, 0, 1]];
+        const RUN_FINAL = [30, 35, 40];
+        const RUN_LEVELS = [
+            { l: 'Menos de 1 minuto', w: 0 },
+            { l: 'De 1 a 5 minutos', w: 2 },
+            { l: 'De 5 a 15 minutos', w: 4 },
+            { l: 'Mais de 15 minutos', w: 6 }
+        ];
+
+        /* alongamento: rotinas (s = repetir dos dois lados) */
+        const FLEX = [
+            {
+                n: 'Despertar', items: [
+                    { n: 'Inclinação lateral do pescoço', c: 'Orelha em direção ao ombro, ombros relaxados.', s: 1 },
+                    { n: 'Círculos com os ombros', c: 'Giros lentos e amplos para trás.' },
+                    { n: 'Gato e vaca', c: 'De quatro apoios, alterne arredondar e arquear a coluna no ritmo da respiração.' },
+                    { n: 'Inclinação lateral em pé', c: 'Braço acima da cabeça, incline o tronco para o lado oposto.', s: 1 },
+                    { n: 'Flexão à frente', c: 'Joelhos levemente dobrados, deixe o tronco pender e a cabeça solta.' },
+                    { n: 'Afundo com quadril à frente', c: 'Joelho de trás no chão, empurre o quadril à frente até sentir a virilha.', s: 1 },
+                    { n: 'Panturrilha na parede', c: 'Calcanhar de trás no chão, joelho estendido, incline o corpo para a parede.', s: 1 }
+                ]
+            },
+            {
+                n: 'Pós-treino', items: [
+                    { n: 'Quadríceps em pé', c: 'Segure o pé atrás, joelhos juntos e quadril neutro.', s: 1 },
+                    { n: 'Posterior da coxa sentado', c: 'Uma perna estendida, incline o tronco a partir do quadril, coluna longa.', s: 1 },
+                    { n: 'Glúteo em quatro', c: 'Deitado, cruze o tornozelo sobre o joelho oposto e puxe a coxa para o peito.', s: 1 },
+                    { n: 'Peitoral na porta', c: 'Antebraço apoiado no batente, gire o corpo para o lado oposto.', s: 1 },
+                    { n: 'Tríceps acima da cabeça', c: 'Mão nas costas, a outra empurra o cotovelo suavemente.', s: 1 },
+                    { n: 'Joelhos ao peito', c: 'Deitado, abrace os joelhos e balance devagar para soltar a lombar.' }
+                ]
+            },
+            {
+                n: 'Antes de dormir', items: [
+                    { n: 'Postura de descanso', c: 'Sente nos calcanhares, braços à frente e testa no chão.' },
+                    { n: 'Borboleta', c: 'Sentado, solas dos pés juntas, deixe os joelhos caírem para os lados.' },
+                    { n: 'Torção deitado', c: 'Joelhos dobrados caem para um lado, olhar para o lado oposto.', s: 1 },
+                    { n: 'Pernas na parede', c: 'Deitado, pernas apoiadas na parede, braços soltos.' },
+                    { n: 'Respiração lenta', c: 'Inspire contando 4, expire contando 6. Deixe o corpo pesar.' }
+                ]
+            }
+        ];
+
+        /* ─── DICAS ─── */
+        const TIPS = {
+            flexoes: [
+                ['Técnica básica', 'Mãos um pouco mais abertas que os ombros, cotovelos a uns 45° do corpo. Do calcanhar à cabeça, o corpo forma uma linha reta: sem quadril caído nem bumbum para cima.'],
+                ['Se ainda não consegue nenhuma', 'Comece com as mãos apoiadas numa mesa ou banco. Quanto mais alto o apoio, mais fácil. Vá baixando a altura a cada semana até chegar ao chão. Flexão com joelhos apoiados também vale.'],
+                ['Respiração', 'Inspire na descida e solte o ar ao empurrar o chão. Prender o ar acelera o cansaço.'],
+                ['Erros comuns', 'Descer só até a metade, abrir demais os cotovelos (sobrecarrega o ombro) e deixar a cabeça cair à frente.']
+            ],
+            barra: [
+                ['Pegada', 'Pegada pronada (palmas para a frente), um pouco mais aberta que os ombros. A pegada supinada (palmas para você) é um pouco mais fácil e conta como variação.'],
+                ['Se ainda não consegue nenhuma', 'Faça negativas: suba com a ajuda de uma cadeira e desça o mais devagar que conseguir (3 a 5 segundos). Elástico preso na barra também ajuda.'],
+                ['Ative as costas', 'Antes de puxar, "abaixe" os ombros, afastando-os das orelhas. Pense em levar os cotovelos ao bolso.'],
+                ['Erros comuns', 'Balançar o corpo para ganhar impulso, não estender os braços embaixo e esticar o pescoço para alcançar a barra.']
+            ],
+            agach: [
+                ['Postura', 'Pés na largura dos ombros, pontas levemente para fora. Leve o quadril para trás como quem vai sentar numa cadeira, peito aberto.'],
+                ['Profundidade', 'Desça até a coxa ficar paralela ao chão, ou o mais fundo que conseguir mantendo os calcanhares no chão e a coluna neutra.'],
+                ['Joelhos', 'Os joelhos acompanham a direção das pontas dos pés. Se eles se fecham para dentro na subida, diminua a amplitude e fortaleça o glúteo.'],
+                ['Ritmo', 'Com muitas repetições, mantenha um ritmo constante: cerca de 2 segundos por repetição. Acelerar demais faz a técnica ser a primeira a desaparecer.']
+            ],
+            abdom: [
+                ['Crunch bem feito', 'Joelhos dobrados, pés no chão. Tire só as escápulas do chão, sem subir até sentar. A lombar fica apoiada o tempo todo.'],
+                ['Pescoço', 'As mãos só encostam na cabeça, sem puxar. Imagine uma laranja entre o queixo e o peito.'],
+                ['Respiração', 'Solte o ar ao subir e contraia o abdômen como se fosse fechar uma calça apertada.'],
+                ['Varie', 'Nos dias de descanso, prancha e elevação de pernas fortalecem o core por outros ângulos e ajudam a progredir.']
+            ],
+            corrida: [
+                ['Ritmo de conversa', 'Corra num ritmo em que ainda dá para falar frases curtas. Se não dá, desacelere. A meta é tempo, não velocidade.'],
+                ['Passada', 'Passos curtos e rápidos, pé tocando o chão embaixo do corpo. Passadas longas freiam a corrida e sobrecarregam os joelhos.'],
+                ['Repetir semana', 'Se uma semana ficou pesada demais, repita-a. Progredir mais devagar é melhor que se machucar.'],
+                ['Tênis e piso', 'Use um tênis confortável e com amortecimento. Prefira pisos regulares: pista, parque ou esteira.']
+            ],
+            along: [
+                ['Sem dor', 'Alongue até sentir tensão, nunca dor. Se arder ou fisgar, recue um pouco.'],
+                ['Sem embalo', 'Mantenha a posição parada. Balançar para ir mais longe ativa o reflexo de proteção do músculo.'],
+                ['Respire', 'Expire devagar ao entrar na posição. A cada expiração, o corpo costuma ceder um pouco mais.'],
+                ['Constância', 'Cinco a dez minutos quase todo dia rendem mais que uma sessão longa por semana.']
+            ]
+        };
+
+        /* ─── ESTADO (compartilhado com o app) ─── */
+        const KEY = 'progride.v1';
+        let st = load();
+        function load() {
+            try { return JSON.parse(localStorage.getItem(KEY)) || { p: {}, log: [] } } catch (e) { return { p: {}, log: [] } }
+        }
+        function save() { try { localStorage.setItem(KEY, JSON.stringify(st)) } catch (e) { } }
+        const ps = id => st.p[id] || (st.p[id] = { on: false, tests: [], done: {}, start: 0 });
+        const lastTest = id => { const t = ps(id).tests; return t.length ? t[t.length - 1].v : 0 };
+        const bestTest = id => ps(id).tests.reduce((a, t) => Math.max(a, t.v), 0);
+        const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const today = () => iso(new Date());
+        const dm = d => `${d.slice(8, 10)}/${d.slice(5, 7)}`;
+
+        /* ─── PLANOS ─── */
+        function plan(p) {
+            if (p.kind === 'reps') return repPlan(lastTest(p.id));
+            if (p.kind === 'run') return runPlan();
+            return flexPlan();
+        }
+
+        function repPlan(M) {
+            const r = x => Math.max(1, Math.round(x)), weeks = [];
+            for (let w = 0; w < 6; w++) {
+                const days = [];
+                for (let d = 0; d < 3; d++) {
+                    const b = r(M * (.45 + (w * 3 + d) * .04));
+                    const sets = [b, r(b * 1.15), r(b * .9), b, r(b * 1.25)];
+                    days.push({ sets, rest: d === 2 ? 90 : 60, total: sets.reduce((a, c) => a + c, 0) });
+                }
+                weeks.push(days);
+            }
+            return weeks;
+        }
+
+        function runPlan() {
+            return RUN.map(([run, walk, reps]) => [0, 1, 2].map(d => {
+                const items = [{ n: 'Aquecimento', c: 'Caminhada em ritmo animado.', t: 'walk', s: 300 }];
+                if (!walk) items.push({ n: 'Correr', c: 'Ritmo de conversa, sem parar.', t: 'run', s: RUN_FINAL[d] * 60 });
+                else for (let i = 0; i < reps; i++) {
+                    items.push({ n: 'Correr', c: `Bloco ${i + 1} de ${reps}. Ritmo de conversa.`, t: 'run', s: run * 60 });
+                    if (i < reps - 1) items.push({ n: 'Caminhar', c: 'Recupere o fôlego sem parar de andar.', t: 'walk', s: walk * 60 });
+                }
+                items.push({ n: 'Desaquecimento', c: 'Caminhada leve.', t: 'walk', s: 300 });
+                return { items, total: Math.round(items.reduce((a, i) => a + i.s, 0) / 60), label: walk ? `${run}′ corre · ${walk}′ anda × ${reps}` : `${RUN_FINAL[d]}′ sem parar` };
+            }));
+        }
+
+        function flexPlan() {
+            const weeks = [];
+            for (let w = 0; w < 4; w++) {
+                const hold = 20 + w * 5;
+                weeks.push(FLEX.map(r => {
+                    const items = [];
+                    r.items.forEach(x => {
+                        if (x.s) ['direito', 'esquerdo'].forEach(l => items.push({ n: x.n, c: `Lado ${l}. ${x.c}`, t: 'hold', s: hold }));
+                        else items.push({ n: x.n, c: x.c, t: 'hold', s: hold });
+                    });
+                    return { items, total: Math.round(items.reduce((a, i) => a + i.s, 0) / 60), label: r.n };
+                }));
+            }
+            return weeks;
+        }
+
+        function nextDay(p) {
+            const s = ps(p.id);
+            if (!s.on) return null;
+            const weeks = plan(p);
+            for (let w = s.start; w < weeks.length; w++)
+                for (let d = 0; d < 3; d++) if (!s.done[`${w}-${d}`]) return { w, d };
+            return null;
+        }
+
+        function cycleInfo(p) {
+            const s = ps(p.id), weeks = plan(p), total = (weeks.length - s.start) * 3;
+            const done = Object.keys(s.done).filter(k => +k.split('-')[0] >= s.start).length;
+            return { done, total, pct: total ? done / total : 0 };
+        }
+
+        function level(p) {
+            if (p.kind === 'run') return ps(p.id).on ? `Começou na semana ${ps(p.id).start + 1}` : '';
+            if (p.kind === 'flex' || !ps(p.id).on) return '';
+            const m = lastTest(p.id) / p.goal;
+            return m < .1 ? 'Iniciante' : m < .25 ? 'Intermediário' : m < .5 ? 'Avançado' : 'Elite';
+        }
+
+        function progressPct(p) {
+            if (p.kind === 'reps') return Math.min(1, bestTest(p.id) / p.goal);
+            return cycleInfo(p).pct;
+        }
+
+        function streak() {
+            const days = new Set(st.log.map(l => l.d));
+            const d = new Date();
+            if (!days.has(iso(d))) d.setDate(d.getDate() - 1);
+            let n = 0;
+            while (days.has(iso(d))) { n++; d.setDate(d.getDate() - 1) }
+            return n;
+        }
+
+        function suggestion() {
+            const active = PR.filter(p => ps(p.id).on && nextDay(p));
+            if (!active.length) return null;
+            const lastP = st.log.length ? st.log[st.log.length - 1].p : null;
+            const notToday = active.filter(p => !st.log.some(l => l.p === p.id && l.d === today()));
+            const pool = notToday.length ? notToday : active;
+            return pool.find(p => p.id !== lastP) || pool[0];
+        }
+
+        /* ─── ROTAS ─── */
+        const $ = s => document.querySelector(s);
+        const app = () => $('#app');
+        let cur = 'home', view = { prog: null, retest: false, progsFilter: 'all' };
+
+        function goHash(h) { if (location.hash === h) route(); else location.hash = h }
+
+        function route() {
+            const [a, b] = location.hash.replace(/^#\/?/, '').split('/');
+            if (cur === 'sess' && a !== 'treino') { stopTimer(); ses = null }
+            let sec = 'home';
+            if (a === 'desafios') { cur = 'progs'; sec = 'progs'; if (b) view.progsFilter = b; rProgs() }
+            else if (a === 'desafio' && byId(b)) {
+                if (view.prog !== b) view.retest = false;
+                view.prog = b; cur = 'prog'; sec = 'progs'; rProg();
+            }
+            else if (a === 'treino' && ses) { cur = 'sess'; sec = 'progs'; rSess() }
+            else if (a === 'progresso') { cur = 'stats'; sec = 'stats'; rStats() }
+            else if (a === 'dicas') { cur = 'tips'; sec = 'tips'; rTips(byId(b) ? b : 'flexoes') }
+            else { cur = 'home'; rHome() }
+            rMenu(sec);
+            $('#menu').classList.remove('open');
+            window.scrollTo(0, 0);
+        }
+
+        let toastT;
+        function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2200) }
+
+        function train() {
+            const s = suggestion();
+            if (!s) { toast('Comece um desafio primeiro'); goHash('#/desafios'); return }
+            const n = nextDay(s); previewSess(s.id, n.w, n.d);
+        }
+
+        /* ─── MENU / RODAPÉ ─── */
+        function ddProgs(base) {
+            return `<div class="dd"><div class="dd-in">${GROUPS.map(([k, l]) => `<div class="dd-g">${l}</div>` +
+                PR.filter(p => p.kind === k).map(p => `<a href="${base}${p.id}"><div class="tile ${p.col}">${ic(p.id)}</div><div><b>${p.name}</b><span>${base.includes('dicas') ? 'Técnica e erros comuns' : p.kind === 'reps' ? `Meta: ${p.goal} ${p.unit}` : p.kind === 'run' ? '8 semanas' : '4 semanas'}</span></div></a>`).join('')).join('')}</div></div>`;
+        }
+
+        function rMenu(sec) {
+            const car = `<button class="car" onclick="this.parentNode.classList.toggle('open')">${ic('down')}</button>`;
+            $('#menu').innerHTML = `
+                <div class="mi"><a href="#/" class="${sec === 'home' ? 'on' : ''}">Início</a></div>
+                <div class="mi"><a href="#/desafios" class="${sec === 'progs' ? 'on' : ''}">Desafios ${ic('down')}</a>${car}${ddProgs('#/desafio/')}</div>
+                <div class="mi"><a href="#/progresso" class="${sec === 'stats' ? 'on' : ''}">Progresso</a></div>
+                <div class="mi"><a href="#/dicas" class="${sec === 'tips' ? 'on' : ''}">Dicas ${ic('down')}</a>${car}${ddProgs('#/dicas/')}</div>
+                <div class="mi"><a href="index.html">Versão app ${ic('phone')}</a></div>
+                <div class="m-cta"><button class="btn bp full" onclick="train()">${ic('play')} Treinar</button></div>`;
+        }
+
+        function rFoot() {
+            $('#foot').innerHTML = `
+                <div><a class="logo" href="#/"><i>${ic('flame')}</i>Progride</a><p>Desafios de treino em casa com planos que se ajustam ao seu nível, do primeiro teste à meta final.</p></div>
+                <div><h4>Desafios</h4><ul>${PR.map(p => `<li><a href="#/desafio/${p.id}">${p.name}</a></li>`).join('')}</ul></div>
+                <div><h4>Site</h4><ul><li><a href="#/">Início</a></li><li><a href="#/desafios">Todos os desafios</a></li><li><a href="#/progresso">Meu progresso</a></li><li><a href="#/dicas">Dicas de técnica</a></li><li><a href="index.html">Versão app</a></li></ul></div>`;
+        }
+
+        const crumb = parts => `<div class="crumb">${parts.map((p, i) => i < parts.length - 1 ? `<a href="${p[1]}">${p[0]}</a>${ic('chev')}` : `<b>${p[0]}</b>`).join('')}</div>`;
+
+        /* ─── INÍCIO ─── */
+        function pcard(p) {
+            const s = ps(p.id), pct = Math.round(progressPct(p) * 100), n = nextDay(p);
+            const tag = !s.on ? '<span class="chip">Novo</span>' : n ? `<span class="chip acc">Semana ${n.w + 1} · Dia ${n.d + 1}</span>` : '<span class="chip ok">Concluído</span>';
+            const meta = !s.on ? (p.kind === 'reps' ? `Meta: ${p.goal} ${p.unit}` : p.kind === 'run' ? '8 semanas · 3x por semana' : '4 semanas · 3x por semana')
+                : p.kind === 'reps' ? `Recorde ${bestTest(p.id)} / ${p.goal}` : `${pct}% do plano`;
+            return `<a class="pcard" href="#/desafio/${p.id}"><div class="ph"><div class="tile ${p.col}">${ic(p.id)}</div>${tag}</div>
+                <h3>${p.name}</h3><p>${p.desc}</p>${s.on ? `<div class="bar"><i style="width:${pct}%"></i></div>` : ''}
+                <div class="pm"><span>${meta}</span><span style="color:var(--acc);font-weight:600;display:flex;align-items:center">${s.on ? 'Continuar' : 'Começar'}${ic('chev')}</span></div></a>`;
+        }
+
+        function rHome() {
+            const sug = suggestion();
+            const reps = st.log.filter(l => l.unit !== 'min').reduce((a, l) => a + l.total, 0);
+            const mins = st.log.filter(l => l.unit === 'min').reduce((a, l) => a + l.total, 0);
+            const sk = streak();
+            let side;
+            if (sug) {
+                const n = nextDay(sug), day = plan(sug)[n.w][n.d];
+                const what = sug.kind === 'reps' ? `${day.sets.length} séries · ${day.total} ${sug.unit}` : `${day.label} · ${day.total} min`;
+                side = `<div class="grad-card"><div class="hico">${ic(sug.id)}</div><div class="k">Seu próximo treino</div><h2>${sug.name}</h2><p>Semana ${n.w + 1} · Dia ${n.d + 1}<br>${what}</p><div class="bar"><i style="width:${Math.round(cycleInfo(sug).pct * 100)}%"></i></div><button class="btn bw" onclick="startSess('${sug.id}',${n.w},${n.d})">${ic('play')} Começar agora</button></div>`;
+            } else {
+                side = `<div class="grad-card"><div class="hico">${ic('target')}</div><div class="k">Como começar</div><h2>Um teste, um plano</h2><p>Escolha um desafio, faça o teste inicial e receba semanas de treino calculadas para o seu nível. Tudo fica salvo neste navegador.</p><a class="btn bw" href="#/desafios">Escolher desafio ${ic('chev')}</a></div>`;
+            }
+            const mine = PR.filter(p => ps(p.id).on);
+            app().innerHTML = `<div class="wrap">
+                <section class="intro">
+                    <div><span class="badge">${ic('flame')} ${sk} dia${sk === 1 ? '' : 's'} seguidos</span>
+                        <h1 style="margin-top:16px">Treine em casa, <em>um desafio</em> de cada vez.</h1>
+                        <p>Flexões, barra, agachamento, abdominal, corrida e alongamento. Cada plano parte do seu teste e avança semana a semana até a meta.</p>
+                        <div class="br"><a class="btn bp" href="#/desafios">${ic('list')} Ver desafios</a><a class="btn bo" href="#/dicas">${ic('bulb')} Dicas de técnica</a></div>
+                    </div>
+                    ${side}
+                </section>
+                <div class="stats">
+                    <div class="stat"><div class="tile t-acc">${ic('check')}</div><div><b>${st.log.length}</b><span>treinos feitos</span></div></div>
+                    <div class="stat"><div class="tile t-am">${ic('flame')}</div><div><b>${sk}</b><span>dias seguidos</span></div></div>
+                    <div class="stat"><div class="tile t-re">${ic('target')}</div><div><b>${reps}</b><span>repetições</span></div></div>
+                    <div class="stat"><div class="tile t-gr">${ic('clock')}</div><div><b>${mins}</b><span>minutos</span></div></div>
+                </div>
+                ${mine.length ? `<div class="sec"><div><h2>Seus desafios</h2><p>${mine.length} em andamento</p></div><a href="#/progresso">Ver progresso ${ic('chev')}</a></div><div class="pgrid">${mine.map(pcard).join('')}</div>` : ''}
+                <div class="sec"><div><h2>${mine.length ? 'Outros desafios' : 'Desafios'}</h2><p>Escolha por onde começar</p></div><a href="#/desafios">Todos ${ic('chev')}</a></div>
+                <div class="pgrid">${PR.filter(p => !ps(p.id).on).map(pcard).join('') || '<div class="card"><p>Você já começou todos os desafios. 💪</p></div>'}</div>
+                <div class="sec"><div><h2>Como funciona</h2><p>Três passos, sem equipamento (só uma barra para o desafio de barras)</p></div></div>
+                <div class="how">
+                    <div class="card"><div class="n">1</div><h3>Faça o teste</h3><p>Registre quantas repetições você faz seguidas, ou quanto tempo já corre. O plano parte desse número.</p></div>
+                    <div class="card"><div class="n">2</div><h3>Siga o plano</h3><p>Três treinos por semana, com séries, descanso e timer guiados. Descanse um dia entre os treinos.</p></div>
+                    <div class="card"><div class="n">3</div><h3>Refaça e evolua</h3><p>No fim do ciclo, faça um novo teste. O plano seguinte começa do seu novo nível até chegar à meta.</p></div>
+                </div>
+            </div>`;
+        }
+
+        /* ─── DESAFIOS ─── */
+        function rProgs() {
+            const f = view.progsFilter;
+            const list = PR.filter(p => f === 'all' || p.kind === f);
+            app().innerHTML = `<div class="wrap">
+                ${crumb([['Início', '#/'], ['Desafios']])}
+                <div class="page-h"><h1>Desafios</h1><p>Planos progressivos para treinar em casa, no seu ritmo.</p></div>
+                <div class="tabs">${[['all', 'Todos'], ...GROUPS].map(([k, l]) => `<button class="tab ${k === f ? 'on' : ''}" onclick="view.progsFilter='${k}';rProgs()">${l}</button>`).join('')}</div>
+                <div class="pgrid">${list.map(pcard).join('')}</div>
+            </div>`;
+        }
+
+        /* ─── DESAFIO ─── */
+        let testVal = 10, runOpt = null;
+
+        function rProg() {
+            const p = byId(view.prog), s = ps(p.id), lv = level(p);
+            const banner = `<div class="grad-card banner"><div class="bico">${ic(p.id)}</div><div><h1>${p.name}</h1><p>${p.desc}</p>${lv ? `<span class="badge w">${lv}</span>` : ''}</div></div>`;
+            const tipsBox = `<div class="card"><h3>Dicas rápidas</h3>${TIPS[p.id].slice(0, 2).map(t => `<div class="tip-mini"><b>${t[0]}</b><span>${t[1]}</span></div>`).join('')}<a class="btn bo sm full" style="margin-top:12px" href="#/dicas/${p.id}">${ic('bulb')} Todas as dicas</a></div>`;
+            let main, aside;
+
+            if (!s.on || view.retest) {
+                if (p.kind === 'reps') {
+                    testVal = lastTest(p.id) || 10;
+                    main = `<div class="card"><h3>${s.on ? 'Novo teste' : 'Teste inicial'}: quantas ${p.unit} você faz seguidas?</h3><p>${p.test}</p>
+                        <div class="num-in"><button onclick="adjTest(-1)">−</button><input id="tv" type="number" min="0" max="999" value="${testVal}" oninput="testVal=Math.max(0,+this.value||0)"><button onclick="adjTest(1)">+</button></div>
+                        <div class="br" style="justify-content:center"><button class="btn bp" onclick="saveTest()">${ic('check')} Gerar meu plano</button>${s.on ? `<button class="btn bt" onclick="view.retest=false;rProg()">Cancelar</button>` : ''}</div></div>`;
+                } else if (p.kind === 'run') {
+                    runOpt = null;
+                    main = `<div class="card"><h3>${s.on ? 'Recomeçar' : 'Ponto de partida'}</h3><p>${p.test}</p><div class="opts">${RUN_LEVELS.map((o, i) => `<button class="opt" onclick="pickRun(${i},this)">${o.l}</button>`).join('')}</div>
+                        <div class="br"><button class="btn bp" onclick="saveRun()">${ic('check')} Montar meu plano</button>${s.on ? `<button class="btn bt" onclick="view.retest=false;rProg()">Cancelar</button>` : ''}</div></div>`;
+                } else {
+                    main = `<div class="card"><h3>Como funciona</h3><p>Três rotinas que se alternam na semana: Despertar, Pós-treino e Antes de dormir. Cada posição começa com 20 segundos e ganha 5 segundos por semana.</p>
+                        <div class="br" style="margin-top:16px"><button class="btn bp" onclick="saveFlex()">${ic('play')} Começar</button></div></div>`;
+                }
+                aside = `<div class="card"><h3>O que você recebe</h3><p>${p.kind === 'reps' ? '6 semanas, 3 treinos por semana, 5 séries por treino. A última série de cada dia é "até onde aguentar".' : p.kind === 'run' ? 'Até 8 semanas, 3 treinos por semana, com timer que avisa a troca entre correr e caminhar.' : '4 semanas, 3 rotinas guiadas com timer por posição.'}</p></div>` + tipsBox;
+            } else {
+                const weeks = plan(p), n = nextDay(p), ci = cycleInfo(p);
+                main = `<div class="sec" style="margin-top:0"><div><h2>Plano</h2><p>${weeks.length - s.start} semanas · 3 dias por semana</p></div></div>
+                    <div class="weeks">${weeks.map((days, w) => `<div class="week" style="${w < s.start ? 'opacity:.5' : ''}">
+                        <div class="week-h"><b>Semana ${w + 1}</b><span>${w < s.start ? 'pulada' : p.kind === 'run' ? days[0].label : p.kind === 'reps' ? `descanso ${days[0].rest}–${days[2].rest}s` : `${20 + w * 5}s por posição`}</span></div>
+                        <div class="days">${days.map((day, d) => {
+                    const done = s.done[`${w}-${d}`], isN = n && n.w === w && n.d === d;
+                    const sm = p.kind === 'reps' ? `${day.total} rep.` : p.kind === 'run' ? `${day.total} min` : day.label;
+                    return `<button class="day ${done ? 'done' : ''} ${isN ? 'next' : ''} ${w < s.start ? 'off' : ''}" onclick="previewSess('${p.id}',${w},${d})">${done ? ic('check') : ''}Dia ${d + 1}<small>${sm}</small></button>`;
+                }).join('')}</div></div>`).join('')}</div>`;
+                aside = `<div class="card"><div class="k" style="font-size:11px;color:var(--mu);font-weight:600;text-transform:uppercase;letter-spacing:.06em">${n ? 'Próximo treino' : 'Plano concluído'}</div>
+                    <h3 style="font-size:20px;margin-top:4px">${n ? `Semana ${n.w + 1} · Dia ${n.d + 1}` : p.kind === 'reps' ? 'Hora do teste final' : 'Parabéns!'}</h3>
+                    <p>${n ? `${ci.done} de ${ci.total} treinos feitos` : p.kind === 'reps' ? `Tente fazer ${p.goal} ${p.unit} seguidas, ou faça um novo teste para outro ciclo.` : 'Você terminou o plano. Recomece ou mantenha a rotina.'}</p>
+                    <div class="bar"><i style="width:${Math.round(ci.pct * 100)}%"></i></div>
+                    ${n ? `<button class="btn bp full" style="margin-top:16px" onclick="startSess('${p.id}',${n.w},${n.d})">${ic('play')} Treinar agora</button>` : ''}
+                    <button class="btn bo full" style="margin-top:10px" onclick="view.retest=true;rProg()">${ic('refresh')} ${p.kind === 'reps' ? 'Novo teste' : 'Recomeçar plano'}</button></div>
+                    ${p.kind === 'reps' && s.tests.length ? `<div class="card"><h3>Seus testes</h3>${s.tests.slice(-5).reverse().map(t => `<div class="lrow"><div class="lbody"><div class="lname">${t.v} ${p.unit}</div></div><div class="lend">${dm(t.d)}</div></div>`).join('')}</div>` : ''}` + tipsBox;
+            }
+            app().innerHTML = `<div class="wrap">${crumb([['Início', '#/'], ['Desafios', '#/desafios'], [p.name]])}${banner}<div class="layout"><div>${main}</div><aside class="aside">${aside}</aside></div></div>`;
+        }
+
+        function adjTest(d) { testVal = Math.max(0, testVal + d); $('#tv').value = testVal }
+        function saveTest() {
+            const p = byId(view.prog), s = ps(p.id);
+            if (testVal < 1) { toast('Registre pelo menos 1 repetição'); return }
+            s.tests.push({ d: today(), v: testVal }); s.on = true; s.done = {}; s.start = 0; view.retest = false;
+            save(); rProg(); toast(testVal >= p.goal ? `Meta de ${p.goal} batida!` : 'Plano gerado para o seu nível');
+        }
+        function pickRun(i, el) { runOpt = i; document.querySelectorAll('.opt').forEach(o => o.classList.toggle('on', o === el)) }
+        function saveRun() {
+            if (runOpt === null) { toast('Escolha uma opção'); return }
+            const s = ps('corrida'); s.on = true; s.start = RUN_LEVELS[runOpt].w; s.done = {}; view.retest = false;
+            save(); rProg(); toast(`Você começa na semana ${s.start + 1}`);
+        }
+        function saveFlex() { const s = ps('along'); s.on = true; s.start = 0; s.done = {}; view.retest = false; save(); rProg() }
+
+        /* ─── TREINO ─── */
+        let ses = null, tmr = null;
+
+        function previewSess(pid, w, d) {
+            if (w < ps(pid).start) { toast('Semana pulada pelo seu nível'); return }
+            ses = { pid, w, d, phase: 'preview' }; goHash('#/treino');
+        }
+        function startSess(pid, w, d) {
+            const p = byId(pid), day = plan(p)[w][d];
+            stopTimer();
+            ses = { pid, w, d, phase: p.kind === 'reps' ? 'work' : 'timed', idx: 0, results: [], left: 0, end: 0, run: false };
+            if (p.kind === 'reps') ses.val = day.sets[0];
+            else ses.left = ses.dur = day.items[0].s;
+            if (cur === 'sess') rSess(); else goHash('#/treino');
+            if (p.kind !== 'reps') play();
+        }
+
+        function rSess() {
+            const p = byId(ses.pid), day = plan(p)[ses.w][ses.d];
+            const title = `Semana ${ses.w + 1} · Dia ${ses.d + 1}`;
+            const shell = inner => `<div class="wrap">${crumb([['Início', '#/'], [p.name, '#/desafio/' + p.id], [title]])}<div class="sess"><div class="card">${inner}</div></div></div>`;
+            const head = extra => `<div class="sess-h"><div style="display:flex;align-items:center;gap:12px"><div class="tile ${p.col}">${ic(p.id)}</div><div><h2>${p.name}</h2><p>${title}</p></div></div>${extra || ''}</div>`;
+            const el = app();
+
+            if (ses.phase === 'preview') {
+                const rows = p.kind === 'reps'
+                    ? day.sets.map((n, i) => `<div class="lrow"><div class="tile t-acc" style="font-family:var(--mono);font-weight:500;width:38px;height:38px">${i + 1}</div><div class="lbody"><div class="lname">${i === day.sets.length - 1 ? `Máximo (mín. ${n})` : `${n} ${p.unit}`}</div><div class="lmeta">${i < day.sets.length - 1 ? `descanso ${day.rest}s` : 'vá até onde aguentar'}</div></div></div>`).join('')
+                    : day.items.map(it => `<div class="lrow"><div class="tile ${it.t === 'run' ? 't-gr' : it.t === 'walk' ? 't-bl' : 't-pk'}" style="width:38px;height:38px">${ic(it.t === 'hold' ? 'along' : it.t === 'run' ? 'corrida' : 'clock')}</div><div class="lbody"><div class="lname">${it.n}</div><div class="lmeta">${it.c}</div></div><div class="lend">${fmt(it.s)}</div></div>`).join('');
+                const done = ps(p.id).done[`${ses.w}-${ses.d}`];
+                el.innerHTML = shell(head(done ? '<span class="chip ok">Feito</span>' : '') +
+                    `<p style="font-size:13px;color:var(--mu);margin:4px 0 10px">${p.kind === 'reps' ? `${day.sets.length} séries · ${day.total} ${p.unit} no total` : `${day.label} · ${day.total} min`}</p>
+                    <div>${rows}</div>
+                    <div class="br" style="margin-top:20px"><button class="btn bp" onclick="startSess('${p.id}',${ses.w},${ses.d})">${ic('play')} ${done ? 'Treinar de novo' : 'Começar'}</button></div>`);
+                return;
+            }
+            if (ses.phase === 'end') {
+                const tot = p.kind === 'reps' ? ses.results.reduce((a, c) => a + c, 0) : day.total;
+                el.innerHTML = shell(`<div class="done-ic">${ic('check')}</div>
+                    <div class="center"><h2>Treino concluído!</h2><p>${p.name} · ${title}<br><b style="color:var(--ink);font-size:24px;font-family:var(--mono)">${tot}</b> ${p.kind === 'reps' ? p.unit : 'minutos'}</p></div>
+                    ${p.kind === 'reps' ? `<div class="steps">${ses.results.map(r => `<span class="step ok">${r}</span>`).join('')}</div>` : ''}
+                    <div class="note" style="margin-bottom:20px">Descanse pelo menos um dia antes do próximo treino deste desafio. Se as últimas séries ficaram muito difíceis, repita este dia.</div>
+                    <div class="br"><a class="btn bp" href="#/desafio/${p.id}">Ver plano</a><a class="btn bo" href="#/">Voltar ao início</a></div>`);
+                return;
+            }
+            const R2 = 108, C = 2 * Math.PI * R2;
+            const ring = (label, cls, big, sub) => `<div class="ring"><svg viewBox="0 0 240 240"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6c3ce0"/><stop offset="1" stop-color="#c13cb4"/></linearGradient></defs><circle cx="120" cy="120" r="${R2}" fill="none" stroke="#efe9fd" stroke-width="13"/><circle id="arc" cx="120" cy="120" r="${R2}" fill="none" stroke="url(#g)" stroke-width="13" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="0"/></svg><div class="c"><em class="${cls}">${label}</em><b id="big">${big}</b><span>${sub}</span></div></div>`;
+            const quit = `<div class="br" style="margin-top:8px"><button class="btn bt" onclick="quitSess()">Encerrar treino</button></div>`;
+
+            if (p.kind === 'reps') {
+                const last = ses.idx === day.sets.length - 1;
+                const steps = `<div class="steps">${day.sets.map((n, i) => `<span class="step ${i < ses.idx ? 'ok' : i === ses.idx ? 'on' : ''}">${i < ses.idx ? ses.results[i] : (i === day.sets.length - 1 ? n + '+' : n)}</span>`).join('')}</div>`;
+                if (ses.phase === 'rest') {
+                    el.innerHTML = shell(head() + ring('Descanso', 'rest', fmt(ses.left), `próxima: ${day.sets[ses.idx]}${ses.idx === day.sets.length - 1 ? '+' : ''} ${p.unit}`) + steps +
+                        `<div class="cue"><b>Respire fundo</b>Solte os braços e as pernas e beba um gole de água.</div>
+                        <div class="br"><button class="btn bo" onclick="addRest(15)">+15s</button><button class="btn bp" onclick="endRest()">${ic('skip')} Pular descanso</button></div>` + quit);
+                    arc();
+                } else {
+                    el.innerHTML = shell(head() + ring(`Série ${ses.idx + 1} de ${day.sets.length}`, '', ses.val, last ? `máximo · mín. ${day.sets[ses.idx]}` : p.unit) +
+                        `<div class="adj"><button onclick="adjVal(-1)">−</button><button onclick="adjVal(1)">+</button></div>` + steps +
+                        `<div class="cue"><b>${last ? 'Vá até o limite!' : 'Ajuste se fez mais ou menos'}</b>${p.cue}</div>
+                        <div class="br"><button class="btn bp" onclick="doneSet()">${ic('check')} Série concluída</button></div>` + quit);
+                }
+                return;
+            }
+            const it = day.items[ses.idx], nx = day.items[ses.idx + 1];
+            const cls = it.t === 'run' ? 'run' : it.t === 'walk' ? 'walk' : '';
+            el.innerHTML = shell(head() + ring(`${ses.idx + 1} de ${day.items.length}`, cls, fmt(ses.left), it.n) +
+                `<div class="cue"><b>${it.n}</b>${it.c}</div>
+                <div class="nextbox"><div class="lbody"><div class="lmeta">A seguir</div><div class="lname">${nx ? nx.n : 'Fim do treino'}</div></div><div class="lend">${nx ? fmt(nx.s) : ''}</div></div>
+                <div class="br"><button class="btn bo" id="pp" onclick="ses.run?pause():play()">${ses.run ? ic('pause') + ' Pausar' : ic('play') + ' Continuar'}</button><button class="btn bp" onclick="nextItem()">${ic('skip')} Próximo</button></div>` + quit);
+            arc();
+        }
+
+        const fmt = s => { const t = Math.max(0, Math.ceil(s)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}` };
+
+        function adjVal(d) { ses.val = Math.max(0, ses.val + d); $('#big').textContent = ses.val }
+        function doneSet() {
+            const day = plan(byId(ses.pid))[ses.w][ses.d];
+            ses.results.push(ses.val); ses.idx++;
+            if (ses.idx >= day.sets.length) return finish();
+            ses.phase = 'rest'; ses.val = day.sets[ses.idx]; ses.left = ses.dur = day.rest;
+            rSess(); play();
+        }
+        function addRest(s) { ses.left += s; ses.dur += s; if (ses.run) ses.end += s * 1000; tick() }
+        function endRest() { stopTimer(); ses.phase = 'work'; beep(660); rSess() }
+
+        function play() {
+            ses.run = true; ses.end = Date.now() + ses.left * 1000;
+            clearInterval(tmr); tmr = setInterval(tick, 250);
+            const pp = $('#pp'); if (pp) pp.innerHTML = ic('pause') + ' Pausar';
+        }
+        function pause() {
+            ses.run = false; clearInterval(tmr); ses.left = Math.max(0, (ses.end - Date.now()) / 1000);
+            const pp = $('#pp'); if (pp) pp.innerHTML = ic('play') + ' Continuar';
+        }
+        function stopTimer() { clearInterval(tmr); tmr = null; if (ses) ses.run = false }
+
+        function tick() {
+            if (!ses) return;
+            if (ses.run) ses.left = Math.max(0, (ses.end - Date.now()) / 1000);
+            const big = $('#big');
+            if (big) big.textContent = fmt(ses.left);
+            arc();
+            if (ses.run && ses.left <= 0) {
+                if (ses.phase === 'rest') endRest();
+                else { beep(880); nextItem() }
+            }
+        }
+        function arc() {
+            const a = $('#arc'); if (!a || !ses.dur) return;
+            a.setAttribute('stroke-dashoffset', 2 * Math.PI * 108 * (1 - ses.left / ses.dur));
+        }
+        function nextItem() {
+            const day = plan(byId(ses.pid))[ses.w][ses.d];
+            stopTimer(); ses.idx++;
+            if (ses.idx >= day.items.length) return finish();
+            ses.left = ses.dur = day.items[ses.idx].s;
+            rSess(); play();
+        }
+
+        function finish() {
+            stopTimer();
+            const p = byId(ses.pid), s = ps(p.id), day = plan(p)[ses.w][ses.d];
+            const total = p.kind === 'reps' ? ses.results.reduce((a, c) => a + c, 0) : day.total;
+            s.done[`${ses.w}-${ses.d}`] = today();
+            st.log.push({ p: p.id, d: today(), w: ses.w, day: ses.d, total, unit: p.kind === 'reps' ? 'reps' : 'min' });
+            save(); ses.phase = 'end'; beep(990, 300); rSess();
+        }
+        function quitSess() { if (confirm('Encerrar sem salvar este treino?')) goHash('#/desafio/' + ses.pid) }
+
+        let ac;
+        function beep(f = 880, ms = 160) {
+            try {
+                ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+                const o = ac.createOscillator(), g = ac.createGain();
+                o.frequency.value = f; o.connect(g); g.connect(ac.destination);
+                g.gain.setValueAtTime(.15, ac.currentTime); g.gain.exponentialRampToValueAtTime(.001, ac.currentTime + ms / 1000);
+                o.start(); o.stop(ac.currentTime + ms / 1000);
+            } catch (e) { }
+            try { navigator.vibrate && navigator.vibrate(120) } catch (e) { }
+        }
+
+        /* ─── PROGRESSO ─── */
+        function rStats() {
+            const mine = PR.filter(p => ps(p.id).on);
+            const log = st.log.slice(-50).reverse();
+            app().innerHTML = `<div class="wrap">
+                ${crumb([['Início', '#/'], ['Progresso']])}
+                <div class="page-h"><h1>Progresso</h1><p>Recordes, andamento dos planos e histórico de treinos.</p></div>
+                ${mine.length ? `<div class="pgrid2">${mine.map(p => {
+                const ci = cycleInfo(p), s = ps(p.id), pct = Math.round(progressPct(p) * 100);
+                const head = p.kind === 'reps' ? `Recorde <b style="font-family:var(--mono);color:var(--ink)">${bestTest(p.id)}</b> de ${p.goal} ${p.unit}` : `${ci.done} de ${ci.total} treinos`;
+                const tests = p.kind === 'reps' && s.tests.length > 1 ? `<div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap">${s.tests.map(t => `<span class="chip">${dm(t.d)} · ${t.v}</span>`).join('')}</div>` : '';
+                return `<a class="card" href="#/desafio/${p.id}" style="display:block"><div style="display:flex;align-items:center;gap:12px"><div class="tile ${p.col}">${ic(p.id)}</div><div class="lbody"><div class="lname">${p.name}</div><div class="lmeta">${head}</div></div><span class="chip acc">${pct}%</span></div><div class="bar"><i style="width:${pct}%"></i></div>${tests}</a>`;
+            }).join('')}</div>` : `<div class="card empty"><div class="tile">${ic('target')}</div><b>Nada por aqui ainda</b>Comece um desafio para acompanhar sua evolução.<br><a class="btn bp" href="#/desafios">Ver desafios</a></div>`}
+                ${log.length ? `<div class="sec"><div><h2>Histórico</h2><p>Últimos ${log.length} treinos</p></div></div>
+                <div class="card"><table class="tbl"><thead><tr><th>Desafio</th><th class="hide-m">Treino</th><th>Data</th><th class="n">Total</th></tr></thead><tbody>${log.map(l => {
+                const p = byId(l.p);
+                return `<tr><td><div class="pn"><div class="tile ${p.col}">${ic(p.id)}</div>${p.short}</div></td><td class="hide-m" style="color:var(--mu)">Semana ${l.w + 1} · Dia ${l.day + 1}</td><td style="color:var(--mu)">${dm(l.d)}</td><td class="n">${l.total} ${l.unit === 'min' ? 'min' : 'rep.'}</td></tr>`;
+            }).join('')}</tbody></table></div>` : ''}
+            </div>`;
+        }
+
+        /* ─── DICAS ─── */
+        function rTips(f) {
+            const p = byId(f);
+            app().innerHTML = `<div class="wrap">
+                ${crumb([['Início', '#/'], ['Dicas', '#/dicas'], [p.short]])}
+                <div class="page-h"><h1>Dicas</h1><p>Técnica, respiração e erros comuns de cada desafio.</p></div>
+                <div class="tabs">${PR.map(x => `<a class="tab ${x.id === f ? 'on' : ''}" href="#/dicas/${x.id}">${x.short}</a>`).join('')}</div>
+                <div class="tgrid">${TIPS[f].map((t, i) => `<div class="card"><div class="tile ${p.col}">${ic(i === 0 ? p.id : i === 1 ? 'target' : i === 2 ? 'clock' : 'bulb')}</div><h3>${t[0]}</h3><p>${t[1]}</p></div>`).join('')}</div>
+                <div class="br" style="margin-bottom:20px"><a class="btn bp" href="#/desafio/${p.id}">${ic('play')} Ir para o desafio ${p.name}</a></div>
+                <div class="note">Os planos são uma referência geral. Se tiver dor, lesão ou alguma condição de saúde, converse com um profissional antes de começar. Dor aguda é sinal para parar.</div>
+            </div>`;
+        }
+
+        /* ─── INIT ─── */
+        $('#burger').onclick = () => $('#menu').classList.toggle('open');
+        window.addEventListener('hashchange', route);
+        window.addEventListener('storage', e => { if (e.key === KEY) { st = load(); if (cur !== 'sess') route() } });
+        rFoot();
+        route();
+    </script>
+</body>
+
+</html>

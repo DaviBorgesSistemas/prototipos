@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar | Fidelix &amp; Cavalcante</title>
+  <link rel="icon" href="../shared/img/simbolo.png">
+  <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="../portal/style.css">
+  <link rel="stylesheet" href="integrado.css">
+</head>
+<body>
+<script src="../shared/icones.js"></script>
+
+<section class="entrada">
+  <div class="entrada-lado escuro">
+    <a class="voltar-site" href="index.html"><svg class="ic"><use href="#i-voltar"/></svg>Voltar ao site</a>
+    <img class="entrada-logo" src="../shared/img/logo.png" alt="Fidelix & Cavalcante, Engenharia Diagnóstica" width="300" height="142">
+    <div>
+      <p class="sobre">Área do cliente e da equipe</p>
+      <h2>Um acesso só para acompanhar cada vistoria</h2>
+      <ul class="beneficios">
+        <li><svg class="ic"><use href="#i-relogio"/></svg>Clientes acompanham proposta, contrato, laudo e pagamento</li>
+        <li><svg class="ic"><use href="#i-painel"/></svg>A equipe vê os mesmos dados no painel interno</li>
+        <li><svg class="ic"><use href="#i-escudo"/></svg>Cada pessoa vê só o que é dela</li>
+      </ul>
+    </div>
+  </div>
+  <div class="entrada-form">
+    <div class="entrada-caixa">
+      <h1>Entrar</h1>
+      <p class="entrada-sub">Use o e-mail ou telefone que você informou no pedido.</p>
+      <form id="form-entrada" novalidate>
+        <div class="campo">
+          <label for="contato">E-mail ou telefone</label>
+          <input id="contato" autocomplete="username" required>
+        </div>
+        <div class="campo">
+          <label for="senha">Senha</label>
+          <input id="senha" type="password" autocomplete="current-password" value="demonstracao" required>
+        </div>
+        <p class="erro" id="erro-entrada" role="alert"></p>
+        <button class="btn" type="submit">Entrar <svg class="ic"><use href="#i-seta"/></svg></button>
+      </form>
+      <div class="atalhos">
+        <p>Atalhos da demonstração (qualquer senha funciona):</p>
+        <button class="btn sec" type="button" data-contato="marina@exemplo.com.br"><svg class="ic"><use href="#i-usuarios"/></svg>Cliente de exemplo: Marina Alves</button>
+        <button class="btn sec" type="button" data-contato="equipe@exemplo.com.br"><svg class="ic"><use href="#i-maleta"/></svg>Equipe: equipe@exemplo.com.br</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="dados.js"></script>
+<script>
+  const campo = document.getElementById('contato');
+  campo.value = new URLSearchParams(location.search).get('contato') || '';
+
+  function acessar(contato) {
+    if (contato.trim().toLowerCase() === EMAIL_EQUIPE) { entrar({ tipo: 'equipe' }); location.href = 'admin.html'; return; }
+    const c = acharClientePorContato(contato);
+    if (!c) {
+      document.getElementById('erro-entrada').textContent = 'Não encontramos uma conta com esse contato. Peça um orçamento no site para criar a sua.';
+      return;
+    }
+    entrar({ tipo: 'cliente', clienteId: c.id });
+    location.href = 'portal.html';
+  }
+
+  document.getElementById('form-entrada').addEventListener('submit', e => { e.preventDefault(); acessar(campo.value); });
+  document.querySelectorAll('[data-contato]').forEach(b => b.addEventListener('click', () => acessar(b.dataset.contato)));
+  barraDemo('');
+</script>
+</body>
+</html>
