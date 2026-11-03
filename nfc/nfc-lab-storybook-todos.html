@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nfc-lab-storybook · todos os temas</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#eceef4}
+body{display:flex;flex-direction:column}
+.bar{flex-shrink:0;display:flex;justify-content:center;padding:10px 12px;background:#eceef4;overflow-x:auto}
+.pills{display:flex;gap:4px;padding:6px;background:#fff;border:1px solid #d5d8e3;border-radius:999px;box-shadow:0 1px 3px #0001}
+.pills button{font:600 12px/1 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;padding:11px 18px;border:0;border-radius:999px;background:transparent;color:#5b6070;cursor:pointer}
+.pills button:hover{background:#eceef4}
+.pills button[aria-selected=true]{background:#1e3a7a;color:#fff}
+iframe{flex:1;width:100%;border:0;background:#fff}
+</style></head><body>
+<div class="bar"><div class="pills" role="tablist" id="pills"></div></div>
+<iframe id="f" title="nfc-lab-storybook"></iframe>
+<script>
+var T = [{"id":"radiance","label":"Precision Radiance"},{"id":"dusk","label":"Dusk"},{"id":"folio","label":"Folio"},{"id":"mindora","label":"Mindora"},{"id":"monoblock","label":"Monoblock"},{"id":"nebula","label":"Nebula"},{"id":"neobrut","label":"Neobrut"},{"id":"nokia","label":"Nokia"},{"id":"tala","label":"Tala"},{"id":"tidal","label":"Tidal"},{"id":"verdant","label":"Verdant"},{"id":"win95","label":"Win95"},{"id":"zenith","label":"Zenith"}], NAME = "nfc-lab-storybook";
+var pills = document.getElementById('pills'), f = document.getElementById('f');
+function pick(id, push) {
+  if (!T.some(function(t){ return t.id === id; })) id = T[0].id;
+  f.src = '../' + id + '/' + NAME + '-' + id + '.html';
+  [].forEach.call(pills.children, function(b){ b.setAttribute('aria-selected', b.dataset.id === id); });
+  if (push) history.replaceState(null, '', '#' + id);
+  try { localStorage.setItem('themify-todos', id); } catch (e) {}
+}
+T.forEach(function(t){
+  var b = document.createElement('button');
+  b.textContent = t.label; b.dataset.id = t.id; b.setAttribute('role', 'tab');
+  b.onclick = function(){ pick(t.id, true); };
+  pills.appendChild(b);
+});
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+  var i = T.findIndex(function(t){ return pills.querySelector('[aria-selected=true]').dataset.id === t.id; });
+  pick(T[(i + (e.key === 'ArrowRight' ? 1 : T.length - 1)) % T.length].id, true);
+});
+var saved = ''; try { saved = localStorage.getItem('themify-todos') || ''; } catch (e) {}
+pick(location.hash.slice(1) || saved, false);
+</script></body></html>

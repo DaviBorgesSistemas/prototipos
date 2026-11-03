@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Imaji Coffee — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0E0A08; --surface:#130F0B; --card:#1A1208;
+  --border:#2A1E14; --amber:#C8854A; --amberL:#E8A070;
+  --amberD:#8B4513; --cream:#F5E6D3; --muted:#8B6A4E;
+  --faint:#5C4030; --green:#4ADE80; --sidebar:220px;
+}
+html,body{background:var(--bg);color:var(--cream);font-family:'DM Sans',sans-serif;min-height:100vh;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:#3A2A1A;border-radius:4px;}
+button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:none;}
+
+/* ── LAYOUT ── */
+#app{display:flex;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+#sidebar{
+  width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:26px 14px;gap:3px;
+  position:fixed;top:0;left:0;height:100vh;z-index:50;overflow-y:auto;
+  transition:transform .3s ease;
+}
+.logo-row{display:flex;align-items:center;gap:10px;margin-bottom:28px;padding-left:8px;}
+.logo-icon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--amber),var(--amberD));display:flex;align-items:center;justify-content:center;font-size:17px;}
+.logo-name{font-family:'Playfair Display',serif;font-size:16px;color:var(--cream);}
+.logo-sub{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+.nav-group-label{font-size:10px;color:var(--faint);letter-spacing:.12em;text-transform:uppercase;padding-left:12px;margin:8px 0 6px;}
+.nav-btn{
+  display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;
+  color:var(--muted);font-size:13px;font-weight:400;text-align:left;width:100%;
+  border-left:2px solid transparent;transition:all .15s;
+}
+.nav-btn:hover{background:rgba(200,133,74,0.08);}
+.nav-btn.active{background:rgba(200,133,74,0.15);color:var(--amber);font-weight:600;border-left-color:var(--amber);}
+.nav-icon{font-size:15px;}
+.sidebar-goal{background:linear-gradient(135deg,#1E1208,#2A1A0A);border:1px solid #3A2218;border-radius:14px;padding:14px;margin-top:auto;margin-bottom:14px;}
+.goal-title{font-size:12px;font-weight:600;color:var(--cream);margin-bottom:3px;}
+.goal-sub{font-size:11px;color:var(--muted);margin-bottom:10px;}
+.goal-bar-bg{background:#0E0A08;border-radius:6px;height:5px;overflow:hidden;}
+.goal-bar-fill{width:78%;height:100%;background:linear-gradient(90deg,var(--amber),var(--amberL));border-radius:6px;}
+.goal-pct{font-size:11px;color:var(--amber);margin-top:5px;font-weight:600;}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding-left:4px;}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amberD));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.user-name{font-size:12px;font-weight:600;color:var(--cream);}
+.user-role{font-size:11px;color:var(--muted);}
+
+/* ── MAIN ── */
+#main{flex:1;margin-left:var(--sidebar);display:flex;flex-direction:column;min-height:100vh;}
+
+/* ── TOP BAR ── */
+#topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;background:var(--bg);position:sticky;top:0;z-index:40;
+  border-bottom:1px solid var(--border);
+}
+.topbar-left{}
+.page-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--cream);}
+.page-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.notif-btn{
+  display:flex;align-items:center;gap:8px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;padding:8px 13px;position:relative;
+}
+.notif-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);animation:pulse 2s infinite;}
+.search-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 13px;font-size:12px;color:var(--muted);}
+.new-order-btn{background:linear-gradient(135deg,var(--amber),#A0612A);border-radius:10px;padding:9px 17px;font-size:13px;font-weight:600;color:#fff;}
+.hamburger{display:none;width:36px;height:36px;border-radius:10px;background:var(--surface);border:1px solid var(--border);align-items:center;justify-content:center;font-size:18px;}
+
+/* ── CONTENT ── */
+#content{padding:20px 24px 40px;flex:1;}
+.page{display:none;}
+.page.active{display:block;}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;transition:transform .2s,box-shadow .2s;}
+.card:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.4);}
+
+/* ── STATS GRID ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{padding:16px;position:relative;overflow:hidden;}
+.stat-glow{position:absolute;top:-10px;right:-10px;width:55px;height:55px;border-radius:50%;}
+.stat-label{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:10px;}
+.stat-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;float:right;margin-top:-2px;}
+.stat-value{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--cream);margin-bottom:5px;clear:both;}
+.stat-change{font-size:11px;font-weight:500;}
+.stat-up{color:#4ADE80;}
+.stat-down{color:#F87171;}
+
+/* ── CHART ROW ── */
+.chart-row{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;margin-bottom:20px;}
+.chart-card{padding:18px;}
+.chart-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.chart-title{font-size:14px;font-weight:700;color:var(--cream);}
+.chart-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.period-btns{display:flex;gap:4px;}
+.period-btn{padding:5px 11px;border-radius:8px;font-size:11px;color:var(--faint);transition:all .15s;}
+.period-btn:hover{background:rgba(200,133,74,0.2);color:var(--amber);}
+.period-btn.active{background:rgba(200,133,74,0.2);color:var(--amber);font-weight:600;}
+canvas{max-width:100%;}
+
+/* ── BOTTOM ROW ── */
+.bottom-row{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;}
+
+/* ── ORDERS TABLE ── */
+.orders-card{padding:18px;}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.section-title{font-size:14px;font-weight:700;color:var(--cream);}
+.view-all{font-size:11px;color:var(--amber);cursor:pointer;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:10px;color:var(--faint);font-weight:600;text-align:left;padding-bottom:10px;padding-right:10px;text-transform:uppercase;letter-spacing:.06em;}
+tr.order-row{border-top:1px solid var(--border);cursor:pointer;transition:background .15s;}
+tr.order-row:hover{background:rgba(200,133,74,0.05);}
+td{padding:10px 10px 10px 0;font-size:12px;}
+td.td-id{color:var(--amber);font-weight:600;font-size:11px;}
+td.td-cust{color:#D4C0A8;}
+td.td-item{color:var(--muted);max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+td.td-time{color:var(--faint);font-size:10px;}
+td.td-total{color:var(--cream);font-weight:600;}
+.badge{display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:3px 9px;font-size:10px;font-weight:600;white-space:nowrap;}
+.badge-dot{width:5px;height:5px;border-radius:50%;display:inline-block;}
+.badge-done{background:#0D2E1A;color:#4ADE80;}.badge-done .badge-dot{background:#22C55E;}
+.badge-prog{background:#2A1D08;color:#FBB040;}.badge-prog .badge-dot{background:#F59E0B;}
+.badge-canc{background:#2A0A0A;color:#F87171;}.badge-canc .badge-dot{background:#EF4444;}
+
+/* ── TOP PRODUCTS ── */
+.products-card{padding:18px;}
+.prod-item{margin-bottom:13px;}
+.prod-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.prod-left{display:flex;align-items:center;gap:8px;}
+.prod-thumb{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.prod-name{font-size:12px;font-weight:600;color:#D4C0A8;}
+.prod-orders{font-size:10px;color:var(--faint);}
+.prod-revenue{font-size:12px;font-weight:700;color:var(--cream);}
+.prod-bar-bg{background:#0E0A08;border-radius:4px;height:4px;overflow:hidden;}
+.prod-bar-fill{height:100%;border-radius:4px;}
+.mini-stats{margin-top:16px;padding-top:14px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mini-stat{background:#110D08;border:1px solid var(--border);border-radius:10px;padding:10px 12px;}
+.mini-stat-icon{font-size:16px;margin-bottom:4px;}
+.mini-stat-val{font-size:15px;font-weight:700;color:var(--cream);}
+.mini-stat-lbl{font-size:10px;color:var(--faint);}
+
+/* ── FILTER TABS ── */
+.filter-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.filter-tab{padding:6px 14px;border-radius:20px;font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--border);transition:all .15s;}
+.filter-tab.active{background:var(--amber);color:#fff;font-weight:700;border-color:var(--amber);}
+
+/* ── MENU GRID ── */
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+.menu-item{padding:16px;text-align:center;}
+.menu-emoji-lg{font-size:32px;margin-bottom:10px;}
+.menu-item-name{font-size:13px;font-weight:600;color:#D4C0A8;margin-bottom:3px;}
+.menu-item-cat{font-size:11px;color:var(--muted);margin-bottom:10px;}
+.menu-item-foot{display:flex;justify-content:space-between;align-items:center;}
+.menu-item-price{font-size:14px;font-weight:700;color:var(--amber);}
+.avail-on{font-size:10px;padding:2px 8px;border-radius:10px;background:#0D2E1A;color:#4ADE80;font-weight:600;}
+.avail-off{font-size:10px;padding:2px 8px;border-radius:10px;background:#2A0A0A;color:#F87171;font-weight:600;}
+
+/* ── CUSTOMERS ── */
+.customers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.cust-card{padding:16px;display:flex;align-items:center;gap:14px;}
+.cust-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amberD));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;}
+.cust-info{flex:1;min-width:0;}
+.cust-name{font-size:14px;font-weight:600;color:var(--cream);margin-bottom:2px;}
+.cust-sub{font-size:11px;color:var(--muted);}
+.cust-spend{text-align:right;flex-shrink:0;}
+.cust-total{font-size:14px;font-weight:700;color:var(--amber);}
+.cust-lbl{font-size:10px;color:var(--faint);}
+
+/* ── ANALYTICS ── */
+.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.pie-wrap{display:flex;align-items:center;gap:16px;}
+.pie-legends{display:flex;flex-direction:column;gap:10px;}
+.pie-legend-item{display:flex;align-items:center;gap:8px;}
+.pie-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+.pie-legend-name{font-size:12px;color:#D4C0A8;font-weight:600;}
+.pie-legend-sub{font-size:10px;color:var(--faint);}
+
+/* ── SETTINGS ── */
+.settings-col{display:flex;flex-direction:column;gap:14px;max-width:600px;}
+.settings-section-title{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;}
+.settings-card{padding:18px;}
+.profile-row{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.profile-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amberD));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;}
+.profile-name{font-size:15px;font-weight:600;color:var(--cream);}
+.profile-email{font-size:12px;color:var(--muted);}
+.profile-role{font-size:11px;color:var(--amber);margin-top:2px;}
+.edit-btn{padding:9px 18px;border-radius:10px;border:1px solid #3A2218;color:var(--amber);font-size:12px;font-weight:600;}
+.toggle-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-label{font-size:13px;color:#D4C0A8;font-weight:500;}
+.toggle-sub{font-size:11px;color:var(--faint);margin-top:2px;}
+.toggle{width:40px;height:22px;border-radius:11px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:var(--amber);}
+.toggle-knob{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;}
+.toggle.on .toggle-knob{left:21px;}
+.signout-btn{padding:9px 18px;border-radius:10px;border:1px solid #3A2218;color:#F87171;font-size:12px;font-weight:600;}
+
+/* ── GOAL BANNER (mobile) ── */
+.goal-banner{background:linear-gradient(135deg,#1E1208,#2A1A0A);border:1px solid #3A2218;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.goal-banner-bar-bg{background:#0E0A08;border-radius:6px;height:5px;overflow:hidden;margin-top:6px;}
+.goal-banner-bar{width:78%;height:100%;background:linear-gradient(90deg,var(--amber),var(--amberL));border-radius:6px;}
+.goal-banner-val{font-size:18px;font-weight:700;color:var(--amber);font-family:'Playfair Display',serif;white-space:nowrap;}
+
+/* ── BOTTOM NAV (mobile) ── */
+#bottom-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:8px 0 10px;
+}
+.bn-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--faint);font-size:10px;font-weight:400;padding:4px 0;transition:color .15s;}
+.bn-btn.active{color:var(--amber);font-weight:600;}
+.bn-icon{font-size:19px;}
+.bn-indicator{width:16px;height:2px;border-radius:2px;background:var(--amber);margin-top:1px;}
+
+/* ── MOBILE HEADER ── */
+#mobile-header{
+  display:none;align-items:center;justify-content:space-between;
+  padding:16px 18px 12px;background:var(--bg);
+  position:sticky;top:0;z-index:50;border-bottom:1px solid var(--border);
+}
+.mh-logo{display:flex;align-items:center;gap:10px;}
+.mh-logo-icon{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--amber),var(--amberD));display:flex;align-items:center;justify-content:center;font-size:15px;}
+.mh-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--cream);}
+.mh-right{display:flex;gap:10px;align-items:center;}
+.mh-notif{width:34px;height:34px;border-radius:10px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;position:relative;}
+.mh-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulse 2s infinite;}
+.mh-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amberD));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .chart-row,.bottom-row,.analytics-grid{grid-template-columns:1fr;}
+}
+@media(max-width:767px){
+  #sidebar{transform:translateX(-100%);}
+  #sidebar.open{transform:translateX(0);}
+  #main{margin-left:0;}
+  #topbar{display:none;}
+  #mobile-header{display:flex;}
+  #bottom-nav{display:flex;}
+  #content{padding:14px 14px 90px;}
+  .stats-grid{grid-template-columns:1fr 1fr;gap:10px;}
+  .hamburger{display:flex;}
+  .menu-grid{grid-template-columns:1fr 1fr;}
+  .customers-grid{grid-template-columns:1fr;}
+  .analytics-grid{grid-template-columns:1fr;}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr 1fr;}
+}
+
+/* ── ANIMATIONS ── */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeUp .4s ease both;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ══ SIDEBAR ══════════════════════════════════════════ -->
+  <nav id="sidebar">
+    <div class="logo-row">
+      <div class="logo-icon">☕</div>
+      <div>
+        <div class="logo-name">Imaji</div>
+        <div class="logo-sub">Coffee Co.</div>
+      </div>
+    </div>
+    <div class="nav-group-label">Main Menu</div>
+    <button class="nav-btn active" onclick="navTo(0,this)"><span class="nav-icon">⊞</span>Dashboard</button>
+    <button class="nav-btn" onclick="navTo(1,this)"><span class="nav-icon">📋</span>Orders</button>
+    <button class="nav-btn" onclick="navTo(2,this)"><span class="nav-icon">☕</span>Menu</button>
+    <button class="nav-btn" onclick="navTo(3,this)"><span class="nav-icon">👤</span>Customers</button>
+    <button class="nav-btn" onclick="navTo(4,this)"><span class="nav-icon">📊</span>Analytics</button>
+    <button class="nav-btn" onclick="navTo(5,this)"><span class="nav-icon">⚙️</span>Settings</button>
+    <div class="sidebar-goal">
+      <div class="goal-title">Today's Goal</div>
+      <div class="goal-sub">$1,200 daily revenue</div>
+      <div class="goal-bar-bg"><div class="goal-bar-fill"></div></div>
+      <div class="goal-pct">78% achieved</div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar">JD</div>
+      <div>
+        <div class="user-name">João Dias</div>
+        <div class="user-role">Store Manager</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══ MAIN ═════════════════════════════════════════════ -->
+  <div id="main">
+
+    <!-- Desktop topbar -->
+    <div id="topbar">
+      <div class="topbar-left">
+        <div class="page-title" id="topbar-title">Good morning, João ☀️</div>
+        <div class="page-sub">Saturday, June 7 · Imaji Coffee Co.</div>
+      </div>
+      <div class="topbar-right">
+        <div class="notif-btn"><span>🔔</span><div class="notif-dot"></div></div>
+        <div class="search-box">🔍 Search...</div>
+        <button class="new-order-btn">+ New Order</button>
+      </div>
+    </div>
+
+    <!-- Mobile header -->
+    <div id="mobile-header">
+      <div class="mh-logo">
+        <div class="mh-logo-icon">☕</div>
+        <div class="mh-title" id="mh-title">Dashboard</div>
+      </div>
+      <div class="mh-right">
+        <div class="mh-notif">🔔<div class="mh-dot"></div></div>
+        <div class="mh-avatar">JD</div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div id="content">
+
+      <!-- ▸ PAGE: DASHBOARD -->
+      <div id="page-0" class="page active">
+        <!-- Mobile goal banner -->
+        <div class="goal-banner" id="goal-banner-mobile">
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:600;color:var(--cream)">Daily Revenue Goal · 78%</div>
+            <div class="goal-banner-bar-bg"><div class="goal-banner-bar"></div></div>
+          </div>
+          <div class="goal-banner-val">$936<span style="font-size:12px">/1200</span></div>
+        </div>
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="card stat-card fade-in" style="animation-delay:.05s">
+            <div class="stat-glow" style="background:#C8854A22"></div>
+            <div style="display:flex;justify-content:space-between">
+              <div class="stat-label">Today's Revenue</div>
+              <div class="stat-icon" style="background:#C8854A22">💰</div>
+            </div>
+            <div class="stat-value">$936.40</div>
+            <div class="stat-change stat-up">▲ +12.4%</div>
+          </div>
+          <div class="card stat-card fade-in" style="animation-delay:.10s">
+            <div class="stat-glow" style="background:#7AAD6E22"></div>
+            <div style="display:flex;justify-content:space-between">
+              <div class="stat-label">Total Orders</div>
+              <div class="stat-icon" style="background:#7AAD6E22">📦</div>
+            </div>
+            <div class="stat-value">72</div>
+            <div class="stat-change stat-up">▲ +8 orders</div>
+          </div>
+          <div class="card stat-card fade-in" style="animation-delay:.15s">
+            <div class="stat-glow" style="background:#4A7FC822"></div>
+            <div style="display:flex;justify-content:space-between">
+              <div class="stat-label">Avg Order Value</div>
+              <div class="stat-icon" style="background:#4A7FC822">📈</div>
+            </div>
+            <div class="stat-value">$13.00</div>
+            <div class="stat-change stat-up">▲ +1.2%</div>
+          </div>
+          <div class="card stat-card fade-in" style="animation-delay:.20s">
+            <div class="stat-glow" style="background:#C84A7F22"></div>
+            <div style="display:flex;justify-content:space-between">
+              <div class="stat-label">Cancelled</div>
+              <div class="stat-icon" style="background:#C84A7F22">❌</div>
+            </div>
+            <div class="stat-value">4</div>
+            <div class="stat-change stat-down">▼ -2 vs yesterday</div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="chart-row">
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Revenue Overview</div>
+                <div class="chart-sub">This week's performance</div>
+              </div>
+              <div class="period-btns">
+                <button class="period-btn" onclick="switchPeriod(this,'daily')">Daily</button>
+                <button class="period-btn active" onclick="switchPeriod(this,'weekly')">Weekly</button>
+                <button class="period-btn" onclick="switchPeriod(this,'monthly')">Monthly</button>
+              </div>
+            </div>
+            <canvas id="revenue-chart" height="160"></canvas>
+          </div>
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Weekly Sales</div>
+                <div class="chart-sub">Orders per week</div>
+              </div>
+            </div>
+            <canvas id="weekly-chart" height="160"></canvas>
+          </div>
+        </div>
+
+        <!-- Bottom row -->
+        <div class="bottom-row">
+          <div class="card orders-card">
+            <div class="section-header">
+              <div class="section-title">Recent Orders</div>
+              <div class="view-all" onclick="navTo(1,null)">View all →</div>
+            </div>
+            <div id="recent-orders-table"></div>
+          </div>
+          <div class="card products-card">
+            <div class="section-header">
+              <div class="section-title">Top Products</div>
+              <div class="view-all">This week</div>
+            </div>
+            <div id="top-products-list"></div>
+            <div class="mini-stats">
+              <div class="mini-stat"><div class="mini-stat-icon">⏱</div><div class="mini-stat-val">4.2m</div><div class="mini-stat-lbl">Avg Prep Time</div></div>
+              <div class="mini-stat"><div class="mini-stat-icon">⭐</div><div class="mini-stat-val">96%</div><div class="mini-stat-lbl">Satisfaction</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ▸ PAGE: ORDERS -->
+      <div id="page-1" class="page">
+        <div style="margin-bottom:16px">
+          <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--cream);margin-bottom:14px">Orders</div>
+          <div class="filter-tabs" id="orders-filter-tabs">
+            <button class="filter-tab active" onclick="filterOrders('All',this)">All</button>
+            <button class="filter-tab" onclick="filterOrders('Completed',this)">Completed</button>
+            <button class="filter-tab" onclick="filterOrders('In Progress',this)">In Progress</button>
+            <button class="filter-tab" onclick="filterOrders('Cancelled',this)">Cancelled</button>
+          </div>
+        </div>
+        <div class="card orders-card"><div id="all-orders-table"></div></div>
+      </div>
+
+      <!-- ▸ PAGE: MENU -->
+      <div id="page-2" class="page">
+        <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--cream);margin-bottom:14px">Menu</div>
+        <div class="filter-tabs" id="menu-filter-tabs">
+          <button class="filter-tab active" onclick="filterMenu('All',this)">All</button>
+          <button class="filter-tab" onclick="filterMenu('Hot',this)">Hot</button>
+          <button class="filter-tab" onclick="filterMenu('Cold',this)">Cold</button>
+          <button class="filter-tab" onclick="filterMenu('Food',this)">Food</button>
+        </div>
+        <div class="menu-grid" id="menu-grid"></div>
+      </div>
+
+      <!-- ▸ PAGE: CUSTOMERS -->
+      <div id="page-3" class="page">
+        <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--cream);margin-bottom:14px">Customers</div>
+        <div class="customers-grid" id="customers-grid"></div>
+      </div>
+
+      <!-- ▸ PAGE: ANALYTICS -->
+      <div id="page-4" class="page">
+        <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--cream);margin-bottom:14px">Analytics</div>
+        <div class="analytics-grid">
+          <div class="card chart-card">
+            <div class="chart-header"><div><div class="chart-title">Revenue Trend</div><div class="chart-sub">7-day view</div></div></div>
+            <canvas id="analytics-revenue-chart" height="160"></canvas>
+          </div>
+          <div class="card chart-card">
+            <div class="chart-header"><div><div class="chart-title">Sales by Category</div><div class="chart-sub">This week</div></div></div>
+            <div class="pie-wrap">
+              <canvas id="pie-chart" width="140" height="140" style="flex-shrink:0"></canvas>
+              <div class="pie-legends" id="pie-legends"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card chart-card">
+          <div class="chart-header"><div><div class="chart-title">Monthly Sales</div><div class="chart-sub">4-week breakdown</div></div></div>
+          <canvas id="analytics-bar-chart" height="140"></canvas>
+        </div>
+      </div>
+
+      <!-- ▸ PAGE: SETTINGS -->
+      <div id="page-5" class="page">
+        <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--cream);margin-bottom:14px">Settings</div>
+        <div class="settings-col">
+          <div>
+            <div class="settings-section-title">Profile</div>
+            <div class="card settings-card">
+              <div class="profile-row">
+                <div class="profile-avatar">JD</div>
+                <div>
+                  <div class="profile-name">João Dias</div>
+                  <div class="profile-email">joao@imajicoffee.com</div>
+                  <div class="profile-role">Store Manager</div>
+                </div>
+              </div>
+              <button class="edit-btn">Edit Profile</button>
+            </div>
+          </div>
+          <div>
+            <div class="settings-section-title">Preferences</div>
+            <div class="card settings-card">
+              <div class="toggle-row">
+                <div><div class="toggle-label">Push Notifications</div><div class="toggle-sub">New orders and alerts</div></div>
+                <div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
+              </div>
+              <div class="toggle-row">
+                <div><div class="toggle-label">Order Sound</div><div class="toggle-sub">Play sound on new order</div></div>
+                <div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
+              </div>
+              <div class="toggle-row">
+                <div><div class="toggle-label">Dark Mode</div><div class="toggle-sub">Current theme</div></div>
+                <div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="settings-section-title">Store</div>
+            <div class="card settings-card">
+              <div style="font-size:13px;color:#D4C0A8;font-weight:500;margin-bottom:3px">Imaji Coffee Co.</div>
+              <div style="font-size:11px;color:var(--faint);margin-bottom:14px">Rua das Flores, 123 · São Paulo</div>
+              <button class="signout-btn">Sign Out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- #content -->
+
+    <!-- Mobile bottom nav -->
+    <nav id="bottom-nav">
+      <button class="bn-btn active" onclick="navTo(0,this)" id="bn-0"><span class="bn-icon">⊞</span><span>Dashboard</span><div class="bn-indicator"></div></button>
+      <button class="bn-btn" onclick="navTo(1,this)" id="bn-1"><span class="bn-icon">📋</span><span>Orders</span></button>
+      <button class="bn-btn" onclick="navTo(2,this)" id="bn-2"><span class="bn-icon">☕</span><span>Menu</span></button>
+      <button class="bn-btn" onclick="navTo(3,this)" id="bn-3"><span class="bn-icon">👤</span><span>Customers</span></button>
+      <button class="bn-btn" onclick="navTo(4,this)" id="bn-4"><span class="bn-icon">📊</span><span>Analytics</span></button>
+    </nav>
+
+  </div><!-- #main -->
+</div><!-- #app -->
+
+<script>
+/* ═══════════════════ DATA ══════════════════════════ */
+const SALES_DATA = [420,680,540,820,960,1240,1080];
+const SALES_LABELS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const WEEKLY_DATA = [3200,4100,3800,5200];
+const WEEKLY_LABELS = ["W1","W2","W3","W4"];
+const TOP_PRODUCTS = [
+  {name:"Caramel Macchiato",orders:142,revenue:568,pct:88,color:"#C8854A"},
+  {name:"Matcha Latte",      orders:118,revenue:472,pct:74,color:"#7AAD6E"},
+  {name:"Cold Brew",         orders:97, revenue:388,pct:60,color:"#4A7FC8"},
+  {name:"Espresso Tonic",    orders:74, revenue:296,pct:46,color:"#C84A7F"},
+  {name:"Vanilla Frappé",    orders:61, revenue:244,pct:38,color:"#C8B84A"},
+];
+const ALL_ORDERS = [
+  {id:"#4821",customer:"Mariana Costa",  item:"Caramel Macchiato",    status:"Completed",   time:"2m ago", total:"$6.50"},
+  {id:"#4820",customer:"Lucas Ferreira", item:"Cold Brew + Croissant", status:"In Progress", time:"5m ago", total:"$11.00"},
+  {id:"#4819",customer:"Sofia Almeida",  item:"Matcha Latte",          status:"Completed",   time:"12m ago",total:"$5.80"},
+  {id:"#4818",customer:"Rafael Souza",   item:"Espresso Tonic",        status:"Completed",   time:"18m ago",total:"$4.90"},
+  {id:"#4817",customer:"Ana Lima",       item:"Vanilla Frappé",        status:"Cancelled",   time:"25m ago",total:"$6.20"},
+  {id:"#4816",customer:"Pedro Nunes",    item:"Cold Brew",             status:"Completed",   time:"31m ago",total:"$4.50"},
+  {id:"#4815",customer:"Juliana Melo",   item:"Caramel Macchiato",     status:"Completed",   time:"40m ago",total:"$6.50"},
+  {id:"#4814",customer:"Carlos Rocha",   item:"Espresso Tonic x2",     status:"In Progress", time:"48m ago",total:"$9.80"},
+];
+const MENU_ITEMS = [
+  {name:"Caramel Macchiato",cat:"Hot", price:"$6.50",emoji:"☕",available:true},
+  {name:"Espresso",         cat:"Hot", price:"$3.20",emoji:"☕",available:true},
+  {name:"Cappuccino",       cat:"Hot", price:"$5.00",emoji:"☕",available:true},
+  {name:"Matcha Latte",     cat:"Hot", price:"$5.80",emoji:"🍵",available:true},
+  {name:"Cold Brew",        cat:"Cold",price:"$4.50",emoji:"🧊",available:true},
+  {name:"Vanilla Frappé",   cat:"Cold",price:"$6.20",emoji:"🥤",available:true},
+  {name:"Espresso Tonic",   cat:"Cold",price:"$4.90",emoji:"🧃",available:false},
+  {name:"Iced Matcha",      cat:"Cold",price:"$5.50",emoji:"🍵",available:true},
+  {name:"Croissant",        cat:"Food",price:"$3.80",emoji:"🥐",available:true},
+  {name:"Avocado Toast",    cat:"Food",price:"$8.50",emoji:"🥑",available:false},
+];
+const CUSTOMERS = [
+  {name:"Mariana Costa", visits:24,total:"$156.00",last:"2m ago", avatar:"MC"},
+  {name:"Lucas Ferreira",visits:18,total:"$220.50",last:"5m ago", avatar:"LF"},
+  {name:"Sofia Almeida", visits:31,total:"$180.40",last:"12m ago",avatar:"SA"},
+  {name:"Rafael Souza",  visits:12,total:"$58.80", last:"18m ago",avatar:"RS"},
+  {name:"Ana Lima",      visits:9, total:"$55.80", last:"25m ago",avatar:"AL"},
+  {name:"Pedro Nunes",   visits:27,total:"$121.50",last:"31m ago",avatar:"PN"},
+  {name:"Juliana Melo",  visits:15,total:"$97.50", last:"40m ago",avatar:"JM"},
+];
+const NAV_TITLES = ["Good morning, João ☀️","Orders","Menu","Customers","Analytics","Settings"];
+const MOB_TITLES = ["Dashboard","Orders","Menu","Customers","Analytics","Settings"];
+const STATUS_CLASS = {"Completed":"badge-done","In Progress":"badge-prog","Cancelled":"badge-canc"};
+
+/* ═══════════════════ CHART.JS DEFAULTS ═════════════ */
+Chart.defaults.color = "#5C4030";
+Chart.defaults.borderColor = "#2A1E14";
+Chart.defaults.font.family = "'DM Sans',sans-serif";
+
+function makeAreaChart(id, labels, data, color){
+  const ctx = document.getElementById(id).getContext('2d');
+  const grad = ctx.createLinearGradient(0,0,0,160);
+  grad.addColorStop(0, color+'55'); grad.addColorStop(1, color+'00');
+  return new Chart(ctx,{
+    type:'line',
+    data:{ labels, datasets:[{ data, borderColor:color, borderWidth:2.5, backgroundColor:grad, fill:true, tension:.4, pointBackgroundColor:color, pointRadius:3, pointHoverRadius:5 }] },
+    options:{ plugins:{legend:{display:false},tooltip:{backgroundColor:'#1C1410',borderColor:'#3A2A1A',borderWidth:1,titleColor:color,bodyColor:'#F5E6D3',padding:10}}, scales:{ x:{grid:{display:false},ticks:{color:'#5C4030',font:{size:10}}}, y:{grid:{color:'#2A1E1488'},ticks:{color:'#5C4030',font:{size:10}}} }, animation:{duration:800} }
+  });
+}
+function makeBarChart(id, labels, data, color){
+  const ctx = document.getElementById(id).getContext('2d');
+  return new Chart(ctx,{
+    type:'bar',
+    data:{ labels, datasets:[{ data, backgroundColor:color, borderRadius:6, borderSkipped:false, maxBarThickness:40 }] },
+    options:{ plugins:{legend:{display:false},tooltip:{backgroundColor:'#1C1410',borderColor:'#3A2A1A',borderWidth:1,titleColor:color,bodyColor:'#F5E6D3',padding:10}}, scales:{ x:{grid:{display:false},ticks:{color:'#5C4030',font:{size:10}}}, y:{grid:{color:'#2A1E1488'},ticks:{color:'#5C4030',font:{size:10}}} }, animation:{duration:800} }
+  });
+}
+
+/* ═══════════════════ NAVIGATION ════════════════════ */
+let activeIdx = 0;
+let analyticsBuilt = false;
+
+function navTo(idx, el){
+  // pages
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+idx).classList.add('active');
+
+  // sidebar buttons
+  document.querySelectorAll('#sidebar .nav-btn').forEach(b=>b.classList.remove('active'));
+  // find matching sidebar btn
+  document.querySelectorAll('#sidebar .nav-btn')[idx].classList.add('active');
+
+  // bottom nav
+  document.querySelectorAll('.bn-btn').forEach(b=>{ b.classList.remove('active'); b.innerHTML=b.innerHTML.replace('<div class="bn-indicator"></div>',''); });
+  const bn = document.getElementById('bn-'+idx);
+  if(bn){ bn.classList.add('active'); bn.insertAdjacentHTML('beforeend','<div class="bn-indicator"></div>'); }
+
+  // titles
+  document.getElementById('topbar-title').textContent = NAV_TITLES[idx] ?? NAV_TITLES[idx];
+  document.getElementById('mh-title').textContent = MOB_TITLES[idx];
+
+  // goal banner: only on dashboard
+  const gb = document.getElementById('goal-banner-mobile');
+  if(gb) gb.style.display = idx===0 ? 'flex' : 'none';
+
+  activeIdx = idx;
+
+  // close sidebar on mobile
+  document.getElementById('sidebar').classList.remove('open');
+
+  // build analytics charts lazily
+  if(idx===4 && !analyticsBuilt){ buildAnalyticsCharts(); analyticsBuilt=true; }
+}
+
+/* ═══════════════════ ORDERS TABLE ══════════════════ */
+function badgeHTML(status){
+  const cls = STATUS_CLASS[status]||'badge-done';
+  return `<span class="badge ${cls}"><span class="badge-dot"></span>${status}</span>`;
+}
+
+function renderOrdersTable(orders, containerId, limit){
+  const list = limit ? orders.slice(0,limit) : orders;
+  if(!list.length){ document.getElementById(containerId).innerHTML='<div style="text-align:center;color:var(--faint);padding:24px 0;font-size:13px">No orders found</div>'; return; }
+  let html = `<table><thead><tr><th>Order</th><th>Customer</th><th>Item</th><th>Status</th><th>Time</th><th>Total</th></tr></thead><tbody>`;
+  list.forEach(o=>{
+    html+=`<tr class="order-row"><td class="td-id">${o.id}</td><td class="td-cust">${o.customer}</td><td class="td-item">${o.item}</td><td>${badgeHTML(o.status)}</td><td class="td-time">${o.time}</td><td class="td-total">${o.total}</td></tr>`;
+  });
+  html+='</tbody></table>';
+  document.getElementById(containerId).innerHTML=html;
+}
+
+/* ═══════════════════ TOP PRODUCTS ══════════════════ */
+function renderTopProducts(){
+  let html='';
+  TOP_PRODUCTS.forEach(p=>{
+    html+=`<div class="prod-item">
+      <div class="prod-row">
+        <div class="prod-left">
+          <div class="prod-thumb" style="background:${p.color}22">☕</div>
+          <div><div class="prod-name">${p.name}</div><div class="prod-orders">${p.orders} orders</div></div>
+        </div>
+        <div class="prod-revenue">$${p.revenue}</div>
+      </div>
+      <div class="prod-bar-bg"><div class="prod-bar-fill" style="width:${p.pct}%;background:linear-gradient(90deg,${p.color},${p.color}88)"></div></div>
+    </div>`;
+  });
+  document.getElementById('top-products-list').innerHTML=html;
+}
+
+/* ═══════════════════ MENU ══════════════════════════ */
+function renderMenu(filter){
+  const list = filter==='All' ? MENU_ITEMS : MENU_ITEMS.filter(m=>m.cat===filter);
+  let html='';
+  list.forEach(m=>{
+    html+=`<div class="card menu-item" style="opacity:${m.available?1:.55}">
+      <div class="menu-emoji-lg">${m.emoji}</div>
+      <div class="menu-item-name">${m.name}</div>
+      <div class="menu-item-cat">${m.cat}</div>
+      <div class="menu-item-foot">
+        <div class="menu-item-price">${m.price}</div>
+        <span class="${m.available?'avail-on':'avail-off'}">${m.available?'Active':'Off'}</span>
+      </div>
+    </div>`;
+  });
+  document.getElementById('menu-grid').innerHTML=html;
+}
+function filterMenu(cat, btn){
+  document.querySelectorAll('#menu-filter-tabs .filter-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMenu(cat);
+}
+
+/* ═══════════════════ CUSTOMERS ═════════════════════ */
+function renderCustomers(){
+  let html='';
+  CUSTOMERS.forEach(c=>{
+    html+=`<div class="card cust-card">
+      <div class="cust-avatar">${c.avatar}</div>
+      <div class="cust-info"><div class="cust-name">${c.name}</div><div class="cust-sub">${c.visits} visitas · Último: ${c.last}</div></div>
+      <div class="cust-spend"><div class="cust-total">${c.total}</div><div class="cust-lbl">total gasto</div></div>
+    </div>`;
+  });
+  document.getElementById('customers-grid').innerHTML=html;
+}
+
+/* ═══════════════════ ANALYTICS ═════════════════════ */
+function buildAnalyticsCharts(){
+  makeAreaChart('analytics-revenue-chart', SALES_LABELS, SALES_DATA, '#7AAD6E');
+  makeBarChart('analytics-bar-chart', WEEKLY_LABELS, WEEKLY_DATA, '#4A7FC8');
+
+  const pieData = [{name:"Hot",value:260,color:"#C8854A"},{name:"Cold",value:232,color:"#4A7FC8"},{name:"Food",value:60,color:"#7AAD6E"}];
+  new Chart(document.getElementById('pie-chart').getContext('2d'),{
+    type:'doughnut',
+    data:{ labels:pieData.map(d=>d.name), datasets:[{ data:pieData.map(d=>d.value), backgroundColor:pieData.map(d=>d.color), borderWidth:0, hoverOffset:4 }] },
+    options:{ cutout:'60%', plugins:{legend:{display:false},tooltip:{backgroundColor:'#1C1410',borderColor:'#3A2A1A',borderWidth:1,bodyColor:'#F5E6D3',padding:10}}, animation:{duration:800} }
+  });
+  let leg='';
+  pieData.forEach(d=>{ leg+=`<div class="pie-legend-item"><div class="pie-dot" style="background:${d.color}"></div><div><div class="pie-legend-name">${d.name}</div><div class="pie-legend-sub">${d.value} orders</div></div></div>`; });
+  document.getElementById('pie-legends').innerHTML=leg;
+}
+
+/* ═══════════════════ PERIOD SWITCH ════════════════ */
+let revenueChart;
+const PERIOD_DATA = {
+  daily:  { labels:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"], data:[420,680,540,820,960,1240,1080] },
+  weekly: { labels:["W1","W2","W3","W4"], data:[3200,4100,3800,5200] },
+  monthly:{ labels:["Jan","Feb","Mar","Apr","May","Jun"], data:[18000,21000,19500,24000,22500,26000] },
+};
+function switchPeriod(btn, period){
+  document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const d = PERIOD_DATA[period];
+  revenueChart.data.labels = d.labels;
+  revenueChart.data.datasets[0].data = d.data;
+  revenueChart.update();
+}
+
+/* ═══════════════════ FILTER ORDERS ════════════════ */
+function filterOrders(status, btn){
+  document.querySelectorAll('#orders-filter-tabs .filter-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const list = status==='All' ? ALL_ORDERS : ALL_ORDERS.filter(o=>o.status===status);
+  renderOrdersTable(list.length?list:[], 'all-orders-table');
+}
+
+/* ═══════════════════ SIDEBAR TOGGLE (mobile) ══════ */
+// Close sidebar when clicking outside
+document.addEventListener('click', e=>{
+  const sb=document.getElementById('sidebar');
+  if(sb.classList.contains('open') && !sb.contains(e.target)){
+    sb.classList.remove('open');
+  }
+});
+
+/* ═══════════════════ INIT ══════════════════════════ */
+(function init(){
+  // Dashboard
+  renderOrdersTable(ALL_ORDERS,'recent-orders-table',5);
+  renderTopProducts();
+
+  // Revenue chart
+  revenueChart = makeAreaChart('revenue-chart', SALES_LABELS, SALES_DATA, '#C8854A');
+  makeBarChart('weekly-chart', WEEKLY_LABELS, WEEKLY_DATA, '#C8854A');
+
+  // Orders page
+  renderOrdersTable(ALL_ORDERS,'all-orders-table');
+
+  // Menu
+  renderMenu('All');
+
+  // Customers
+  renderCustomers();
+
+  // Hide goal banner on non-dashboard initially handled by CSS (flex by default)
+  // it only shows on page-0 which is active, that's fine
+})();
+</script>
+</body>
+</html>
