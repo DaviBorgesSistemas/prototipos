@@ -255,7 +255,7 @@ function laudo(idParam) {
       </div>
 
       <article class="folha" id="folha">
-        <div class="folha-marca"><img src="../shared/img/logo.png" alt="Fidelix & Cavalcante, Engenharia Diagnóstica"><span>contato@exemplo.com.br<br>(48) 90000-0000</span></div>
+        <div class="folha-marca"><img src="shared/img/logo.png" alt="Fidelix & Cavalcante, Engenharia Diagnóstica"><span>contato@exemplo.com.br<br>(48) 90000-0000</span></div>
         <div class="folha-corpo">
         <h1>${modelos[modelo].titulo}</h1>
         <p class="cab">Código ${v.id}. Emitido em ${dataBR(HOJE)}.</p>
