@@ -7,13 +7,20 @@ $raiz = $PSScriptRoot
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 
 function Atualizar-Lista {
-  $itens = Get-ChildItem -Path $raiz -Directory |
-    Where-Object { $_.Name -notmatch '^[._]' -and (Test-Path (Join-Path $_.FullName 'index.html')) } |
-    Sort-Object Name
-  if ($itens) {
-    $linhas = $itens | ForEach-Object {
-      "      <li><a href=`"./$($_.Name)/`">$($_.Name)<small>$($_.Name)/</small></a></li>"
+  $itens = @()
+  $linhas = @()
+  foreach ($d in (Get-ChildItem -Path $raiz -Directory | Where-Object { $_.Name -notmatch '^[._]' } | Sort-Object Name)) {
+    if (Test-Path (Join-Path $d.FullName 'index.html')) {
+      $itens += $d
+      $linhas += "      <li><a href=`"./$($d.Name)/`">$($d.Name)<small>$($d.Name)/</small></a></li>"
+    } else {
+      foreach ($f in (Get-ChildItem -Path $d.FullName -Filter *.html -File | Sort-Object Name)) {
+        $itens += $f
+        $linhas += "      <li><a href=`"./$($d.Name)/$($f.Name)`">$($f.BaseName)<small>$($d.Name)/$($f.Name)</small></a></li>"
+      }
     }
+  }
+  if ($itens.Count -gt 0) {
   } else {
     $linhas = @('      <li class="vazio">Nenhum protótipo ainda.</li>')
   }
